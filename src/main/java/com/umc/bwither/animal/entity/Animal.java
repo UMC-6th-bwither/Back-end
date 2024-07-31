@@ -6,9 +6,9 @@ import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.Status;
 import com.umc.bwither.breeder.entity.Breeder;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.*;
-
-import java.util.Date;
 
 @Entity
 @Getter
@@ -36,7 +36,7 @@ public class Animal extends BaseEntity {
     private Gender gender; // Enum 정의 필요
 
     @Column(nullable = false)
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(nullable = false, name = "`character`")
     private String character;
@@ -66,4 +66,10 @@ public class Animal extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "breeder_id", nullable = false)
     private Breeder breeder;
+
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnimalFile> animalFiles;
+
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnimalParents> animalParents;
 }
