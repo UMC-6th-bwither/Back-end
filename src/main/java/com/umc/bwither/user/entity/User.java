@@ -54,3 +54,5 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Status status; // Enum 정의 필요
 }
+
+
