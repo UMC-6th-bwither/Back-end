@@ -13,6 +13,7 @@ import lombok.*;
 @Builder
 public class JoinRequestDTO {
 
+
         // User 엔티티 속성
         private String name;
         private String phone;
