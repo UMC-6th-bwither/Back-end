@@ -163,6 +163,100 @@ public class AnimalServiceImpl implements AnimalService {
     return animal.getAnimalId();
   }
 
+  @Override
+  @Transactional
+  public void animalUpdate(Long animalId, long memberId, AnimalCreateDTO animalCreateDTO,
+      Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages,
+      Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
+    Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    animal.update(animalCreateDTO);
+    animalRepository.save(animal);
+
+    if (animalFiles != null) {
+      for (Map.Entry<FileType, List<MultipartFile>> entry : animalFiles.entrySet()) {
+        FileType fileType = entry.getKey();
+        List<MultipartFile> files = entry.getValue();
+        if (files != null) {
+          List<AnimalFile> oldFiles = animalFileRepository.findByAnimalAndType(animal, fileType);
+          for (AnimalFile oldFile : oldFiles) {
+            s3Uploader.deleteFile(oldFile.getAnimalFilePath());
+          }
+          animalFileRepository.deleteByAnimalAndType(animal, fileType);
+
+          for (MultipartFile file : files) {
+            if (file != null && !file.isEmpty()) {
+              String filePath = s3Uploader.uploadFile("animal-files", file);
+              AnimalFile animalFile = AnimalFile.builder()
+                  .animal(animal)
+                  .type(fileType)
+                  .animalFilePath(filePath)
+                  .build();
+              animalFileRepository.save(animalFile);
+            }
+          }
+        }
+      }
+    }
+
+    updateParents(animal, ParentType.MOTHER, animalCreateDTO.getMotherName(), animalCreateDTO.getMotherBreed(),
+        animalCreateDTO.getMotherBirthDate(), animalCreateDTO.getMotherHereditary(), animalCreateDTO.getMotherCharacter(),
+        animalCreateDTO.getMotherHealthCheck(), parentImages.get(ParentType.MOTHER), parentHealthCheckImages);
+
+    updateParents(animal, ParentType.FATHER, animalCreateDTO.getFatherName(), animalCreateDTO.getFatherBreed(),
+        animalCreateDTO.getFatherBirthDate(), animalCreateDTO.getFatherHereditary(), animalCreateDTO.getFatherCharacter(),
+        animalCreateDTO.getFatherHealthCheck(), parentImages.get(ParentType.FATHER), parentHealthCheckImages);
+  }
+
+  @Override
+  public boolean isAnimalAuthor(Long animalId, long memberId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    return animal.getBreeder().getUserId() == memberId;
+  }
+
+  private void updateParents(Animal animal, ParentType parentType, String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, MultipartFile image, Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
+    AnimalParents parent = animalParentsRepository.findByAnimalAndType(animal, parentType)
+        .orElseGet(() -> AnimalParents.builder()
+            .animal(animal)
+            .type(parentType)
+            .build());
+
+    String oldImageUrl = parent.getImageUrl();
+    if (oldImageUrl != null) {
+      s3Uploader.deleteFile(oldImageUrl);
+    }
+
+    String imageUrl = null;
+    if (image != null && !image.isEmpty()) {
+      imageUrl = s3Uploader.uploadFile("animal-parents", image);
+    }
+
+    parent.update(name, breed, birthDate, hereditary, character, healthCheck, imageUrl);
+
+    animalParentsRepository.save(parent);
+
+    // health check images
+    if (parentHealthCheckImages != null && parentHealthCheckImages.get(parentType) != null) {
+      List<HealthCheckImage> existingHealthCheckImages = healthCheckImageRepository.findByAnimalParents(parent);
+      for (HealthCheckImage existingHealthCheckImage : existingHealthCheckImages) {
+        s3Uploader.deleteFile(existingHealthCheckImage.getFilePath());
+      }
+      healthCheckImageRepository.deleteByAnimalParents(parent);
+      List<MultipartFile> healthCheckImages = parentHealthCheckImages.get(parentType);
+      for (MultipartFile healthCheckImage : healthCheckImages) {
+        if (healthCheckImage != null && !healthCheckImage.isEmpty()) {
+          String healthCheckImagePath = s3Uploader.uploadFile("parents-health-check-images", healthCheckImage);
+          HealthCheckImage healthCheckImageEntity = HealthCheckImage.builder()
+              .animal(animal)
+              .animalParents(parent)
+              .filePath(healthCheckImagePath)
+              .build();
+          healthCheckImageRepository.save(healthCheckImageEntity);
+        }
+      }
+    }
+  }
+
   private AnimalParents saveParents(Animal animal, ParentType parentType, String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, MultipartFile image) {
      String imageUrl = s3Uploader.uploadFile("animal-parents", image);
 

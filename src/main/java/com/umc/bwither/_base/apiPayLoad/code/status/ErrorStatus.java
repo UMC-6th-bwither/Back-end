@@ -22,7 +22,8 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "ANIMAL4003", "존재하지 않는 파일 타입입니다."),
 
     //BREEDER 관련 에러
-    BREEDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "BREEDER4001", "존재하지 브리더입니다.");
+    BREEDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "BREEDER4001", "존재하지 브리더입니다."),
+    BREEDER_NOT_AUTHORIZED(HttpStatus.BAD_REQUEST, "BREEDER4002", "작성자가 일치하지 않습니다.");
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

@@ -49,5 +49,17 @@ public class AnimalParents extends BaseEntity {
 
     @OneToMany(mappedBy = "animalParents", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<HealthCheckImage> healthCheckImages;
+
+    public void update(String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, String imageUrl) {
+        this.name = name;
+        this.breed = breed;
+        this.birthDate = birthDate;
+        this.hereditary = hereditary;
+        this.character = character;
+        this.healthCheck = healthCheck;
+        if (imageUrl != null) {
+            this.imageUrl = imageUrl;
+        }
+    }
 }
 
