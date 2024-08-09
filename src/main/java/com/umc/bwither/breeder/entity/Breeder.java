@@ -33,6 +33,12 @@ public class Breeder{
     @Column(nullable = false, length = 50)
     private String tradeName;
 
+    @Column(nullable = false, length = 50)
+    private String tradePhone;
+
+    @Column(nullable = false, length = 50)
+    private String tradeEmail;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String representative;
 
@@ -42,10 +48,10 @@ public class Breeder{
     @Column(nullable = false, length = 100)
     private String licenseNumber;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String snsAddress;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String animalHospital;
 
     @Enumerated(EnumType.STRING)
