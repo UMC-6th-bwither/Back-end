@@ -1,6 +1,7 @@
 package com.umc.bwither.user.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
+import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.user.dto.EmailDTO;
 import com.umc.bwither.user.service.EmailServiceImpl;
@@ -19,12 +20,6 @@ import static org.hibernate.query.sqm.tree.SqmNode.log;
 public class EmailController {
     private final EmailServiceImpl emailService;
 
-    @PostMapping("/send_test")
-    public ResponseEntity<?> emailSendForTest(@RequestBody EmailDTO emailDTO){
-        String code = emailService.sendEmail(emailDTO);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_EMAIL_SENT, code ));
-    }
-
     @PostMapping("/send")
     public ResponseEntity<?> emailSend(@RequestBody EmailDTO emailDTO){
         emailService.sendEmail(emailDTO);
@@ -32,8 +27,13 @@ public class EmailController {
     }
 
     @PostMapping("/verify")
-    public String verify(@RequestBody EmailDTO emailDTO) {
+    public ResponseEntity<?> verify(@RequestBody EmailDTO emailDTO) {
         boolean isVerify = emailService.verifyEmailCode(emailDTO);
-        return isVerify ? "인증이 완료되었습니다." : "인증 실패하셨습니다.";
+        if(isVerify){
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_EMAIL_VERIFIED, null));
+        }
+        else {
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.ERROR_EMAIL_CODE, null));
+        }
     }
 }
