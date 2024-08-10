@@ -236,6 +236,18 @@ public class AnimalServiceImpl implements AnimalService {
     animalMemberRepository.save(animalMember);
   }
 
+  @Override
+  public void unbookmarkAnimal(long memberId, Long animalId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    AnimalMember animalMember = animalMemberRepository.findByAnimalAndMember(animal, member)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_BOOKMARK));
+
+    animalMemberRepository.delete(animalMember);
+  }
+
   private void updateParents(Animal animal, ParentType parentType, String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, MultipartFile image, Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
     AnimalParents parent = animalParentsRepository.findByAnimalAndType(animal, parentType)
         .orElseGet(() -> AnimalParents.builder()

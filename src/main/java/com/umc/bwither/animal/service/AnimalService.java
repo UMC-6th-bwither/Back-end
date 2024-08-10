@@ -19,4 +19,6 @@ public interface AnimalService {
   boolean isAnimalAuthor(Long animalId, long memberId);
 
   void bookmarkAnimal(long memberId, Long animalId);
+
+  void unbookmarkAnimal(long memberId, Long animalId);
 }

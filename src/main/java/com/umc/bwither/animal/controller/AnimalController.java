@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -129,6 +130,17 @@ public class AnimalController {
     animalService.bookmarkAnimal(Long.parseLong(memberId), animalId);
     return ApiResponse.onSuccess(SuccessStatus._OK);
   }
+
+  @DeleteMapping("/{animalId}/bookmark")
+  @Operation(summary = "동물 저장(북마크) 취소 API", description = "사용자가 저장한 동물을 취소하는 API. 동물 아이디(animalId) PathVariable")
+  public ApiResponse unbookmarkAnimal(
+      @PathVariable(name = "animalId") Long animalId,
+      @RequestParam String memberId) {
+    animalService.unbookmarkAnimal(Long.parseLong(memberId), animalId);
+    return ApiResponse.onSuccess(SuccessStatus._OK);
+  }
+
+
 }
 
 //  @PostMapping(value = "", consumes = "multipart/form-data" )
