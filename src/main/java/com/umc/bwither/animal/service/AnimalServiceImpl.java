@@ -9,18 +9,22 @@ import com.umc.bwither.animal.dto.AnimalResponseDTO.FileDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.ParentDTO;
 import com.umc.bwither.animal.entity.Animal;
 import com.umc.bwither.animal.entity.AnimalFile;
+import com.umc.bwither.animal.entity.AnimalMember;
 import com.umc.bwither.animal.entity.AnimalParents;
 import com.umc.bwither.animal.entity.HealthCheckImage;
 import com.umc.bwither.animal.entity.enums.FileType;
 import com.umc.bwither.animal.entity.enums.ParentType;
 import com.umc.bwither.animal.entity.enums.Status;
 import com.umc.bwither.animal.repository.AnimalFileRepository;
+import com.umc.bwither.animal.repository.AnimalMemberRepository;
 import com.umc.bwither.animal.repository.AnimalParentsRepository;
 import com.umc.bwither.animal.repository.AnimalRepository;
 import com.umc.bwither.animal.repository.HealthCheckImageRepository;
 import com.umc.bwither.animal.repository.WaitListRepository;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
+import com.umc.bwither.member.entity.Member;
+import com.umc.bwither.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +44,8 @@ public class AnimalServiceImpl implements AnimalService {
   private final AnimalParentsRepository animalParentsRepository;
   private final HealthCheckImageRepository healthCheckImageRepository;
   private final WaitListRepository waitListRepository;
+  private final MemberRepository memberRepository;
+  private final AnimalMemberRepository animalMemberRepository;
   private final S3Uploader s3Uploader;
 
   @Override
@@ -212,6 +218,22 @@ public class AnimalServiceImpl implements AnimalService {
     Animal animal = animalRepository.findById(animalId)
         .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
     return animal.getBreeder().getUserId() == memberId;
+  }
+
+  @Override
+  public void bookmarkAnimal(long memberId, Long animalId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    animalMemberRepository.findByAnimalAndMember(animal, member)
+        .ifPresent(mb -> { throw new TestHandler(ErrorStatus.ANIMAL_ALREADY_BOOKMARK); });
+
+    AnimalMember animalMember = AnimalMember.builder()
+        .animal(animal)
+        .member(member)
+        .build();
+    animalMemberRepository.save(animalMember);
   }
 
   private void updateParents(Animal animal, ParentType parentType, String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, MultipartFile image, Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {

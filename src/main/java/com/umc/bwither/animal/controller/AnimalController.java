@@ -2,6 +2,7 @@ package com.umc.bwither.animal.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
+import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.dto.AnimalRequestDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
@@ -118,6 +119,15 @@ public class AnimalController {
     animalService.animalUpdate(animalId,Long.parseLong(memberId), animalCreateDTO, animalFiles, parentImages, parentHealthCheckImages);
 
     return ApiResponse.onSuccess(animalId);
+  }
+
+  @PostMapping("/{animalId}/bookmark")
+  @Operation(summary = "동물 저장(북마크) API", description = "동물 저장(북마크) API. 동물 아이디(animalId) PathVariable")
+  public ApiResponse bookmarkAnimal(
+      @PathVariable(name = "animalId") Long animalId,
+      @RequestParam String memberId) {
+    animalService.bookmarkAnimal(Long.parseLong(memberId), animalId);
+    return ApiResponse.onSuccess(SuccessStatus._OK);
   }
 }
 
