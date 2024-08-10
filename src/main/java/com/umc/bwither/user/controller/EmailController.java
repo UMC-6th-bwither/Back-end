@@ -20,6 +20,6 @@ public class EmailController {
     @PostMapping("/send")
     public ResponseEntity<?> emailSend(@RequestBody EmailDTO emailDTO){
         String code = emailService.sendMail(emailDTO);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._SUCCESS_EMAIL_SENT, code ));
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_EMAIL_SENT, "이메일 인증 코드 : " + code ));
     }
 }
