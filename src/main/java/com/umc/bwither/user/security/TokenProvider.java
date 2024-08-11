@@ -1,4 +1,4 @@
-package com.umc.bwither.breeder.security;
+package com.umc.bwither.user.security;
 
 import com.umc.bwither.user.entity.User;
 import io.jsonwebtoken.Claims;

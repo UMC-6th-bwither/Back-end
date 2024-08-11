@@ -1,4 +1,4 @@
-package com.umc.bwither.breeder.config;
+package com.umc.bwither._base.config;
 
 
 import com.umc.bwither.user.security.JwtAuthenticationFilter;
@@ -27,7 +27,9 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/","/breeder/join").permitAll().anyRequest().authenticated());
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/","/breeder/join", "/breeder/login").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll() // Swagger 경로 허용
+                                .anyRequest().authenticated());
 
         http.addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

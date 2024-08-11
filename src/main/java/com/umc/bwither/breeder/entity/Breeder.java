@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-//@Builder
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Breeder{
@@ -58,10 +58,19 @@ public class Breeder{
     @Column(nullable = false)
     private EmploymentStatus employmentStatus;
 
-    @Column(nullable = false)
+    @Column
     private Integer trustLevel;
 
     @Column(columnDefinition = "TEXT")
     private String description;
-}
 
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Kennel> kennels;
+
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Certificate> certificates;
+
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Breeding> breedingHistory;
+
+}

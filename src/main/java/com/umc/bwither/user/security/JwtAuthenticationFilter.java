@@ -1,4 +1,4 @@
-package com.umc.bwither.breeder.security;
+package com.umc.bwither.user.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

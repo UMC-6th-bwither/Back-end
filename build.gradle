@@ -28,6 +28,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+	implementation group: 'io.jsonwebtoken', name: 'jjwt', version: '0.9.1'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'javax.xml.bind:jaxb-api:2.3.1'
+	implementation 'org.glassfish.jaxb:jaxb-runtime:2.3.1'
 	compileOnly 'org.projectlombok:lombok'
 	runtimeOnly 'com.mysql:mysql-connector-j'
 	annotationProcessor 'org.projectlombok:lombok'
@@ -42,6 +46,10 @@ dependencies {
 	// Thymeleaf : html 파일 내 동적 컨텐츠 생성
 	implementation 'ognl:ognl:3.3.1'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+
+	// swagger
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
 }
 
 tasks.named('test') {

@@ -13,9 +13,9 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "dtype")
 public class User extends BaseEntity {
     @Id
@@ -34,7 +34,7 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String username;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 100)
     private String password;
 
     @Column(nullable = false, length = 10)
@@ -60,6 +60,3 @@ public class User extends BaseEntity {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
-
-
-

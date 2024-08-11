@@ -25,4 +25,3 @@ public class Certificate extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private Breeder breeder;
 }
-
