@@ -12,10 +12,10 @@ import lombok.experimental.SuperBuilder;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
+@Builder
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@DiscriminatorValue("Member")
-public class Member extends User{
+public class Member{
 
     @Id
     private Long userId;

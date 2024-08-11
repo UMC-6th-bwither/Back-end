@@ -18,8 +18,10 @@ public class Certificate extends BaseEntity {
     @Column(length = 100)
     private String certificateName;
 
+    @Column(length = 255)
+    private String certificateFile;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Breeder breeder;
 }
-
