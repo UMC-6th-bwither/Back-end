@@ -34,6 +34,15 @@ dependencies {
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// 이메일 인증 시 사용
+	// 이메일 전송 설정
+	implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail'
+	// redis : 이메일 인증 코드 유효성 검사를 위한 DB
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	// Thymeleaf : html 파일 내 동적 컨텐츠 생성
+	implementation 'ognl:ognl:3.3.1'
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 }
 
 tasks.named('test') {

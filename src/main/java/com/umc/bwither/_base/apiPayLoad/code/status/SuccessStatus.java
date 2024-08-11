@@ -21,8 +21,12 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_BOOKMARK_ANIMAL(HttpStatus.OK, "COMMON200", "동물이 성공적으로 북마크되었습니다."),
     SUCCESS_REMOVE_BOOKMARK_ANIMAL(HttpStatus.OK, "COMMON200", "동물의 북마크가 성공적으로 해제되었습니다."),
     SUCCESS_FETCH_BOOKMARK_ANIMALS_LIST(HttpStatus.OK, "COMMON200", "저장한 동물 목록을 성공적으로 가져왔습니다."),
-    SUCCESS_FETCH_MY_ANIMALS_LIST(HttpStatus.OK, "COMMON200", "관리 중인 동물 목록을 성공적으로 가져왔습니다.");
+    SUCCESS_FETCH_MY_ANIMALS_LIST(HttpStatus.OK, "COMMON200", "관리 중인 동물 목록을 성공적으로 가져왔습니다."),
 
+    // 이메일 인증 관련 응답
+    SUCCESS_EMAIL_SENT(HttpStatus.OK, "EMAIL2001", "이메일 인증 코드가 전송되었습니다."),
+    SUCCESS_EMAIL_VERIFIED(HttpStatus.OK,"EMAIL2002", "이메일 인증이 완료되었습니다."),
+    ERROR_EMAIL_CODE(HttpStatus.BAD_REQUEST,"EMAIL4001","잘못된 인증 코드입니다.");
 
 
     private final HttpStatus httpStatus;
