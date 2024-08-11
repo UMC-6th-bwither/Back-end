@@ -37,7 +37,7 @@ public class AnimalController {
   @GetMapping("/{animalId}")
   public ApiResponse<AnimalResponseDTO.AnimalDetailDTO> getAnimalDetail(@PathVariable("animalId") Long animalId) {
     AnimalResponseDTO.AnimalDetailDTO result = animalService.getAnimalDetail(animalId);
-    return ApiResponse.onSuccess(result);
+    return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_ANIMAL,result);
   }
 
   @PostMapping(value = "", consumes = "multipart/form-data")
@@ -76,7 +76,7 @@ public class AnimalController {
 
     Long animalId = animalService.animalCreate(Long.parseLong(memberId), animalCreateDTO, animalFiles, parentImages, parentHealthCheckImages);
 
-    return ApiResponse.onSuccess(animalId);
+    return ApiResponse.of(SuccessStatus.SUCCESS_CREATE_ANIMAL, animalId);
   }
 
   @PutMapping(value = "/{animalId}", consumes = "multipart/form-data")
@@ -119,7 +119,7 @@ public class AnimalController {
 
     animalService.animalUpdate(animalId,Long.parseLong(memberId), animalCreateDTO, animalFiles, parentImages, parentHealthCheckImages);
 
-    return ApiResponse.onSuccess(animalId);
+    return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_ANIMAL, animalId);
   }
 
   @PostMapping("/{animalId}/bookmark")
@@ -128,7 +128,7 @@ public class AnimalController {
       @PathVariable(name = "animalId") Long animalId,
       @RequestParam String memberId) {
     animalService.bookmarkAnimal(Long.parseLong(memberId), animalId);
-    return ApiResponse.onSuccess(SuccessStatus._OK);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_BOOKMARK_ANIMAL);
   }
 
   @DeleteMapping("/{animalId}/bookmark")
@@ -137,7 +137,7 @@ public class AnimalController {
       @PathVariable(name = "animalId") Long animalId,
       @RequestParam String memberId) {
     animalService.unbookmarkAnimal(Long.parseLong(memberId), animalId);
-    return ApiResponse.onSuccess(SuccessStatus._OK);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_REMOVE_BOOKMARK_ANIMAL);
   }
 
 
