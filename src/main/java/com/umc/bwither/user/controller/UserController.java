@@ -73,6 +73,7 @@ public class UserController {
                     .snsAddress(breederJoinDTO.getSnsAddress())
                     .animalHospital(breederJoinDTO.getAnimalHospital())
                     .employmentStatus(breederJoinDTO.getEmploymentStatus())
+                    .trustLevel(5)
                     .build();
 
 
