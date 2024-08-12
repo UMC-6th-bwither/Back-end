@@ -7,6 +7,8 @@ import com.umc.bwither.post.entity.Block;
 import com.umc.bwither.post.entity.Post;
 import com.umc.bwither.post.entity.enums.DataType; // DataType Enum을 import
 import com.umc.bwither.post.repository.PostRepository;
+import com.umc.bwither.user.entity.User;
+import com.umc.bwither.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,15 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
     public void createPost(PostRequestDTO requestDTO) {
+
+        // 사용자 조회
+        User user = userRepository.findById(requestDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<Block> blocks = new ArrayList<>();
         requestDTO.getBlocks().forEach(blockDTO -> {
@@ -41,7 +48,7 @@ public class PostServiceImpl implements PostService {
         });
 
         Post post = Post.create(
-//                requestDTO.getUser(),
+                user,
                 requestDTO.getPetType(),
                 requestDTO.getTitle(),
                 requestDTO.getCategory(),
