@@ -100,9 +100,74 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public List<PostResponseDTO> getAllPosts() {
+        return postRepository.findAll().stream()
+                .map(post -> {
+                    List<BlockDTO> blockDTOs = post.getBlocks().stream()
+                            .map(block -> {
+                                BlockDTO.DataDTO dataDTO = block.getImageUrl() != null
+                                        ? new BlockDTO.DataDTO(null, new BlockDTO.ImageUrlDTO(block.getImageUrl()))
+                                        : new BlockDTO.DataDTO(block.getText(), null);
+
+                                return BlockDTO.builder()
+                                        .type(block.getDataType())
+                                        .data(dataDTO)
+                                        .build();
+                            })
+                            .collect(Collectors.toList());
+
+                    return new PostResponseDTO(
+                            post.getPostId(),
+                            post.getTitle(),
+                            post.getPetType(),
+                            post.getCategory(),
+                            post.getUser().getName(),
+                            blockDTOs
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
         postRepository.delete(post);
+    }
+
+    @Override
+    @Transactional
+    public void updatePost(Long postId, PostRequestDTO requestDTO) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 게시글 제목 및 카테고리 업데이트
+        post.setTitle(requestDTO.getTitle());
+        post.setCategory(requestDTO.getCategory());
+
+        // 기존 블록 삭제
+        post.getBlocks().clear();
+
+        // 새로운 블록 추가
+        List<Block> blocks = requestDTO.getBlocks().stream()
+                .map(blockDTO -> {
+                    Block block = new Block();
+                    block.setDataType(blockDTO.getType());
+
+                    if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
+                        block.setImageUrl(blockDTO.getData().getFile().getUrl());
+                    } else if (blockDTO.getType() == DataType.TEXT) {
+                        block.setText(blockDTO.getData().getText());
+                    }
+
+                    return block;
+                })
+                .collect(Collectors.toList());
+
+        blocks.forEach(block -> block.setPost(post));
+        post.getBlocks().addAll(blocks);
+
+        postRepository.save(post);
     }
 }
