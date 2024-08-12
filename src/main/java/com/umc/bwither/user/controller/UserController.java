@@ -73,6 +73,7 @@ public class UserController {
                     .snsAddress(breederJoinDTO.getSnsAddress())
                     .animalHospital(breederJoinDTO.getAnimalHospital())
                     .employmentStatus(breederJoinDTO.getEmploymentStatus())
+                    .trustLevel(5)
                     .build();
 
 
@@ -82,34 +83,6 @@ public class UserController {
         } catch (Exception e) {
             // 오류 발생 시 응답 생성
             return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_JOIN_BREEDER, e.getMessage()));
-        }
-    }
-
-
-    @PostMapping("/breeder/login")
-    public ResponseEntity<?> authenticate(@RequestBody LoginRequestDTO loginRequestDTO) {
-        try {
-            User user = userService.getByCredentials(
-                    loginRequestDTO.getUsername(),
-                    loginRequestDTO.getPassword(),
-                    passwordEncoder);
-
-            if (user != null) {
-                // 토큰 생성
-                final String token = tokenProvider.create(user);
-                final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
-                        .username(user.getUsername())
-                        .token(token)
-                        .build();
-
-                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_BREEDER, responseDTO));
-            } else {
-                return ResponseEntity
-                        .badRequest()
-                        .body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_BREEDER, "잘못된 사용자 정보입니다"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_BREEDER, e.getMessage()));
         }
     }
 
@@ -158,8 +131,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/user/login")
-    public ResponseEntity<?> LoginMember(@RequestBody LoginRequestDTO loginRequestDTO) {
+    @PostMapping("/login")
+    public ResponseEntity<?> LoginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
         try {
             User user = userService.getByCredentials(
                     loginRequestDTO.getUsername(),
@@ -174,14 +147,14 @@ public class UserController {
                         .token(token)
                         .build();
 
-                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_MEMBER, responseDTO));
+                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_USER, responseDTO));
             } else {
                 return ResponseEntity
                         .badRequest()
-                        .body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_MEMBER, "잘못된 사용자 정보입니다"));
+                        .body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, "잘못된 사용자 정보입니다"));
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_MEMBER, e.getMessage()));
+            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, e.getMessage()));
         }
     }
 }
