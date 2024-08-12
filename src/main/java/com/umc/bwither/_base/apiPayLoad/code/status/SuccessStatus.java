@@ -34,7 +34,15 @@ public enum SuccessStatus implements BaseCode {
 
     // 브리더 로그인 관련 응답
     SUCCESS_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN2000", "로그인에 성공했습니다."),
-    ERROR_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN4000", "로그인에 실패했습니다.");
+    ERROR_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN4000", "로그인에 실패했습니다."),
+
+    //멤버 회원가입 관련 응답
+    SUCCESS_JOIN_MEMBER(HttpStatus.OK, "MEMBERJOIN2001", "회원가입에 성공했습니다."),
+    ERROR_JOIN_MEMBER(HttpStatus.OK, "MEMBERJOIN4001", "회원가입에 실패했습니다."),
+
+    //멤버 로그인 관련 응답
+    SUCCESS_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN2000", "로그인에 성공했습니다."),
+    ERROR_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN4000", "로그인에 실패했습니다.");
 
 
     private final HttpStatus httpStatus;
