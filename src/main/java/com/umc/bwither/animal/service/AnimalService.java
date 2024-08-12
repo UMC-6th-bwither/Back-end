@@ -16,11 +16,11 @@ public interface AnimalService {
 
   AnimalDetailDTO getAnimalDetail(Long animalId);
 
-  Long animalCreate(long memberId, AnimalCreateDTO animalCreateDTO, Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages, Map<ParentType, List<MultipartFile>> parentHealthCheckImages);
+  Long animalCreate(long breederId, AnimalCreateDTO animalCreateDTO, Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages, Map<ParentType, List<MultipartFile>> parentHealthCheckImages);
 
-  void animalUpdate(Long animalId, long memberId, AnimalCreateDTO animalCreateDTO, Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages, Map<ParentType, List<MultipartFile>> parentHealthCheckImages);
+  void animalUpdate(Long animalId, long breederId, AnimalCreateDTO animalCreateDTO, Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages, Map<ParentType, List<MultipartFile>> parentHealthCheckImages);
 
-  boolean isAnimalAuthor(Long animalId, long memberId);
+  boolean isAnimalAuthor(Long animalId, long breederId);
 
   void bookmarkAnimal(long memberId, Long animalId);
 

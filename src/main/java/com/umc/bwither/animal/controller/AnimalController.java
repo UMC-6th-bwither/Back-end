@@ -49,7 +49,7 @@ public class AnimalController {
   @PostMapping(value = "", consumes = "multipart/form-data")
   @Operation(summary = "분양대기동물 작성 API", description = "분양대기동물 작성 API")
   public ApiResponse<Long> animalCreate(
-      @RequestParam String memberId,
+      @RequestParam String breederId,
       @ModelAttribute AnimalRequestDTO.AnimalCreateDTO animalCreateDTO,
       @RequestPart(value = "pedigreeImage", required = false) MultipartFile pedigreeImage,
       @RequestPart(value = "feedingImages", required = false) List<MultipartFile> feedingImages,
@@ -80,7 +80,7 @@ public class AnimalController {
     parentHealthCheckImages.put(ParentType.MOTHER, motherHealthCheckImages);
     parentHealthCheckImages.put(ParentType.FATHER, fatherHealthCheckImages);
 
-    Long animalId = animalService.animalCreate(Long.parseLong(memberId), animalCreateDTO, animalFiles, parentImages, parentHealthCheckImages);
+    Long animalId = animalService.animalCreate(Long.parseLong(breederId), animalCreateDTO, animalFiles, parentImages, parentHealthCheckImages);
 
     return ApiResponse.of(SuccessStatus.SUCCESS_CREATE_ANIMAL, animalId);
   }
@@ -89,7 +89,7 @@ public class AnimalController {
   @Operation(summary = "분양대기동물 수정 API", description = "분양대기동물 수정 API")
   public ApiResponse<Long> animalUpdate(
       @PathVariable Long animalId,
-      @RequestParam String memberId,
+      @RequestParam String breederId,
       @ModelAttribute AnimalRequestDTO.AnimalCreateDTO animalCreateDTO,
       @RequestPart(value = "pedigreeImage", required = false) MultipartFile pedigreeImage,
       @RequestPart(value = "feedingImages", required = false) List<MultipartFile> feedingImages,
@@ -102,7 +102,7 @@ public class AnimalController {
       @RequestPart(value = "fatherImages", required = false) MultipartFile fatherImage,
       @RequestPart(value = "motherHealthCheckImages", required = false) List<MultipartFile> motherHealthCheckImages,
       @RequestPart(value = "fatherHealthCheckImages", required = false) List<MultipartFile> fatherHealthCheckImages) {
-    if (!animalService.isAnimalAuthor(animalId, Long.parseLong(memberId))) {
+    if (!animalService.isAnimalAuthor(animalId, Long.parseLong(breederId))) {
       throw new TestHandler(ErrorStatus.BREEDER_NOT_AUTHORIZED);
     }
     //동물 파일
@@ -123,7 +123,7 @@ public class AnimalController {
     parentHealthCheckImages.put(ParentType.MOTHER, motherHealthCheckImages);
     parentHealthCheckImages.put(ParentType.FATHER, fatherHealthCheckImages);
 
-    animalService.animalUpdate(animalId,Long.parseLong(memberId), animalCreateDTO, animalFiles, parentImages, parentHealthCheckImages);
+    animalService.animalUpdate(animalId,Long.parseLong(breederId), animalCreateDTO, animalFiles, parentImages, parentHealthCheckImages);
 
     return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_ANIMAL, animalId);
   }

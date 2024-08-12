@@ -123,12 +123,12 @@ public class AnimalServiceImpl implements AnimalService {
 
   @Override
   @Transactional
-  public Long animalCreate(long memberId, AnimalCreateDTO animalCreateDTO,
+  public Long animalCreate(long breederId, AnimalCreateDTO animalCreateDTO,
       Map<FileType, List<MultipartFile>> animalFiles,
       Map<ParentType, MultipartFile> parentImages,
       Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
 
-    Breeder breeder = breederRepository.findById(memberId)
+    Breeder breeder = breederRepository.findById(breederId)
         .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
 
     Animal animal = animalRepository.save(Animal.builder()
@@ -181,7 +181,7 @@ public class AnimalServiceImpl implements AnimalService {
 
   @Override
   @Transactional
-  public void animalUpdate(Long animalId, long memberId, AnimalCreateDTO animalCreateDTO,
+  public void animalUpdate(Long animalId, long breederId, AnimalCreateDTO animalCreateDTO,
       Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages,
       Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
     Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
@@ -224,10 +224,10 @@ public class AnimalServiceImpl implements AnimalService {
   }
 
   @Override
-  public boolean isAnimalAuthor(Long animalId, long memberId) {
+  public boolean isAnimalAuthor(Long animalId, long breederId) {
     Animal animal = animalRepository.findById(animalId)
         .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
-    return animal.getBreeder().getUserId() == memberId;
+    return animal.getBreeder().getUserId() == breederId;
   }
 
   @Override
