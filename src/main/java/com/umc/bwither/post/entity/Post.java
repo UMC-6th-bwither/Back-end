@@ -47,9 +47,9 @@ public class Post extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
     private List<Block> blocks;
 
-    public static Post create(User user, PetType petType, String title, Category category, List<Block> blocks) {
+    public static Post create( PetType petType, String title, Category category, List<Block> blocks) {
         Post post = new Post();
-        post.user = user;
+//        post.user = user;
         post.petType = petType;
         post.title = title;
         post.category = category;

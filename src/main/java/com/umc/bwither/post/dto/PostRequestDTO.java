@@ -8,7 +8,7 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class PostRequestDTO {
-    private User user;
+    private Long userId;
     private PetType petType;
     private String title;
     private Category category;
