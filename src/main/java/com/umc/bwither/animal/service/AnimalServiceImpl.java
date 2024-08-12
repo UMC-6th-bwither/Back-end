@@ -3,7 +3,10 @@ package com.umc.bwither.animal.service;
 import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.dto.AnimalRequestDTO.AnimalCreateDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalDetailDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.FileDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.ParentDTO;
@@ -12,7 +15,9 @@ import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.animal.entity.AnimalMember;
 import com.umc.bwither.animal.entity.AnimalParents;
 import com.umc.bwither.animal.entity.HealthCheckImage;
+import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
+import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.ParentType;
 import com.umc.bwither.animal.entity.enums.Status;
 import com.umc.bwither.animal.repository.AnimalFileRepository;
@@ -28,8 +33,13 @@ import com.umc.bwither.member.repository.MemberRepository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -246,6 +256,73 @@ public class AnimalServiceImpl implements AnimalService {
         .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_BOOKMARK));
 
     animalMemberRepository.delete(animalMember);
+  }
+
+  @Override
+  public BookmarkAnimalPreViewListDTO getBookmarkedAnimals(long memberId, AnimalType animalType,
+      Gender gender, String breed, Status status, Integer page) {
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "id"));
+    Page<AnimalMember> animalMembers = animalMemberRepository.findByMember(member, pageable);
+    List<Long> animalIds = animalMembers.stream()
+        .map(animalMember -> animalMember.getAnimal().getAnimalId())
+        .collect(Collectors.toList());
+
+    List<Animal> animals = animalRepository.findAllById(animalIds);
+
+    Map<Long, Animal> animalMap = animals.stream()
+        .collect(Collectors.toMap(Animal::getAnimalId, Function.identity()));
+
+    List<Animal> sortedAnimals = animalMembers.stream()
+        .map(animalMember -> animalMap.get(animalMember.getAnimal().getAnimalId()))
+        .collect(Collectors.toList());
+
+    if (animalType != null) {
+      sortedAnimals = sortedAnimals.stream()
+          .filter(animal -> animal.getType() == animalType)
+          .collect(Collectors.toList());
+    }
+    if (gender != null) {
+      sortedAnimals = sortedAnimals.stream()
+          .filter(animal -> animal.getGender() == gender)
+          .collect(Collectors.toList());
+    }
+    if (breed != null && !breed.isEmpty()) {
+      sortedAnimals = sortedAnimals.stream()
+          .filter(animal -> animal.getBreed().equalsIgnoreCase(breed))
+          .collect(Collectors.toList());
+    }
+    if (status != null) {
+      sortedAnimals = sortedAnimals.stream()
+          .filter(animal -> animal.getStatus() == status)
+          .collect(Collectors.toList());
+    }
+
+    // DTO로 변환
+    List<AnimalResponseDTO.BookmarkAnimalDTO> animalDTOs = sortedAnimals.stream()
+        .map(animal -> BookmarkAnimalDTO.builder()
+            .animalId(animal.getAnimalId())
+            .status(animal.getStatus())
+            .imageUrl(animal.getAnimalFiles().isEmpty() ? null : animal.getAnimalFiles().get(0).getAnimalFilePath())
+            .location(animal.getBreeder().getUser().getAddress())
+            .name(animal.getName())
+            .breed(animal.getBreed())
+            .birthDate(animal.getBirthDate())
+            .gender(animal.getGender())
+            .breederName(animal.getBreeder().getTradeName())
+            .build())
+        .collect(Collectors.toList());
+
+    // 최종 결과 반환
+    return BookmarkAnimalPreViewListDTO.builder()
+        .animalList(animalDTOs)
+        .listSize(animalDTOs.size())
+        .totalPage(animalMembers.getTotalPages())
+        .totalElements(animalMembers.getTotalElements())
+        .isFirst(animalMembers.isFirst())
+        .isLast(animalMembers.isLast())
+        .build();
   }
 
   private void updateParents(Animal animal, ParentType parentType, String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, MultipartFile image, Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {

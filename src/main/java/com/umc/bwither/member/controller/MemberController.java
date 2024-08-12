@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
-
+    /*
     private final MemberService memberService;
 
     @PostMapping("/join")
@@ -21,4 +21,5 @@ public class MemberController {
         Member member = memberService.joinMember(joinDto);
         return ApiResponse.onSuccess(joinDto);
     }
+     */
 }

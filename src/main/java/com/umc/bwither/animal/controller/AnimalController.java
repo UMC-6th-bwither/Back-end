@@ -6,10 +6,16 @@ import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.dto.AnimalRequestDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
+import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
+import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.ParentType;
+import com.umc.bwither.animal.entity.enums.Status;
 import com.umc.bwither.animal.service.AnimalService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -140,6 +146,26 @@ public class AnimalController {
     return ApiResponse.onSuccess(SuccessStatus.SUCCESS_REMOVE_BOOKMARK_ANIMAL);
   }
 
+  @GetMapping("/bookmark")
+  @Operation(summary = "내가 저장(북마크)한 동물 조회 API", description = "내가 저장(북마크)한 동물 조회 API.")
+  @Parameters({
+      @Parameter(name = "page", description = "페이지 번호, 0번이 1 페이지입니다."),
+      @Parameter(name = "animalType", description = "동물 타입 (DOG, CAT)"),
+      @Parameter(name = "gender", description = "성별 (MALE, FEMALE)"),
+      @Parameter(name = "breed", description = "종"),
+      @Parameter(name = "status", description = "예약 여부 (BOOKING, COMPLETE, BEFORE)")
+  })
+  public ApiResponse<BookmarkAnimalPreViewListDTO> getBookmarkedAnimals(
+      @RequestParam String memberId,
+      @RequestParam(name = "page", defaultValue = "0") Integer page,
+      @RequestParam(name = "animalType", required = false) AnimalType animalType,
+      @RequestParam(name = "gender", required = false) Gender gender,
+      @RequestParam(name = "breed", required = false) String breed,
+      @RequestParam(name = "status", required = false) Status status) {
+    BookmarkAnimalPreViewListDTO result = animalService.getBookmarkedAnimals(
+        Long.parseLong(memberId), animalType, gender, breed, status, page);
+    return ApiResponse.onSuccess(result);
+  }
 
 }
 

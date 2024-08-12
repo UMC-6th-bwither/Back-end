@@ -40,6 +40,7 @@ public class JoinDto {
     private String currentPet;
     private FuturePlan futurePlan;
 
+    /*
     public Member toMember() {
         Member member = new Member();
         member.setUserId(this.userId);
@@ -65,4 +66,5 @@ public class JoinDto {
         member.setFuturePlan(this.futurePlan);
         return member;
     }
+    */
 }

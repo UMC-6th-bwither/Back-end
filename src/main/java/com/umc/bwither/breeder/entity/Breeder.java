@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-//@Builder
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Breeder{
@@ -33,6 +33,12 @@ public class Breeder{
     @Column(nullable = false, length = 50)
     private String tradeName;
 
+    @Column(nullable = false, length = 50)
+    private String tradePhone;
+
+    @Column(nullable = false, length = 50)
+    private String tradeEmail;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String representative;
 
@@ -42,20 +48,29 @@ public class Breeder{
     @Column(nullable = false, length = 100)
     private String licenseNumber;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String snsAddress;
 
-    @Column(nullable = false, length = 100)
+    @Column(length = 100)
     private String animalHospital;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EmploymentStatus employmentStatus;
 
-    @Column(nullable = false)
+    @Column
     private Integer trustLevel;
 
     @Column(columnDefinition = "TEXT")
     private String description;
-}
 
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Kennel> kennels;
+
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Certificate> certificates;
+
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Breeding> breedingHistory;
+
+}

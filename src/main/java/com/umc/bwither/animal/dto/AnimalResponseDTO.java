@@ -82,4 +82,35 @@ public class AnimalResponseDTO {
     Integer trustLevel;
     //TODO 브리더 태그
   }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class BookmarkAnimalDTO {
+    Long animalId;
+    Status status;
+    String imageUrl;
+    String location;
+    String name;
+    String breed;
+    LocalDate birthDate;
+    Gender gender;
+    String breederName;
+  }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class BookmarkAnimalPreViewListDTO {
+    List<BookmarkAnimalDTO> animalList;
+    Integer listSize;
+    Integer totalPage;
+    Long totalElements;
+    Boolean isFirst;
+    Boolean isLast;
+  }
+
+
 }
