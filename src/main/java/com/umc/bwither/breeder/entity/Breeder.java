@@ -1,12 +1,14 @@
 package com.umc.bwither.breeder.entity;
 
+import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.breeder.entity.enums.Animal;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,13 +16,13 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Breeder{
+public class Breeder {
     @Id
-    private Long userId;
+    private Long breederId;
 
     @OneToOne
     @MapsId
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "breeder_id")
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -65,12 +67,9 @@ public class Breeder{
     private String description;
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Kennel> kennels;
+    private List<BreederFile> breederFiles;
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Certificate> certificates;
-
-    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Breeding> breedingHistory;
+    private List<Breeding> breedingCareer;
 
 }

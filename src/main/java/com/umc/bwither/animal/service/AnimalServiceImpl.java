@@ -61,92 +61,92 @@ public class AnimalServiceImpl implements AnimalService {
   @Override
   public AnimalDetailDTO getAnimalDetail(Long animalId) {
     Animal animal = animalRepository.findById(animalId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
     Integer waitList = waitListRepository.countByAnimal(animal);
     Integer totalAnimals = animalRepository.countByBreeder(animal.getBreeder());
 
     List<FileDTO> files = animal.getAnimalFiles().stream()
-        .map(file -> new FileDTO(file.getAnimalFileId(), file.getType(), file.getAnimalFilePath()))
-        .collect(Collectors.toList());
+            .map(file -> new FileDTO(file.getAnimalFileId(), file.getType(), file.getAnimalFilePath()))
+            .collect(Collectors.toList());
 
     List<ParentDTO> animalParents = animal.getAnimalParents().stream()
-        .map(parent -> new ParentDTO(
-            parent.getAnimalParentsId(),
-            parent.getType(),
-            parent.getName(),
-            parent.getBreed(),
-            parent.getBirthDate(),
-            parent.getHereditary(),
-            parent.getCharacter(),
-            parent.getHealthCheck(),
-            parent.getImageUrl(),
-            parent.getHealthCheckImages().stream()
-                .map(HealthCheckImage::getFilePath)
-                .collect(Collectors.toList())
-        ))
-        .collect(Collectors.toList());
+            .map(parent -> new ParentDTO(
+                    parent.getAnimalParentsId(),
+                    parent.getType(),
+                    parent.getName(),
+                    parent.getBreed(),
+                    parent.getBirthDate(),
+                    parent.getHereditary(),
+                    parent.getCharacter(),
+                    parent.getHealthCheck(),
+                    parent.getImageUrl(),
+                    parent.getHealthCheckImages().stream()
+                            .map(HealthCheckImage::getFilePath)
+                            .collect(Collectors.toList())
+            ))
+            .collect(Collectors.toList());
 
     BreederDTO breeder = new BreederDTO(
-        animal.getBreeder().getUserId(),
-        animal.getBreeder().getTradeName(),
-        animal.getBreeder().getUser().getAddress(),
-        animal.getBreeder().getDescription(),
-        totalAnimals,
+            animal.getBreeder().getBreederId(),
+            animal.getBreeder().getTradeName(),
+            animal.getBreeder().getUser().getAddress(),
+            animal.getBreeder().getDescription(),
+            totalAnimals,
 //        animal.getBreeder().getRating(), //TODO
 //        animal.getBreeder().getReviewCount(), //TODO
 //        animal.getBreeder().getExperienceYears(), //TODO
-        animal.getBreeder().getTrustLevel()
+            animal.getBreeder().getTrustLevel()
     );
 
     AnimalDetailDTO animalDetailDTO = AnimalDetailDTO.builder()
-        .animalId(animalId)
-        .waitList(waitList)
-        .status(animal.getStatus())
-        .name(animal.getName())
-        .type(animal.getType())
-        .breed(animal.getBreed())
-        .gender(animal.getGender())
-        .birthDate(animal.getBirthDate())
-        .character(animal.getCharacter())
-        .feature(animal.getFeature())
-        .feeding(animal.getFeeding())
-        .vaccination(animal.getVaccination())
-        .virusCheck(animal.getVirusCheck())
-        .parasitic(animal.getParasitic())
-        .healthCheck(animal.getHealthCheck())
-        .files(files)
-        .animalParents(animalParents)
-        .breeder(breeder)
-        .build();
+            .animalId(animalId)
+            .waitList(waitList)
+            .status(animal.getStatus())
+            .name(animal.getName())
+            .type(animal.getType())
+            .breed(animal.getBreed())
+            .gender(animal.getGender())
+            .birthDate(animal.getBirthDate())
+            .character(animal.getCharacter())
+            .feature(animal.getFeature())
+            .feeding(animal.getFeeding())
+            .vaccination(animal.getVaccination())
+            .virusCheck(animal.getVirusCheck())
+            .parasitic(animal.getParasitic())
+            .healthCheck(animal.getHealthCheck())
+            .files(files)
+            .animalParents(animalParents)
+            .breeder(breeder)
+            .build();
     return animalDetailDTO;
   }
 
   @Override
   @Transactional
   public Long animalCreate(long breederId, AnimalCreateDTO animalCreateDTO,
-      Map<FileType, List<MultipartFile>> animalFiles,
-      Map<ParentType, MultipartFile> parentImages,
-      Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
+                           Map<FileType, List<MultipartFile>> animalFiles,
+                           Map<ParentType, MultipartFile> parentImages,
+                           Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
 
     Breeder breeder = breederRepository.findById(breederId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
 
     Animal animal = animalRepository.save(Animal.builder()
-        .breeder(breeder)
-        .name(animalCreateDTO.getName())
-        .type(animalCreateDTO.getType())
-        .breed(animalCreateDTO.getBreed())
-        .gender(animalCreateDTO.getGender())
-        .birthDate(animalCreateDTO.getBirthDate())
-        .character(animalCreateDTO.getCharacter())
-        .feature(animalCreateDTO.getFeature())
-        .feeding(animalCreateDTO.getFeeding())
-        .vaccination(animalCreateDTO.getVaccination())
-        .virusCheck(animalCreateDTO.getVirusCheck())
-        .parasitic(animalCreateDTO.getParasitic())
-        .healthCheck(animalCreateDTO.getHealthCheck())
-        .status(Status.BEFORE)
-        .build());
+            .breeder(breeder)
+            .name(animalCreateDTO.getName())
+            .type(animalCreateDTO.getType())
+            .breed(animalCreateDTO.getBreed())
+            .gender(animalCreateDTO.getGender())
+            .birthDate(animalCreateDTO.getBirthDate())
+            .character(animalCreateDTO.getCharacter())
+            .feature(animalCreateDTO.getFeature())
+            .feeding(animalCreateDTO.getFeeding())
+            .vaccination(animalCreateDTO.getVaccination())
+            .virusCheck(animalCreateDTO.getVirusCheck())
+            .parasitic(animalCreateDTO.getParasitic())
+            .healthCheck(animalCreateDTO.getHealthCheck())
+            .status(Status.BEFORE)
+            .build());
 
     if (animalFiles != null) {
       for (Map.Entry<FileType, List<MultipartFile>> entry : animalFiles.entrySet()) {
@@ -157,10 +157,10 @@ public class AnimalServiceImpl implements AnimalService {
             if (file != null && !file.isEmpty()) {
               String filePath = s3Uploader.uploadFile("animal-files", file);
               AnimalFile animalFile = AnimalFile.builder()
-                  .animal(animal)
-                  .type(fileType)
-                  .animalFilePath(filePath)
-                  .build();
+                      .animal(animal)
+                      .type(fileType)
+                      .animalFilePath(filePath)
+                      .build();
               animalFileRepository.save(animalFile);
             }
           }
@@ -168,13 +168,13 @@ public class AnimalServiceImpl implements AnimalService {
       }
     }
     AnimalParents mother = saveParents(animal, ParentType.MOTHER, animalCreateDTO.getMotherName(), animalCreateDTO.getMotherBreed(),
-        animalCreateDTO.getMotherBirthDate(), animalCreateDTO.getMotherHereditary(), animalCreateDTO.getMotherCharacter(),
-        animalCreateDTO.getMotherHealthCheck(), parentImages.get(ParentType.MOTHER));
+            animalCreateDTO.getMotherBirthDate(), animalCreateDTO.getMotherHereditary(), animalCreateDTO.getMotherCharacter(),
+            animalCreateDTO.getMotherHealthCheck(), parentImages.get(ParentType.MOTHER));
     saveParentFiles(mother, ParentType.MOTHER, parentHealthCheckImages);
 
     AnimalParents father = saveParents(animal, ParentType.FATHER, animalCreateDTO.getFatherName(), animalCreateDTO.getFatherBreed(),
-        animalCreateDTO.getFatherBirthDate(), animalCreateDTO.getFatherHereditary(), animalCreateDTO.getFatherCharacter(),
-        animalCreateDTO.getFatherHealthCheck(), parentImages.get(ParentType.FATHER));
+            animalCreateDTO.getFatherBirthDate(), animalCreateDTO.getFatherHereditary(), animalCreateDTO.getFatherCharacter(),
+            animalCreateDTO.getFatherHealthCheck(), parentImages.get(ParentType.FATHER));
     saveParentFiles(father, ParentType.FATHER, parentHealthCheckImages);
     return animal.getAnimalId();
   }
@@ -182,8 +182,8 @@ public class AnimalServiceImpl implements AnimalService {
   @Override
   @Transactional
   public void animalUpdate(Long animalId, long breederId, AnimalCreateDTO animalCreateDTO,
-      Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages,
-      Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
+                           Map<FileType, List<MultipartFile>> animalFiles, Map<ParentType, MultipartFile> parentImages,
+                           Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
     Animal animal = animalRepository.findById(animalId).orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
     animal.update(animalCreateDTO);
     animalRepository.save(animal);
@@ -203,10 +203,10 @@ public class AnimalServiceImpl implements AnimalService {
             if (file != null && !file.isEmpty()) {
               String filePath = s3Uploader.uploadFile("animal-files", file);
               AnimalFile animalFile = AnimalFile.builder()
-                  .animal(animal)
-                  .type(fileType)
-                  .animalFilePath(filePath)
-                  .build();
+                      .animal(animal)
+                      .type(fileType)
+                      .animalFilePath(filePath)
+                      .build();
               animalFileRepository.save(animalFile);
             }
           }
@@ -215,122 +215,122 @@ public class AnimalServiceImpl implements AnimalService {
     }
 
     updateParents(animal, ParentType.MOTHER, animalCreateDTO.getMotherName(), animalCreateDTO.getMotherBreed(),
-        animalCreateDTO.getMotherBirthDate(), animalCreateDTO.getMotherHereditary(), animalCreateDTO.getMotherCharacter(),
-        animalCreateDTO.getMotherHealthCheck(), parentImages.get(ParentType.MOTHER), parentHealthCheckImages);
+            animalCreateDTO.getMotherBirthDate(), animalCreateDTO.getMotherHereditary(), animalCreateDTO.getMotherCharacter(),
+            animalCreateDTO.getMotherHealthCheck(), parentImages.get(ParentType.MOTHER), parentHealthCheckImages);
 
     updateParents(animal, ParentType.FATHER, animalCreateDTO.getFatherName(), animalCreateDTO.getFatherBreed(),
-        animalCreateDTO.getFatherBirthDate(), animalCreateDTO.getFatherHereditary(), animalCreateDTO.getFatherCharacter(),
-        animalCreateDTO.getFatherHealthCheck(), parentImages.get(ParentType.FATHER), parentHealthCheckImages);
+            animalCreateDTO.getFatherBirthDate(), animalCreateDTO.getFatherHereditary(), animalCreateDTO.getFatherCharacter(),
+            animalCreateDTO.getFatherHealthCheck(), parentImages.get(ParentType.FATHER), parentHealthCheckImages);
   }
 
   @Override
   public boolean isAnimalAuthor(Long animalId, long breederId) {
     Animal animal = animalRepository.findById(animalId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
-    return animal.getBreeder().getUserId() == breederId;
+            .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    return animal.getBreeder().getBreederId() == breederId;
   }
 
   @Override
   public void bookmarkAnimal(long memberId, Long animalId) {
     Animal animal = animalRepository.findById(animalId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
     Member member = memberRepository.findById(memberId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
     animalMemberRepository.findByAnimalAndMember(animal, member)
-        .ifPresent(mb -> { throw new TestHandler(ErrorStatus.ANIMAL_ALREADY_BOOKMARK); });
+            .ifPresent(mb -> { throw new TestHandler(ErrorStatus.ANIMAL_ALREADY_BOOKMARK); });
 
     AnimalMember animalMember = AnimalMember.builder()
-        .animal(animal)
-        .member(member)
-        .build();
+            .animal(animal)
+            .member(member)
+            .build();
     animalMemberRepository.save(animalMember);
   }
 
   @Override
   public void unbookmarkAnimal(long memberId, Long animalId) {
     Animal animal = animalRepository.findById(animalId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
     Member member = memberRepository.findById(memberId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
     AnimalMember animalMember = animalMemberRepository.findByAnimalAndMember(animal, member)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_BOOKMARK));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_BOOKMARK));
 
     animalMemberRepository.delete(animalMember);
   }
 
   @Override
   public BookmarkAnimalPreViewListDTO getBookmarkedAnimals(long memberId, AnimalType animalType,
-      Gender gender, String breed, Status status, Integer page) {
+                                                           Gender gender, String breed, Status status, Integer page) {
     Member member = memberRepository.findById(memberId)
-        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+            .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
     Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "id"));
     Page<AnimalMember> animalMembers = animalMemberRepository.findByMember(member, pageable);
     List<Long> animalIds = animalMembers.stream()
-        .map(animalMember -> animalMember.getAnimal().getAnimalId())
-        .collect(Collectors.toList());
+            .map(animalMember -> animalMember.getAnimal().getAnimalId())
+            .collect(Collectors.toList());
 
     List<Animal> animals = animalRepository.findAllById(animalIds);
 
     Map<Long, Animal> animalMap = animals.stream()
-        .collect(Collectors.toMap(Animal::getAnimalId, Function.identity()));
+            .collect(Collectors.toMap(Animal::getAnimalId, Function.identity()));
 
     List<Animal> sortedAnimals = animalMembers.stream()
-        .map(animalMember -> animalMap.get(animalMember.getAnimal().getAnimalId()))
-        .collect(Collectors.toList());
+            .map(animalMember -> animalMap.get(animalMember.getAnimal().getAnimalId()))
+            .collect(Collectors.toList());
 
     if (animalType != null) {
       sortedAnimals = sortedAnimals.stream()
-          .filter(animal -> animal.getType() == animalType)
-          .collect(Collectors.toList());
+              .filter(animal -> animal.getType() == animalType)
+              .collect(Collectors.toList());
     }
     if (gender != null) {
       sortedAnimals = sortedAnimals.stream()
-          .filter(animal -> animal.getGender() == gender)
-          .collect(Collectors.toList());
+              .filter(animal -> animal.getGender() == gender)
+              .collect(Collectors.toList());
     }
     if (breed != null && !breed.isEmpty()) {
       sortedAnimals = sortedAnimals.stream()
-          .filter(animal -> animal.getBreed().equalsIgnoreCase(breed))
-          .collect(Collectors.toList());
+              .filter(animal -> animal.getBreed().equalsIgnoreCase(breed))
+              .collect(Collectors.toList());
     }
     if (status != null) {
       sortedAnimals = sortedAnimals.stream()
-          .filter(animal -> animal.getStatus() == status)
-          .collect(Collectors.toList());
+              .filter(animal -> animal.getStatus() == status)
+              .collect(Collectors.toList());
     }
 
     // DTO로 변환
     List<AnimalResponseDTO.BookmarkAnimalDTO> animalDTOs = sortedAnimals.stream()
-        .map(animal -> BookmarkAnimalDTO.builder()
-            .animalId(animal.getAnimalId())
-            .status(animal.getStatus())
-            .imageUrl(animal.getAnimalFiles().isEmpty() ? null : animal.getAnimalFiles().get(0).getAnimalFilePath())
-            .location(animal.getBreeder().getUser().getAddress())
-            .name(animal.getName())
-            .breed(animal.getBreed())
-            .birthDate(animal.getBirthDate())
-            .gender(animal.getGender())
-            .breederName(animal.getBreeder().getTradeName())
-            .build())
-        .collect(Collectors.toList());
+            .map(animal -> BookmarkAnimalDTO.builder()
+                    .animalId(animal.getAnimalId())
+                    .status(animal.getStatus())
+                    .imageUrl(animal.getAnimalFiles().isEmpty() ? null : animal.getAnimalFiles().get(0).getAnimalFilePath())
+                    .location(animal.getBreeder().getUser().getAddress())
+                    .name(animal.getName())
+                    .breed(animal.getBreed())
+                    .birthDate(animal.getBirthDate())
+                    .gender(animal.getGender())
+                    .breederName(animal.getBreeder().getTradeName())
+                    .build())
+            .collect(Collectors.toList());
 
     // 최종 결과 반환
     return BookmarkAnimalPreViewListDTO.builder()
-        .animalList(animalDTOs)
-        .listSize(animalDTOs.size())
-        .totalPage(animalMembers.getTotalPages())
-        .totalElements(animalMembers.getTotalElements())
-        .isFirst(animalMembers.isFirst())
-        .isLast(animalMembers.isLast())
-        .build();
+            .animalList(animalDTOs)
+            .listSize(animalDTOs.size())
+            .totalPage(animalMembers.getTotalPages())
+            .totalElements(animalMembers.getTotalElements())
+            .isFirst(animalMembers.isFirst())
+            .isLast(animalMembers.isLast())
+            .build();
   }
 
   private void updateParents(Animal animal, ParentType parentType, String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, MultipartFile image, Map<ParentType, List<MultipartFile>> parentHealthCheckImages) {
     AnimalParents parent = animalParentsRepository.findByAnimalAndType(animal, parentType)
-        .orElseGet(() -> AnimalParents.builder()
-            .animal(animal)
-            .type(parentType)
-            .build());
+            .orElseGet(() -> AnimalParents.builder()
+                    .animal(animal)
+                    .type(parentType)
+                    .build());
 
     String oldImageUrl = parent.getImageUrl();
     if (oldImageUrl != null) {
@@ -358,10 +358,10 @@ public class AnimalServiceImpl implements AnimalService {
         if (healthCheckImage != null && !healthCheckImage.isEmpty()) {
           String healthCheckImagePath = s3Uploader.uploadFile("parents-health-check-images", healthCheckImage);
           HealthCheckImage healthCheckImageEntity = HealthCheckImage.builder()
-              .animal(animal)
-              .animalParents(parent)
-              .filePath(healthCheckImagePath)
-              .build();
+                  .animal(animal)
+                  .animalParents(parent)
+                  .filePath(healthCheckImagePath)
+                  .build();
           healthCheckImageRepository.save(healthCheckImageEntity);
         }
       }
@@ -369,19 +369,19 @@ public class AnimalServiceImpl implements AnimalService {
   }
 
   private AnimalParents saveParents(Animal animal, ParentType parentType, String name, String breed, LocalDate birthDate, String hereditary, String character, String healthCheck, MultipartFile image) {
-     String imageUrl = s3Uploader.uploadFile("animal-parents", image);
+    String imageUrl = s3Uploader.uploadFile("animal-parents", image);
 
     AnimalParents animalParents = AnimalParents.builder()
-        .type(parentType)
-        .name(name)
-        .breed(breed)
-        .birthDate(birthDate)
-        .hereditary(hereditary)
-        .character(character)
-        .healthCheck(healthCheck)
-        .animal(animal)
-        .imageUrl(imageUrl)
-        .build();
+            .type(parentType)
+            .name(name)
+            .breed(breed)
+            .birthDate(birthDate)
+            .hereditary(hereditary)
+            .character(character)
+            .healthCheck(healthCheck)
+            .animal(animal)
+            .imageUrl(imageUrl)
+            .build();
     return animalParentsRepository.save(animalParents);
   }
 
@@ -393,10 +393,10 @@ public class AnimalServiceImpl implements AnimalService {
         if (healthCheckImage != null && !healthCheckImage.isEmpty()) {
           String healthCheckImagePath = s3Uploader.uploadFile("parents-health-check-images", healthCheckImage);
           HealthCheckImage healthCheckImageEntity = HealthCheckImage.builder()
-              .animal(animalParents.getAnimal())
-              .animalParents(animalParents)
-              .filePath(healthCheckImagePath)
-              .build();
+                  .animal(animalParents.getAnimal())
+                  .animalParents(animalParents)
+                  .filePath(healthCheckImagePath)
+                  .build();
           healthCheckImageRepository.save(healthCheckImageEntity);
         }
       }
@@ -470,4 +470,3 @@ public class AnimalServiceImpl implements AnimalService {
 //    }
 //    return animal.getAnimalId();
 //  }
-
