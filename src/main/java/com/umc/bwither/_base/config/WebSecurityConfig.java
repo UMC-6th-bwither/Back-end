@@ -19,15 +19,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 public class WebSecurityConfig {
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth.requestMatchers("/","/breeder/join", "/breeder/login", "/user/join", "/user/login").permitAll()
+                .authorizeHttpRequests(auth -> auth.requestMatchers("/","/breeder/join", "/breeder/login", "/user/join", "/user/login", "/breeder/{breederId}/member/{memberId}", "/user/{memberId}/view-breeders").permitAll()
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll() // Swagger 경로 허용
                                 .anyRequest().authenticated());
 

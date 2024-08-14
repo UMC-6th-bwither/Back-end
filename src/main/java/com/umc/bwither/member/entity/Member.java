@@ -13,15 +13,15 @@ import lombok.experimental.SuperBuilder;
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Member{
 
     @Id
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long memberId;
 
     @OneToOne
-    @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -51,6 +51,10 @@ public class Member{
 
     @Enumerated(EnumType.STRING)
     private FuturePlan futurePlan;
+
+    public Member(Long memberId) {
+        this.memberId = memberId;
+    }
 
 }
 

@@ -16,10 +16,10 @@ import java.util.Set;
 @AllArgsConstructor
 public class Breeder{
     @Id
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long breederId;
 
     @OneToOne
-    @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -73,4 +73,7 @@ public class Breeder{
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Breeding> breedingHistory;
 
+    public Breeder(Long breederId) {
+        this.breederId = breederId;
+    }
 }
