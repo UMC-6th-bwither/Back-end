@@ -1,7 +1,7 @@
 package com.umc.bwither.user.dto;
 
-import com.umc.bwither.breeder.dto.BreedingHistoryDTO;
-import com.umc.bwither.breeder.dto.CertificateDTO;
+import com.umc.bwither.breeder.dto.BreederFileDTO;
+import com.umc.bwither.breeder.dto.BreedingCareerDTO;
 import com.umc.bwither.breeder.entity.enums.Animal;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import lombok.Builder;
@@ -37,13 +37,6 @@ public class BreederJoinDTO {
     private String snsAddress;     // 홈페이지/SNS 주소 (선택 사항)
     private String animalHospital; // 이용 중인 동물병원 (선택 사항)
     private EmploymentStatus employmentStatus; // 재직 상태
+    private List<BreedingCareerDTO> breedingCareer;
 
-    // 켄넬/케터리 사진
-    private List<String> kennelImages; // 켄넬/케터리 사진 리스트
-
-    // 자격증 정보 리스트 (선택 사항)
-    private List<CertificateDTO> certificates;
-
-    // 번식 경력 정보
-    private List<BreedingHistoryDTO> breedingHistory; // 번식 경력 리스트
 }

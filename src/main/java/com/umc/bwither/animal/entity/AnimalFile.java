@@ -4,6 +4,9 @@ import com.umc.bwither._base.common.BaseEntity;
 import com.umc.bwither.animal.entity.enums.FileType;
 import jakarta.persistence.*;
 import lombok.*;
+import org.joda.time.LocalDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
