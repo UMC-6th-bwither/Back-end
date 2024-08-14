@@ -174,12 +174,12 @@ public class AnimalController {
       @Parameter(name = "gender", description = "성별 (MALE, FEMALE)"),
       @Parameter(name = "breed", description = "종")
   })
-  public ApiResponse<BreederAnimalPreViewListDTO> getBreederAnimals(
+  public ApiResponse<AnimalResponseDTO.BreederAnimalPreViewListDTO> getBreederAnimals(
       @RequestParam String breederId,
       @RequestParam(name = "page", defaultValue = "0") Integer page,
       @RequestParam(name = "gender", required = false) Gender gender,
       @RequestParam(name = "breed", required = false) String breed) {
-    BreederAnimalPreViewListDTO result = animalService
+    AnimalResponseDTO.BreederAnimalPreViewListDTO result = animalService
         .getBreederAnimals(
             Long.parseLong(breederId), gender, breed, page);
     return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_MY_ANIMALS_LIST, result);

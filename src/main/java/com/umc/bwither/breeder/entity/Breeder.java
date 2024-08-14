@@ -8,6 +8,7 @@ import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -29,8 +30,10 @@ public class Breeder {
     @Column(nullable = false)
     private Animal animal;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String species;
+    @ElementCollection
+    @CollectionTable(name = "breeder_species", joinColumns = @JoinColumn(name = "breeder_id"))
+    @Column(name = "species", nullable = false)
+    private List<String> species;
 
     @Column(nullable = false, length = 50)
     private String tradeName;
@@ -65,6 +68,36 @@ public class Breeder {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(columnDefinition = "TEXT")
+    private String descriptionDetail;
+
+    @Column(nullable = false, length = 50)
+    private String schoolName;
+
+    @Column(nullable = false, length = 50)
+    private String departmentName;
+
+    @Column(nullable = false)
+    private LocalDate enrollmentDate;
+
+    @Column(nullable = false)
+    private LocalDate graduationDate;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String questionGuarantee;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String questionPedigree;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String questionBaby;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String questionPeriod;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String questionSupport;
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BreederFile> breederFiles;
