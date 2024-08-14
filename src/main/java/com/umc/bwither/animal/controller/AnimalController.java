@@ -7,6 +7,7 @@ import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.dto.AnimalRequestDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalPreViewListDTO;
 import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
 import com.umc.bwither.animal.entity.enums.Gender;
@@ -164,8 +165,27 @@ public class AnimalController {
       @RequestParam(name = "status", required = false) Status status) {
     BookmarkAnimalPreViewListDTO result = animalService.getBookmarkedAnimals(
         Long.parseLong(memberId), animalType, gender, breed, status, page);
-    return ApiResponse.onSuccess(result);
+    return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_BOOKMARK_ANIMALS_LIST, result);
   }
+
+  @GetMapping("/breeder")
+  @Operation(summary = "브리더 버전 관리 중인 동물 목록 API", description = "브리더 버전 관리 중인 동물 목록 API.")
+  @Parameters({
+      @Parameter(name = "page", description = "페이지 번호, 0번이 1 페이지입니다."),
+      @Parameter(name = "gender", description = "성별 (MALE, FEMALE)"),
+      @Parameter(name = "breed", description = "종")
+  })
+  public ApiResponse<BreederAnimalPreViewListDTO> getBreederAnimals(
+      @RequestParam String breederId,
+      @RequestParam(name = "page", defaultValue = "0") Integer page,
+      @RequestParam(name = "gender", required = false) Gender gender,
+      @RequestParam(name = "breed", required = false) String breed) {
+    BreederAnimalPreViewListDTO result = animalService
+        .getBreederAnimals(
+            Long.parseLong(breederId), gender, breed, page);
+    return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_MY_ANIMALS_LIST, result);
+  }
+
 
 }
 

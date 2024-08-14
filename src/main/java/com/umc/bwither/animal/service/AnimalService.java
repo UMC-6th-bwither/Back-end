@@ -3,6 +3,7 @@ package com.umc.bwither.animal.service;
 import com.umc.bwither.animal.dto.AnimalRequestDTO.AnimalCreateDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalDetailDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalPreViewListDTO;
 import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
 import com.umc.bwither.animal.entity.enums.Gender;
@@ -27,4 +28,6 @@ public interface AnimalService {
   void unbookmarkAnimal(long memberId, Long animalId);
 
   BookmarkAnimalPreViewListDTO getBookmarkedAnimals(long memberId, AnimalType animalType, Gender gender, String breed, Status status, Integer page);
+
+  BreederAnimalPreViewListDTO getBreederAnimals(long breederId, Gender gender, String breed, Integer page);
 }

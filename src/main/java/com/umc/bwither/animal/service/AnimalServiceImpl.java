@@ -7,6 +7,8 @@ import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalDetailDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.FileDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.ParentDTO;
@@ -31,6 +33,7 @@ import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -322,6 +325,52 @@ public class AnimalServiceImpl implements AnimalService {
         .totalElements(animalMembers.getTotalElements())
         .isFirst(animalMembers.isFirst())
         .isLast(animalMembers.isLast())
+        .build();
+  }
+
+  @Override
+  public BreederAnimalPreViewListDTO getBreederAnimals(long breederId, Gender gender, String breed,
+      Integer page) {
+    Breeder breeder = breederRepository.findById(breederId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
+    Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, "animalId"));
+    Page<Animal> animals = animalRepository.findByBreeder(breeder, pageable);
+    List<Animal> animalList = new ArrayList<>(animals.getContent());
+    if (gender != null) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getGender() == gender)
+          .collect(Collectors.toList());
+    }
+    if (breed != null && !breed.isEmpty()) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getBreed().equalsIgnoreCase(breed))
+          .collect(Collectors.toList());
+    }
+    List<BreederAnimalDTO> animalDTOs = animalList.stream()
+        .map(animal -> {
+          int waitListCount = waitListRepository.countByAnimal(animal); // 해당 동물의 대기자 수 계산
+          return BreederAnimalDTO.builder()
+              .animalId(animal.getAnimalId())
+              .name(animal.getName())
+              .breed(animal.getBreed())
+              .birthDate(animal.getBirthDate())
+              .gender(animal.getGender())
+              .status(animal.getStatus())
+              .imageUrl(animal.getAnimalFiles().isEmpty() ? null : animal.getAnimalFiles().get(0).getAnimalFilePath())
+              .location(animal.getBreeder().getUser().getAddress())
+              .breederName(breeder.getTradeName())
+              .waitList(waitListCount)
+              .build();
+        })
+        .collect(Collectors.toList());
+
+    return BreederAnimalPreViewListDTO.builder()
+        .animalList(animalDTOs)
+        .listSize(animalDTOs.size())
+        .totalPage(animals.getTotalPages())
+        .totalElements(animals.getTotalElements())
+        .isFirst(animals.isFirst())
+        .isLast(animals.isLast())
         .build();
   }
 
