@@ -1,6 +1,7 @@
 package com.umc.bwither.animal.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,6 @@ public class WaitList extends BaseEntity {
     private Animal animal;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }

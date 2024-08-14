@@ -58,8 +58,8 @@ public class Breeder{
     @Column(nullable = false)
     private EmploymentStatus employmentStatus;
 
-    @Column
-    private Integer trustLevel;
+    @Column(nullable = false)
+    private Integer trustLevel = 5;
 
     @Column(columnDefinition = "TEXT")
     private String description;
