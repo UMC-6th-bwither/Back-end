@@ -1,5 +1,7 @@
 package com.umc.bwither.post.service;
 
+import com.umc.bwither.breeder.entity.Breeder;
+import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.post.dto.BlockDTO;
 import com.umc.bwither.post.dto.PostRequestDTO;
 import com.umc.bwither.post.dto.PostResponseDTO;
@@ -23,10 +25,14 @@ public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+    private final BreederRepository breederRepository;
 
     @Override
     @Transactional
     public void createPost(PostRequestDTO requestDTO) {
+        // 브리더 조회
+        Breeder breeder = breederRepository.findById(requestDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         // 사용자 조회
         User user = userRepository.findById(requestDTO.getUserId())
@@ -48,8 +54,10 @@ public class PostServiceImpl implements PostService {
         });
 
         Post post = Post.create(
+                breeder,
                 user,
                 requestDTO.getPetType(),
+                requestDTO.getRating(),
                 requestDTO.getTitle(),
                 requestDTO.getCategory(),
                 blocks
@@ -58,6 +66,28 @@ public class PostServiceImpl implements PostService {
         blocks.forEach(block -> block.setPost(post)); // Block 객체에도 Post 참조 설정
 
         postRepository.save(post);
+
+        // 전체 게시글의 평균 별점 계산 및 업데이트
+        updateAverageRating(post);
+    }
+
+    // 평균 별점 계산 및 업데이트
+    @Transactional
+    public void updateAverageRating(Post newPost) {
+        List<Post> allPosts = postRepository.findAll();
+        double totalRating = 0.0;
+        int count = 0;
+
+        for (Post post : allPosts) {
+            totalRating += post.getRating(); // 각 게시글의 별점 합산
+            count++;
+        }
+
+        double averageRating = totalRating / count; // 평균 계산
+
+        // 새로운 게시글에 평균 별점 설정
+        newPost.getBreeder().setAverageRating(averageRating);
+        postRepository.save(newPost); // 게시글 저장 후 평균 별점 업데이트
     }
 
     @Override
@@ -82,6 +112,8 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
+        Breeder breeder =post.getBreeder();
+
         List<BlockDTO> blockDTOs = post.getBlocks().stream()
                 .map(block -> {
                     BlockDTO.DataDTO dataDTO = block.getImageUrl() != null
@@ -95,7 +127,7 @@ public class PostServiceImpl implements PostService {
                 })
                 .collect(Collectors.toList());
 
-        return new PostResponseDTO(post.getPostId(), post.getTitle(), post.getPetType(), post.getCategory(), post.getUser().getName(), blockDTOs);
+        return new PostResponseDTO(post.getPostId(), post.getTitle(), post.getPetType(), post.getRating(), breeder.getAverageRating(), post.getCategory(),post.getBreeder().getTradeName(), post.getUser().getName(), blockDTOs);
     }
 
     @Override
@@ -120,7 +152,10 @@ public class PostServiceImpl implements PostService {
                             post.getPostId(),
                             post.getTitle(),
                             post.getPetType(),
+                            post.getRating(),
+                            post.getBreeder().getAverageRating(),
                             post.getCategory(),
+                            post.getBreeder().getUser().getName(),
                             post.getUser().getName(),
                             blockDTOs
                     );

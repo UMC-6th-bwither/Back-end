@@ -1,6 +1,7 @@
 package com.umc.bwither.post.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.post.entity.enums.Category;
 import com.umc.bwither.post.entity.enums.PetType;
 import com.umc.bwither.user.entity.User;
@@ -34,6 +35,13 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private PetType petType;
 
+    @Column(nullable = true)
+    private Integer rating;
+
+    @ManyToOne
+    @JoinColumn(name = "breeder_id", nullable = true)
+    private Breeder breeder;
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
@@ -47,10 +55,12 @@ public class Post extends BaseEntity {
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
     private List<Block> blocks;
 
-    public static Post create( User user, PetType petType, String title, Category category, List<Block> blocks) {
+    public static Post create( Breeder breeder, User user, PetType petType, Integer rating, String title, Category category, List<Block> blocks) {
         Post post = new Post();
+        post.breeder = breeder;
         post.user = user;
         post.petType = petType;
+        post.rating = rating;
         post.title = title;
         post.category = category;
         post.blocks = blocks;

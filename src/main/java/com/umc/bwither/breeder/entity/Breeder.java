@@ -73,4 +73,7 @@ public class Breeder{
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Breeding> breedingHistory;
 
+    @Column
+    private double averageRating;
+
 }

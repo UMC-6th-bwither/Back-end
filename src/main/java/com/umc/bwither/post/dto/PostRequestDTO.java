@@ -8,9 +8,13 @@ import lombok.Data;
 import java.util.List;
 @Data
 public class PostRequestDTO {
+    private Long breederId;
     private Long userId;
     private PetType petType;
     private String title;
+    private Integer rating;
+    private double totalRating;
     private Category category;
     private List<BlockDTO> blocks;
+
 }

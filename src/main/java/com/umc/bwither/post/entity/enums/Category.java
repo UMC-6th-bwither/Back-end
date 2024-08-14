@@ -5,5 +5,5 @@ package com.umc.bwither.post.entity.enums;
 }*/
 
 public enum Category {
-    INFORMATION, BREEDER_REVIEWS
+    TIPS, BREEDER_REVIEWS
 }
