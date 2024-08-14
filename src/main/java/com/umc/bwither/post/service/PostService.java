@@ -19,4 +19,8 @@ public interface PostService {
 
     void updatePost(Long postId, PostRequestDTO requestDTO);
 
+    void bookmarkPost(Long memberId, Long postId);
+
+    void unbookmarkPost(Long memberId, Long postId);
+
 }

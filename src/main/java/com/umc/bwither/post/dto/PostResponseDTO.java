@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Calendar;
 import java.util.List;
 
@@ -23,4 +25,5 @@ public class PostResponseDTO {
     private String kennelName;
     private String author; // 작성자 필드 추가
     private List<BlockDTO> blocks;
+    private LocalDateTime createdAt;
 }

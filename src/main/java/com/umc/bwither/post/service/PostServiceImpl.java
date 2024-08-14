@@ -6,8 +6,10 @@ import com.umc.bwither.post.dto.BlockDTO;
 import com.umc.bwither.post.dto.PostRequestDTO;
 import com.umc.bwither.post.dto.PostResponseDTO;
 import com.umc.bwither.post.entity.Block;
+import com.umc.bwither.post.entity.Bookmark;
 import com.umc.bwither.post.entity.Post;
 import com.umc.bwither.post.entity.enums.DataType; // DataType Enum을 import
+import com.umc.bwither.post.repository.BookmarkRepository;
 import com.umc.bwither.post.repository.PostRepository;
 import com.umc.bwither.user.entity.User;
 import com.umc.bwither.user.repository.UserRepository;
@@ -26,6 +28,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
     private final BreederRepository breederRepository;
+    private final BookmarkRepository bookmarkRepository;
 
     @Override
     @Transactional
@@ -127,7 +130,7 @@ public class PostServiceImpl implements PostService {
                 })
                 .collect(Collectors.toList());
 
-        return new PostResponseDTO(post.getPostId(), post.getTitle(), post.getPetType(), post.getRating(), breeder.getAverageRating(), post.getCategory(),post.getBreeder().getTradeName(), post.getUser().getName(), blockDTOs);
+        return new PostResponseDTO(post.getPostId(), post.getTitle(), post.getPetType(), post.getRating(), breeder.getAverageRating(), post.getCategory(),post.getBreeder().getTradeName(), post.getUser().getName(), blockDTOs, post.getCreatedAt());
     }
 
     @Override
@@ -157,7 +160,8 @@ public class PostServiceImpl implements PostService {
                             post.getCategory(),
                             post.getBreeder().getUser().getName(),
                             post.getUser().getName(),
-                            blockDTOs
+                            blockDTOs,
+                            post.getCreatedAt()
                     );
                 })
                 .collect(Collectors.toList());
@@ -204,5 +208,41 @@ public class PostServiceImpl implements PostService {
         post.getBlocks().addAll(blocks);
 
         postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    public void bookmarkPost(Long memberId, Long postId) {
+        User user = userRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 이미 북마크한 상태인지 확인
+        if (bookmarkRepository.findByUserAndPost(user, post).isPresent()) {
+            throw new RuntimeException("Post is already bookmarked");
+        }
+
+        // 북마크 추가
+        Bookmark bookmark = new Bookmark(user, post);
+        bookmarkRepository.save(bookmark);
+    }
+
+    @Override
+    @Transactional
+    public void unbookmarkPost(Long memberId, Long postId) {
+        User user = userRepository.findById(memberId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 북마크가 있는지 확인
+        Bookmark bookmark = bookmarkRepository.findByUserAndPost(user, post)
+                .orElseThrow(() -> new RuntimeException("Bookmark not found"));
+
+        // 북마크 삭제
+        bookmarkRepository.delete(bookmark);
     }
 }
