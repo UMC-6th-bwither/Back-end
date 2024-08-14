@@ -17,12 +17,13 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Breeder {
+  
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long breederId;
 
     @OneToOne
-    @MapsId
-    @JoinColumn(name = "breeder_id")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Enumerated(EnumType.STRING)
@@ -72,4 +73,7 @@ public class Breeder {
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Breeding> breedingCareer;
 
+    public Breeder(Long breederId) {
+        this.breederId = breederId;
+    }
 }
