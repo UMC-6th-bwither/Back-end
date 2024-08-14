@@ -112,5 +112,34 @@ public class AnimalResponseDTO {
     Boolean isLast;
   }
 
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class BreederAnimalDTO {
+    Long animalId;
+    Status status;
+    String imageUrl;
+    String location;
+    String name;
+    String breed;
+    LocalDate birthDate;
+    Gender gender;
+    String breederName;
+    Integer waitList;
+  }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class BreederAnimalPreViewListDTO {
+    List<BreederAnimalDTO> animalList;
+    Integer listSize;
+    Integer totalPage;
+    Long totalElements;
+    Boolean isFirst;
+    Boolean isLast;
+  }
 
 }
