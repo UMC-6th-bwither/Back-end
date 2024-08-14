@@ -30,6 +30,9 @@ public class Breeding extends BaseEntity {
     @Column(nullable = false)
     private Boolean currentlyEmployed;  // 재직 중 여부
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @ManyToOne
     @JoinColumn(name = "breeder_id", nullable = false)
     private Breeder breeder;

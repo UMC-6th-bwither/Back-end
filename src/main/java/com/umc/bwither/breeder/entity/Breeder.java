@@ -72,31 +72,31 @@ public class Breeder {
     @Column(columnDefinition = "TEXT")
     private String descriptionDetail;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String schoolName;
 
-    @Column(nullable = false, length = 50)
+    @Column(length = 50)
     private String departmentName;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate enrollmentDate;
 
-    @Column(nullable = false)
+    @Column
     private LocalDate graduationDate;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String questionGuarantee;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String questionPedigree;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String questionBaby;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String questionPeriod;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String questionSupport;
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
