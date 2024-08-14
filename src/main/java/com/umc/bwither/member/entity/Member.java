@@ -7,14 +7,16 @@ import com.umc.bwither.member.entity.enums.PetAllowed;
 import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @Entity
 @Getter
 @Setter
-//@Builder
+@Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Member {
+public class Member{
+
     @Id
     private Long userId;
 
@@ -49,5 +51,6 @@ public class Member {
 
     @Enumerated(EnumType.STRING)
     private FuturePlan futurePlan;
+
 }
 
