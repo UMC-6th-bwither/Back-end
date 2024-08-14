@@ -1,4 +1,3 @@
-
 package com.umc.bwither.animal.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
@@ -164,9 +163,28 @@ public class AnimalController {
           @RequestParam(name = "breed", required = false) String breed,
           @RequestParam(name = "status", required = false) Status status) {
     BookmarkAnimalPreViewListDTO result = animalService.getBookmarkedAnimals(
-            Long.parseLong(memberId), animalType, gender, breed, status, page);
-    return ApiResponse.onSuccess(result);
+        Long.parseLong(memberId), animalType, gender, breed, status, page);
+    return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_BOOKMARK_ANIMALS_LIST, result);
   }
+
+  @GetMapping("/breeder")
+  @Operation(summary = "브리더 버전 관리 중인 동물 목록 API", description = "브리더 버전 관리 중인 동물 목록 API.")
+  @Parameters({
+      @Parameter(name = "page", description = "페이지 번호, 0번이 1 페이지입니다."),
+      @Parameter(name = "gender", description = "성별 (MALE, FEMALE)"),
+      @Parameter(name = "breed", description = "종")
+  })
+  public ApiResponse<BreederAnimalPreViewListDTO> getBreederAnimals(
+      @RequestParam String breederId,
+      @RequestParam(name = "page", defaultValue = "0") Integer page,
+      @RequestParam(name = "gender", required = false) Gender gender,
+      @RequestParam(name = "breed", required = false) String breed) {
+    BreederAnimalPreViewListDTO result = animalService
+        .getBreederAnimals(
+            Long.parseLong(breederId), gender, breed, page);
+    return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_MY_ANIMALS_LIST, result);
+  }
+
 
 }
 
@@ -178,3 +196,4 @@ public class AnimalController {
 //    Long animalId = animalService.createAnimal(Long.parseLong(memberId), animalCreateDTO);
 //    return ApiResponse.onSuccess(animalId);
 //  }
+

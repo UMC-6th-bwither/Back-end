@@ -1,6 +1,5 @@
 package com.umc.bwither.user.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.animal.entity.AnimalFile;
@@ -12,6 +11,10 @@ import com.umc.bwither.breeder.entity.Breeding;
 import com.umc.bwither.breeder.entity.enums.FileType;
 import com.umc.bwither.breeder.service.BreederService;
 import com.umc.bwither.member.entity.Member;
+import com.umc.bwither.member.entity.enums.EmploymentStatus;
+import com.umc.bwither.member.entity.enums.FamilyAgreement;
+import com.umc.bwither.member.entity.enums.FuturePlan;
+import com.umc.bwither.member.entity.enums.PetAllowed;
 import com.umc.bwither.member.service.MemberService;
 import com.umc.bwither.user.dto.BreederJoinDTO;
 import com.umc.bwither.user.dto.LoginRequestDTO;
@@ -46,7 +49,6 @@ public class UserController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final TokenProvider tokenProvider;
-    private final S3Uploader s3Uploader;
 
     @PostMapping(value = "/breeder/join", consumes = "multipart/form-data")
     @Operation(summary = "브리더 회원가입 API", description = "브리더 회원가입 API")
@@ -100,6 +102,7 @@ public class UserController {
                     .trustLevel(5)
                     .build();
 
+
             breederService.saveBreeder(breeder);
 
             // Breeding 객체 생성 및 초기화
@@ -144,6 +147,7 @@ public class UserController {
 
             return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_JOIN_BREEDER, null));
         } catch (Exception e) {
+            // 오류 발생 시 응답 생성
             return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_JOIN_BREEDER, e.getMessage()));
         }
     }

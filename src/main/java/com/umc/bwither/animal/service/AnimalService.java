@@ -4,6 +4,7 @@ import com.umc.bwither.animal.dto.AnimalRequestDTO.AnimalCreateDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalDetailDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalPreViewListDTO;
 import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
 import com.umc.bwither.animal.entity.enums.Gender;
@@ -29,5 +30,7 @@ public interface AnimalService {
 
   BookmarkAnimalPreViewListDTO getBookmarkedAnimals(long memberId, AnimalType animalType, Gender gender, String breed, Status status, Integer page);
 
-  List<AnimalResponseDTO.MissingFilesDTO> getAnimalsWithMissingFiles(Long breederId);
+  BreederAnimalPreViewListDTO getBreederAnimals(long breederId, Gender gender, String breed, Integer page);
+
+    List<AnimalResponseDTO.MissingFilesDTO> getAnimalsWithMissingFiles(Long breederId);
 }
