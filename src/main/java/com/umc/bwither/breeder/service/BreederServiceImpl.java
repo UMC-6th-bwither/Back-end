@@ -1,8 +1,13 @@
 package com.umc.bwither.breeder.service;
 
 import com.umc.bwither.breeder.dto.BreederRequestDTO;
+import com.umc.bwither.breeder.dto.BreederResponseDTO;
 import com.umc.bwither.breeder.entity.Breeder;
+import com.umc.bwither.breeder.entity.BreederFile;
+import com.umc.bwither.breeder.entity.Breeding;
+import com.umc.bwither.breeder.repository.BreederFileRepository;
 import com.umc.bwither.breeder.repository.BreederRepository;
+import com.umc.bwither.breeder.repository.BreedingRepository;
 import com.umc.bwither.user.entity.User;
 import com.umc.bwither.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -12,26 +17,28 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class BreederServiceImpl implements BreederService {
-    private UserRepository userRepository;
+
     private final BreederRepository breederRepository;
+    private final BreedingRepository breedingRepository;
+    private final BreederFileRepository breederFileRepository;
 
     @Override
     public void saveBreeder(final Breeder breeder) {
         breederRepository.save(breeder);
     }
 
-    public User getByCredentials(final String username, final String password) {
-        return userRepository.findByUsernameAndPassword(username, password);
-    }
+    @Override
+    public void saveBreeding(final Breeding breeding) { breedingRepository.save(breeding); }
 
-    public User getByCredentials(final String username, final String password,
-                                 final PasswordEncoder encoder){
-        final User originalUser = userRepository.findByUsername(username);
+    @Override
+    public void saveBreederFile(final BreederFile breederFile) { breederFileRepository.save(breederFile); }
 
-        if(originalUser != null && encoder.matches(password, originalUser.getPassword())) {
-            return originalUser;
-        }
+    @Override
+    public BreederResponseDTO.TrustLevelResponseDTO getTrustLevel(Long breederId) {
+        Integer trustLevel = breederRepository.findTrustLevelByBreederId(breederId);
 
-        return null;
+        return BreederResponseDTO.TrustLevelResponseDTO.builder()
+                .trustLevel(trustLevel)
+                .build();
     }
 }

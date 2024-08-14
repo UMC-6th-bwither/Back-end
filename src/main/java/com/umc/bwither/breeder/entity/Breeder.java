@@ -1,12 +1,14 @@
 package com.umc.bwither.breeder.entity;
 
+import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.breeder.entity.enums.Animal;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,7 +16,8 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Breeder{
+public class Breeder {
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long breederId;
@@ -58,20 +61,17 @@ public class Breeder{
     @Column(nullable = false)
     private EmploymentStatus employmentStatus;
 
-    @Column
-    private Integer trustLevel;
+    @Column(nullable = false)
+    private Integer trustLevel = 5;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Kennel> kennels;
+    private List<BreederFile> breederFiles;
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Certificate> certificates;
-
-    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Breeding> breedingHistory;
+    private List<Breeding> breedingCareer;
 
     public Breeder(Long breederId) {
         this.breederId = breederId;

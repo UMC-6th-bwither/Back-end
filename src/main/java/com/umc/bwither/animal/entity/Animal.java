@@ -1,14 +1,15 @@
 package com.umc.bwither.animal.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.animal.dto.AnimalRequestDTO.AnimalCreateDTO;
 import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.Status;
 import com.umc.bwither.breeder.entity.Breeder;
 import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.util.List;
 import lombok.*;
-
-import java.util.Date;
 
 @Entity
 @Getter
@@ -36,7 +37,7 @@ public class Animal extends BaseEntity {
     private Gender gender; // Enum 정의 필요
 
     @Column(nullable = false)
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(nullable = false, name = "`character`")
     private String character;
@@ -66,4 +67,25 @@ public class Animal extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "breeder_id", nullable = false)
     private Breeder breeder;
+
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnimalFile> animalFiles;
+
+    @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AnimalParents> animalParents;
+
+    public void update(AnimalCreateDTO animalCreateDTO) {
+        this.name = animalCreateDTO.getName();
+        this.type = animalCreateDTO.getType();
+        this.breed = animalCreateDTO.getBreed();
+        this.gender = animalCreateDTO.getGender();
+        this.birthDate = animalCreateDTO.getBirthDate();
+        this.character = animalCreateDTO.getCharacter();
+        this.feature = animalCreateDTO.getFeature();
+        this.feeding = animalCreateDTO.getFeeding();
+        this.vaccination = animalCreateDTO.getVaccination();
+        this.virusCheck = animalCreateDTO.getVirusCheck();
+        this.parasitic = animalCreateDTO.getParasitic();
+        this.healthCheck = animalCreateDTO.getHealthCheck();
+    }
 }
