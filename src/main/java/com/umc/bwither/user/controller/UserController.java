@@ -1,18 +1,6 @@
 package com.umc.bwither.user.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
-import com.umc.bwither.user.dto.BreederDTO;
-import com.umc.bwither.user.dto.MemberDTO;
-import com.umc.bwither.user.dto.UserDTO;
-import com.umc.bwither.user.dto.UserInfoDTO;
-import com.umc.bwither.user.entity.User;
-import com.umc.bwither.user.service.UserService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.service.BreederService;
@@ -40,48 +28,15 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.umc.bwither._base.common.UserAuthorizationUtil.getCurrentUserId;
-
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
     private final BreederService breederService;
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final TokenProvider tokenProvider;
-
-    @GetMapping("/{userId}")
-    public ApiResponse<?> getUserInfo() {
-        Long userId = getCurrentUserId();
-        Object userInfo = userService.getUserInfo(userId);
-        return ApiResponse.onSuccess(userInfo);
-    }
-
-//    @PatchMapping("/{userId}")
-//    public ApiResponse<?> updateUserInfo(@PathVariable Long userId,
-//                                         @RequestBody @Validated UserDTO userDTO,
-//                                         @RequestBody(required = false) BreederDTO breederDTO,
-//                                         @RequestBody(required = false) MemberDTO memberDTO) {
-//        userService.updateUserInfo(userId, userDTO, breederDTO, memberDTO);
-//        return ApiResponse.onSuccess(userId);
-//    }
-    @PatchMapping("/{userId}")
-    public ApiResponse<?> updateUserInfo(@RequestBody UserInfoDTO requestDTO) {
-        Long userId = getCurrentUserId();
-        System.out.println("컨토를러1" + requestDTO);
-        UserInfoDTO updatedUserInfo = userService.updateUserInfo(
-                userId,
-                requestDTO.getUserDTO(),
-                requestDTO.getBreederDTO(),
-                requestDTO.getMemberDTO());
-        System.out.println("컨토를러2" + updatedUserInfo);
-
-        return ApiResponse.onSuccess(updatedUserInfo);
-    }
-
 
     @PostMapping("/breeder/join")
     public ResponseEntity<?> registerUser(@RequestBody BreederJoinDTO breederJoinDTO) {
@@ -118,7 +73,6 @@ public class UserController {
                     .snsAddress(breederJoinDTO.getSnsAddress())
                     .animalHospital(breederJoinDTO.getAnimalHospital())
                     .employmentStatus(breederJoinDTO.getEmploymentStatus())
-                    .trustLevel(5)
                     .build();
 
 
@@ -128,6 +82,34 @@ public class UserController {
         } catch (Exception e) {
             // 오류 발생 시 응답 생성
             return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_JOIN_BREEDER, e.getMessage()));
+        }
+    }
+
+
+    @PostMapping("/breeder/login")
+    public ResponseEntity<?> authenticate(@RequestBody LoginRequestDTO loginRequestDTO) {
+        try {
+            User user = userService.getByCredentials(
+                    loginRequestDTO.getUsername(),
+                    loginRequestDTO.getPassword(),
+                    passwordEncoder);
+
+            if (user != null) {
+                // 토큰 생성
+                final String token = tokenProvider.create(user);
+                final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
+                        .username(user.getUsername())
+                        .token(token)
+                        .build();
+
+                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_BREEDER, responseDTO));
+            } else {
+                return ResponseEntity
+                        .badRequest()
+                        .body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_BREEDER, "잘못된 사용자 정보입니다"));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_BREEDER, e.getMessage()));
         }
     }
 
@@ -176,8 +158,8 @@ public class UserController {
         }
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> LoginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
+    @PostMapping("/user/login")
+    public ResponseEntity<?> LoginMember(@RequestBody LoginRequestDTO loginRequestDTO) {
         try {
             User user = userService.getByCredentials(
                     loginRequestDTO.getUsername(),
@@ -192,14 +174,15 @@ public class UserController {
                         .token(token)
                         .build();
 
-                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_USER, responseDTO));
+                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_MEMBER, responseDTO));
             } else {
                 return ResponseEntity
                         .badRequest()
-                        .body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, "잘못된 사용자 정보입니다"));
+                        .body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_MEMBER, "잘못된 사용자 정보입니다"));
             }
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, e.getMessage()));
+            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_MEMBER, e.getMessage()));
         }
     }
 }
+
