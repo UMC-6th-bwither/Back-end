@@ -5,9 +5,7 @@ import com.umc.bwither.user.entity.enums.Role;
 import com.umc.bwither.user.entity.enums.Status;
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -16,7 +14,6 @@ import java.util.Date;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-@DiscriminatorColumn(name = "dtype")
 public class User extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,7 +31,7 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 30)
     private String username;
 
-    @Column(nullable = false, length = 100)
+    @Column(nullable = false, length = 30)
     private String password;
 
     @Column(nullable = false, length = 10)
@@ -56,7 +53,4 @@ public class User extends BaseEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Status status; // Enum 정의 필요
-
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }

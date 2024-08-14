@@ -26,9 +26,6 @@ public class Breeding extends BaseEntity {
     @Column
     private Date leaveDate;
 
-    @Column(nullable = false)
-    private Boolean currentlyEmployed;  // 재직 중 여부
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private Breeder breeder;

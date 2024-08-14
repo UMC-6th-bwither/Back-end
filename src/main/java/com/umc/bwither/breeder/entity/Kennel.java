@@ -16,7 +16,7 @@ public class Kennel extends BaseEntity {
     private Long kennelId;
 
     @Column(nullable = false)
-    private String kennelFile;
+    private String kennelName;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
