@@ -31,6 +31,7 @@ import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -403,6 +404,28 @@ public class AnimalServiceImpl implements AnimalService {
     }
   }
 
+  public List<AnimalResponseDTO.MissingFilesDTO> getAnimalsWithMissingFiles(Long breederId) {
+    // Breeder가 관리하는 모든 동물 조회
+    List<Animal> animals = animalRepository.findByBreeder_BreederId(breederId);
+    List<AnimalResponseDTO.MissingFilesDTO> missingFilesList = new ArrayList<>();
+
+    for (Animal animal : animals) {
+      // 업로드된 파일들을 조회
+      List<AnimalFile> uploadedFiles = animalFileRepository.findByAnimal(animal);
+
+      // 모든 파일 타입을 확인하여 업로드되지 않은 파일을 찾음
+      for (FileType fileType : FileType.values()) {
+        boolean isFileUploaded = uploadedFiles.stream()
+                .anyMatch(file -> file.getType().equals(fileType));
+
+        if (!isFileUploaded) {
+          missingFilesList.add(new AnimalResponseDTO.MissingFilesDTO(animal.getAnimalId(), fileType.name()));
+        }
+      }
+    }
+    return missingFilesList;
+  }
+
 }
 
 
@@ -470,3 +493,5 @@ public class AnimalServiceImpl implements AnimalService {
 //    }
 //    return animal.getAnimalId();
 //  }
+
+

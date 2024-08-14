@@ -112,5 +112,14 @@ public class AnimalResponseDTO {
     Boolean isLast;
   }
 
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class MissingFilesDTO {
+    private Long animalId;
+    private String fileType;
+  }
+
 
 }

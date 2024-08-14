@@ -37,6 +37,6 @@ public class BreederJoinDTO {
     private String snsAddress;     // 홈페이지/SNS 주소 (선택 사항)
     private String animalHospital; // 이용 중인 동물병원 (선택 사항)
     private EmploymentStatus employmentStatus; // 재직 상태
-
     private List<BreedingCareerDTO> breedingCareer;
+
 }
