@@ -12,16 +12,13 @@ import lombok.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class WaitList extends BaseEntity {
-
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "animal_id", nullable = false)
     private Animal animal;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @Id
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
