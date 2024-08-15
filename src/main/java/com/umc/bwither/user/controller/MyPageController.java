@@ -11,9 +11,16 @@ import com.umc.bwither.user.dto.MemberUpdateDTO;
 import com.umc.bwither.user.dto.UserInfoDTO;
 import com.umc.bwither.user.service.MyPageService;
 import com.umc.bwither.user.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Slf4j
@@ -55,5 +62,27 @@ public class MyPageController {
         UserInfoDTO updatedUserInfo = myPageService.updateMember(userId, memberUpdateDTO);
 
         return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_MEMBER, updatedUserInfo);
+    }
+
+    @PostMapping("/recent-animals")
+    public ApiResponse<?> viewAnimal(@RequestParam Long animalId,
+                                             HttpServletRequest request,
+                                             HttpServletResponse response) {
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+
+        // 동물 조회 기록을 저장
+        myPageService.saveAnimalView(userId, animalId, request, response);
+
+        return ApiResponse.of(SuccessStatus.SUCCESS_SAVE_RECENTANIMAL, animalId);
+    }
+
+    @GetMapping("/recent-animals")
+    public ApiResponse<List<Long>> getRecentViews(HttpServletRequest request) {
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+
+        // 최근 본 동물 ID 목록 반환
+        List<Long> recentAnimalIds = myPageService.getRecentViews(userId, request);
+
+        return ApiResponse.of(SuccessStatus.SUCCESS_GET_RECENTANIMAL, recentAnimalIds);
     }
 }

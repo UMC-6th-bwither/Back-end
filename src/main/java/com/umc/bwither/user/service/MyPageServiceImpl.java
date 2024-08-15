@@ -1,5 +1,6 @@
 package com.umc.bwither.user.service;
 
+import com.umc.bwither.animal.repository.AnimalRepository;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.entity.BreederFile;
 import com.umc.bwither.breeder.entity.Breeding;
@@ -12,12 +13,21 @@ import com.umc.bwither.user.dto.*;
 import com.umc.bwither.user.entity.User;
 import com.umc.bwither.user.entity.enums.Role;
 import com.umc.bwither.user.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +40,7 @@ public class MyPageServiceImpl implements MyPageService{
     private final MemberRepository memberRepository;
     private final BreedingRepository breedingRepository;
     private final BreederFileRepository breederFileRepository;
+    private final AnimalRepository animalRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     @Override
@@ -411,6 +422,78 @@ public class MyPageServiceImpl implements MyPageService{
         return null;
     }
 
+    @Override
+    public void saveAnimalView(Long userId, Long animalId, HttpServletRequest request, HttpServletResponse response) {
+        String cookieName = "recentViews_" + userId;
 
+        // 동물 ID 유효성 검사
+        if (!animalRepository.existsByAnimalId(animalId)) {
+            // 동물 ID가 유효하지 않으면 쿠키를 업데이트하지 않음
+            throw new RuntimeException("동물 id를 찾을 수 없습니다.");
+        }
 
+        // 기존 쿠키 조회
+        Cookie[] cookies = request.getCookies();
+        String recentViews = "";
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookieName.equals(cookie.getName())) {
+                    // 디코딩하여 쿠키 값을 읽음
+                    recentViews = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
+                    break;
+                }
+            }
+        }
+
+        // 새로운 동물 ID 추가
+        recentViews = addAnimalIdToRecentViews(recentViews, animalId);
+
+        // 인코딩하여 쿠키 값을 설정
+        String encodedRecentViews = URLEncoder.encode(recentViews, StandardCharsets.UTF_8);
+        Cookie recentViewsCookie = new Cookie(cookieName, encodedRecentViews);
+        recentViewsCookie.setPath("/");
+        recentViewsCookie.setMaxAge(7 * 24 * 60 * 60); // 7일간 유지
+        response.addCookie(recentViewsCookie);
+    }
+    private String addAnimalIdToRecentViews(String recentViews, Long animalId) {
+        String[] viewsArray = recentViews.isEmpty() ? new String[0] : recentViews.split(",");
+        List<String> viewsList = new ArrayList<>(Arrays.asList(viewsArray));
+
+        // 동물 ID가 이미 목록에 있으면 제거하고 맨 앞으로 추가
+        viewsList.remove(animalId.toString());
+        viewsList.add(0, animalId.toString());
+
+        // 최대 5개만 저장
+        if (viewsList.size() > 5) {
+            viewsList = viewsList.subList(0, 5);
+        }
+
+        return String.join(",", viewsList);
+    }
+
+    @Override
+    public List<Long> getRecentViews(Long userId, HttpServletRequest request) {
+        String cookieName = "recentViews_" + userId;
+
+        // 쿠키에서 최근 본 동물 목록 조회
+        Cookie[] cookies = request.getCookies();
+        String recentViews = "";
+
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookieName.equals(cookie.getName())) {
+                    // 디코딩하여 쿠키 값을 읽음
+                    recentViews = URLDecoder.decode(cookie.getValue(), StandardCharsets.UTF_8);
+                    break;
+                }
+            }
+        }
+
+        // String을 List<Long>으로 변환
+        return Arrays.stream(recentViews.split(","))
+                .filter(s -> !s.isEmpty())
+                .map(Long::valueOf)
+                .collect(Collectors.toList());
+    }
 }
