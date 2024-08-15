@@ -24,8 +24,10 @@ public enum ErrorStatus implements BaseErrorCode {
     ANIMAL_NOT_BOOKMARK(HttpStatus.BAD_REQUEST, "ANIMAL4005", "사용자가 저장하지 않은 동물입니다."),
 
     //BREEDER 관련 에러
-    BREEDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "BREEDER4001", "존재하지 브리더입니다."),
+    BREEDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "BREEDER4001", "존재하지 않는 브리더입니다."),
     BREEDER_NOT_AUTHORIZED(HttpStatus.BAD_REQUEST, "BREEDER4002", "작성자가 일치하지 않습니다."),
+    BREEDER_ALREADY_BOOKMARK(HttpStatus.BAD_REQUEST, "BREEDER4003", "이미 사용자가 저장(북마크)한 브리더입니다."),
+    BREEDER_NOT_BOOKMARK(HttpStatus.BAD_REQUEST, "BREEDER4004", "사용자가 저장하지 않은 브리더입니다."),
 
     //MEMBER 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "존재하지 멤버입니다.");

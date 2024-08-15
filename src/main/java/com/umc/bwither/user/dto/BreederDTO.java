@@ -1,6 +1,6 @@
 package com.umc.bwither.user.dto;
 
-import com.umc.bwither.breeder.entity.enums.Animal;
+import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import lombok.*;
 
@@ -10,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BreederDTO {
-    private Animal animal;
+    private AnimalType animal;
     private String species;
     private String tradeName;
     private String representative;

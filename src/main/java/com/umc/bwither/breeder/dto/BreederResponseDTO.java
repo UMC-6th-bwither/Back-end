@@ -116,7 +116,7 @@ public class BreederResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BookmarkBreederPreViewListDTO {
-        List<BookmarkBreederDTO> animalList;
+        List<BookmarkBreederDTO> breederList;
         Integer listSize;
         Integer totalPage;
         Long totalElements;
