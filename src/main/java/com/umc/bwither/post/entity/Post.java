@@ -1,6 +1,7 @@
 package com.umc.bwither.post.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.post.entity.enums.Category;
 import com.umc.bwither.post.entity.enums.PetType;
 import com.umc.bwither.user.entity.User;
@@ -8,13 +9,15 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Entity
 @Getter
 @Setter
 @Builder
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
+//@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@NoArgsConstructor
 @AllArgsConstructor
 public class Post extends BaseEntity {
     @Id
@@ -32,16 +35,36 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private PetType petType;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String context;
+    @Column(nullable = true)
+    private Integer rating;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "breeder_id", nullable = true)
+    private Breeder breeder;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
-    @Column(nullable = false)
-    private Integer saved;
+    @Column(nullable = true)
+    private Integer scrapCount;
 
-    @Column(nullable = false)
-    private Long view;
+    @Column(nullable = true)
+    private Integer viewCount;
+
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
+    private List<Block> blocks;
+
+    public static Post create( Breeder breeder, User user, PetType petType, Integer rating, String title, Category category, List<Block> blocks) {
+        Post post = new Post();
+        post.breeder = breeder;
+        post.user = user;
+        post.petType = petType;
+        post.rating = rating;
+        post.title = title;
+        post.category = category;
+        post.blocks = blocks;
+        return post;
+    }
+
 }

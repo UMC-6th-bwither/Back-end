@@ -64,7 +64,8 @@ public class Breeder {
     @Column(nullable = false)
     private EmploymentStatus employmentStatus;
 
-    @Column(nullable = false)
+//    @Column(nullable = false)
+    @Column
     private Integer trustLevel = 5;
 
     @Column(columnDefinition = "TEXT")
@@ -105,7 +106,8 @@ public class Breeder {
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Breeding> breedingCareer;
-
+    @Column
+    private double averageRating;
     public Breeder(Long breederId) {
         this.breederId = breederId;
     }

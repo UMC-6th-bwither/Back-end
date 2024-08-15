@@ -1,6 +1,7 @@
 package com.umc.bwither.user.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.post.entity.Post;
 import com.umc.bwither.user.entity.enums.Role;
 import com.umc.bwither.user.entity.enums.Status;
 import jakarta.persistence.*;
@@ -9,6 +10,7 @@ import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -59,4 +61,8 @@ public class User extends BaseEntity {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    List<Post> posts;
+
 }
