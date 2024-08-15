@@ -1,5 +1,5 @@
 package com.umc.bwither.breeder.entity.enums;
 
-public enum Animal {
+public enum AnimalType {
     DOG, CAT
 }

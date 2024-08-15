@@ -1,7 +1,7 @@
 package com.umc.bwither.user.dto;
 
 import com.umc.bwither.breeder.dto.BreedingCareerDTO;
-import com.umc.bwither.breeder.entity.enums.Animal;
+import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import lombok.*;
 
@@ -15,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 public class BreederDTO {
     // Breeder
-    private Animal animal; // 브리딩하는 동물 종류
+    private AnimalType animal; // 브리딩하는 동물 종류
     private List<String> species; // 종
     private String tradeName; // 상호명
     private String tradePhone; // 전화번호
