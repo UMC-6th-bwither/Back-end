@@ -2,7 +2,7 @@ package com.umc.bwither.breeder.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
 import com.umc.bwither.animal.entity.AnimalFile;
-import com.umc.bwither.breeder.entity.enums.Animal;
+import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
@@ -29,7 +29,7 @@ public class Breeder {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Animal animal;
+    private AnimalType animal;
 
     @ElementCollection
     @CollectionTable(name = "breeder_species", joinColumns = @JoinColumn(name = "breeder_id"))

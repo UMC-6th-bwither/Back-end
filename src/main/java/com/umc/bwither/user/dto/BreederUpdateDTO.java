@@ -13,7 +13,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BreederDTO {
+public class BreederUpdateDTO {
+    // User
+    private String profileImage;
+    private String password;
+
     // Breeder
     private AnimalType animal; // 브리딩하는 동물 종류
     private List<String> species; // 종

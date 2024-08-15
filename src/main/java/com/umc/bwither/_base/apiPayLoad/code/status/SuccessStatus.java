@@ -26,6 +26,9 @@ public enum SuccessStatus implements BaseCode {
     // BREEDER 관련 응답
     SUCCESS_FETCH_BREEDER_LIST(HttpStatus.OK, "BREEDER200", "브리더 목록을 성공적으로 가져왔습니다."),
     SUCCESS_FETCH_BREEDER(HttpStatus.OK, "BREEDER200", "브리더 상세 정보를 성공적으로 가져왔습니다."),
+    SUCCESS_BOOKMARK_BREEDER(HttpStatus.OK, "BREEDER200", "브리더이 성공적으로 북마크되었습니다."),
+    SUCCESS_REMOVE_BOOKMARK_BREEDER(HttpStatus.OK, "BREEDER200", "브리더의 북마크가 성공적으로 해제되었습니다."),
+    SUCCESS_FETCH_BOOKMARK_BREEDERS_LIST(HttpStatus.OK, "BREEDER200", "저장한 브리더 목록을 성공적으로 가져왔습니다."),
 
 
     // 이메일 인증 관련 응답
@@ -60,7 +63,13 @@ public enum SuccessStatus implements BaseCode {
     ERROR_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN4000", "로그인에 실패했습니다."),
 
     // 업로드 안된 항목 관련 응답
-    SUCCESS_MISSING_PHOTO(HttpStatus.OK, "MISSINGPHOTO2000", "업로드 안된 항목 조회에 성공했습니다.");
+    SUCCESS_MISSING_PHOTO(HttpStatus.OK, "MISSINGPHOTO2000", "업로드 안된 항목 조회에 성공했습니다."),
+
+    // 마이페이지 관련 응답
+    SUCCESS_GET_USERINFO(HttpStatus.OK, "GETUSERINFO2000", "마이페이지 조회에 성공했습니다"),
+    SUCCESS_UPDATE_MEMBER(HttpStatus.OK, "UPDATEMEMBER2000", "일반 유저 프로필 설정에 성공했습니다"),
+    SUCCESS_UPDATE_BREEDER(HttpStatus.OK, "UPDATEBREEDER2000", "브리더 프로필 설정에 성공했습니다"),
+    SUCCESS_GET_USERRESERVATION(HttpStatus.OK, "GETUSERRESERVATION2000", "예약 조회에 성공했습니다");
 
     private final HttpStatus httpStatus;
     private final String code;

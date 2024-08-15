@@ -1,6 +1,8 @@
 package com.umc.bwither.breeder.dto;
 
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
+import com.umc.bwither.animal.entity.enums.Gender;
+import com.umc.bwither.animal.entity.enums.Status;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -60,6 +62,66 @@ public class BreederResponseDTO {
         Long reviewId;
         Integer age;
         String gender;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BreedersDTO {
+        Long breederId;
+        String profileUrl;
+        String tradeName;
+        String address;
+        // Todo   Integer careerYear;
+        // Todo   Integer certificateCount;
+        // Todo   Integer waitAnimal;
+        // Todo   Integer waitList;
+        //TODO    Double breederRating;
+        //TODO    Integer reviewCount;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BreederPreViewListDTO {
+        List<BreedersDTO> animalList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookmarkBreederDTO {
+        Long breederId;
+        String profileUrl;
+        String tradeName;
+        String address;
+        // Todo   Integer careerYear;
+        // Todo   Integer certificateCount;
+        // Todo   Integer waitAnimal;
+        // Todo   Integer waitList;
+        //TODO    Double breederRating;
+        //TODO    Integer reviewCount;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BookmarkBreederPreViewListDTO {
+        List<BookmarkBreederDTO> breederList;
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
     }
 
     @Data
