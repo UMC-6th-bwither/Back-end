@@ -1,16 +1,11 @@
 package com.umc.bwither.user.dto;
 
-import com.umc.bwither.breeder.dto.BreedingHistoryDTO;
-import com.umc.bwither.breeder.dto.CertificateDTO;
-import com.umc.bwither.breeder.entity.enums.Animal;
 import com.umc.bwither.member.entity.enums.EmploymentStatus;
 import com.umc.bwither.member.entity.enums.FamilyAgreement;
 import com.umc.bwither.member.entity.enums.FuturePlan;
 import com.umc.bwither.member.entity.enums.PetAllowed;
 import lombok.Builder;
 import lombok.Getter;
-
-import java.util.List;
 
 @Getter
 @Builder

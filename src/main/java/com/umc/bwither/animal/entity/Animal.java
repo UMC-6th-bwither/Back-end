@@ -8,6 +8,7 @@ import com.umc.bwither.animal.entity.enums.Status;
 import com.umc.bwither.breeder.entity.Breeder;
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 import lombok.*;
 
@@ -73,6 +74,10 @@ public class Animal extends BaseEntity {
 
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnimalParents> animalParents;
+
+    public Integer getAge() {
+        return Period.between(this.birthDate, LocalDate.now()).getYears();
+    }
 
     public void update(AnimalCreateDTO animalCreateDTO) {
         this.name = animalCreateDTO.getName();

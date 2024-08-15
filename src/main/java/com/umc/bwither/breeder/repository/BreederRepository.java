@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface BreederRepository extends JpaRepository<Breeder, Long> {
-    @Query("SELECT b.trustLevel FROM Breeder b WHERE b.userId = :breederId")
+    @Query("SELECT b.trustLevel FROM Breeder b WHERE b.breederId = :breederId")
     Integer findTrustLevelByBreederId(Long breederId);
 }

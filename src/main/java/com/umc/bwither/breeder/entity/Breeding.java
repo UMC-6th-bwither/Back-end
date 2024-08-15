@@ -4,6 +4,7 @@ import com.umc.bwither._base.common.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -21,15 +22,18 @@ public class Breeding extends BaseEntity {
     private String tradeName;
 
     @Column
-    private Date joinDate;
+    private LocalDate joinDate;
 
     @Column
-    private Date leaveDate;
+    private LocalDate leaveDate;
 
     @Column(nullable = false)
     private Boolean currentlyEmployed;  // 재직 중 여부
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "breeder_id", nullable = false)
     private Breeder breeder;
 }

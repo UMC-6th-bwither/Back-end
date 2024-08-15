@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AnimalFileRepository extends JpaRepository<AnimalFile, Long> {
 
+  List<AnimalFile> findByAnimal(Animal animal);
+
   List<AnimalFile> findByAnimalAndType(Animal animal, FileType fileType);
 
   void deleteByAnimalAndType(Animal animal, FileType fileType);

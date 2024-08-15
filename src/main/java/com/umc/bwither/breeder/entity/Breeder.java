@@ -1,12 +1,15 @@
 package com.umc.bwither.breeder.entity;
 
+import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.breeder.entity.enums.Animal;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Getter
@@ -14,12 +17,13 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Breeder{
+public class Breeder {
+  
     @Id
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long breederId;
 
     @OneToOne
-    @MapsId
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -27,8 +31,10 @@ public class Breeder{
     @Column(nullable = false)
     private Animal animal;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String species;
+    @ElementCollection
+    @CollectionTable(name = "breeder_species", joinColumns = @JoinColumn(name = "breeder_id"))
+    @Column(name = "species", nullable = false)
+    private List<String> species;
 
     @Column(nullable = false, length = 50)
     private String tradeName;
@@ -65,16 +71,44 @@ public class Breeder{
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Kennel> kennels;
+    @Column(columnDefinition = "TEXT")
+    private String descriptionDetail;
 
-    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Certificate> certificates;
+    @Column(length = 50)
+    private String schoolName;
 
-    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Breeding> breedingHistory;
+    @Column(length = 50)
+    private String departmentName;
 
     @Column
-    private double averageRating;
+    private LocalDate enrollmentDate;
 
+    @Column
+    private LocalDate graduationDate;
+
+    @Column(columnDefinition = "TEXT")
+    private String questionGuarantee;
+
+    @Column(columnDefinition = "TEXT")
+    private String questionPedigree;
+
+    @Column(columnDefinition = "TEXT")
+    private String questionBaby;
+
+    @Column(columnDefinition = "TEXT")
+    private String questionPeriod;
+
+    @Column(columnDefinition = "TEXT")
+    private String questionSupport;
+
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BreederFile> breederFiles;
+
+    @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Breeding> breedingCareer;
+    @Column
+    private double averageRating;
+    public Breeder(Long breederId) {
+        this.breederId = breederId;
+    }
 }
