@@ -27,7 +27,7 @@ public class BreederJoinDTO {
 
     // Breeder 관련 필드
     private Animal animal;         // 브리딩하는 동물 종류
-    private String species;        // 종
+    List<String> species;        // 종
     private String tradeName;      // 상호명
     private String tradePhone;     // 전화번호
     private String tradeEmail;     // 이메일

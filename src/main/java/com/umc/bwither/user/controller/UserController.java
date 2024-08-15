@@ -49,6 +49,7 @@ public class UserController {
     private final MemberService memberService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final TokenProvider tokenProvider;
+    private final S3Uploader s3Uploader;
 
     @PostMapping(value = "/breeder/join", consumes = "multipart/form-data")
     @Operation(summary = "브리더 회원가입 API", description = "브리더 회원가입 API")

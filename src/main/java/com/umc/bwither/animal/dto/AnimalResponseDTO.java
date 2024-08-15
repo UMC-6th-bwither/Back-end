@@ -141,6 +141,7 @@ public class AnimalResponseDTO {
     Boolean isFirst;
     Boolean isLast;
   }
+
   @Builder
   @Getter
   @NoArgsConstructor

@@ -23,6 +23,11 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_FETCH_BOOKMARK_ANIMALS_LIST(HttpStatus.OK, "COMMON200", "저장한 동물 목록을 성공적으로 가져왔습니다."),
     SUCCESS_FETCH_MY_ANIMALS_LIST(HttpStatus.OK, "COMMON200", "관리 중인 동물 목록을 성공적으로 가져왔습니다."),
 
+    // BREEDER 관련 응답
+    SUCCESS_FETCH_BREEDER_LIST(HttpStatus.OK, "BREEDER200", "브리더 목록을 성공적으로 가져왔습니다."),
+    SUCCESS_FETCH_BREEDER(HttpStatus.OK, "BREEDER200", "브리더 상세 정보를 성공적으로 가져왔습니다."),
+
+
     // 이메일 인증 관련 응답
     SUCCESS_EMAIL_SENT(HttpStatus.OK, "EMAIL2001", "이메일 인증 코드가 전송되었습니다."),
     SUCCESS_EMAIL_VERIFIED(HttpStatus.OK,"EMAIL2002", "이메일 인증이 완료되었습니다."),

@@ -11,8 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.Map;
 
 public interface UserService {
-    Object getUserInfo(Long userId);
-    UserInfoDTO updateUserInfo(Long userId, UserDTO userDto, BreederDTO breederDto, MemberDTO memberDto);
     User create(User user);
     User getByCredentials(String username, String password, PasswordEncoder encoder);
 
