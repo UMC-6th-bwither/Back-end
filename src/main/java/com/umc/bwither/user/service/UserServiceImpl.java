@@ -25,7 +25,7 @@ public class UserServiceImpl implements UserService {
     private final BreederRepository breederRepository;
     private final MemberRepository memberRepository;
     private final ObjectMapper objectMapper;
-
+    @Override
     public UserInfoDTO getUserInfo(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found with id: " + userId));
@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
                 .memberDTO(memberDto)
                 .build();
     }
-
+    @Override
     public UserInfoDTO updateUserInfo(Long userId, UserDTO userDto, BreederDTO breederDto, MemberDTO memberDto) {
         System.out.println("서비스들어옴"+userId);
         // 1. 사용자 정보 가져오기

@@ -35,11 +35,12 @@ public class PostServiceImpl implements PostService {
     public void createPost(PostRequestDTO requestDTO) {
         // 브리더 조회
         Breeder breeder = breederRepository.findById(requestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("Breeder not found"));
 
         // 사용자 조회
         User user = userRepository.findById(requestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + requestDTO.getUserId()));
+
 
         List<Block> blocks = new ArrayList<>();
         requestDTO.getBlocks().forEach(blockDTO -> {
