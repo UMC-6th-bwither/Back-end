@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Breeder {
-  
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long breederId;

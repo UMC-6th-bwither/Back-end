@@ -49,7 +49,7 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_VIEW_BREEDER(HttpStatus.OK, "VIEWBREEDER2000", "브리더 세부사항 목록저장에 성공하셨습니다."),
     ERROR_VIEW_BREEDER(HttpStatus.OK, "VIEWBREEDER4001", "브리더 세부사항 목록저장에 실패하셨습니다."),
     SUCCESS_VIEW_BREEDERS(HttpStatus.OK, "VIEWBREEDERS2001", "최근 본 브리더 목록 조회에 성공하셨습니다."),
-    ERROR_VIEW_BREEDERS(HttpStatus.OK, "VIEWBREEDERS4002", "최근 본 브리더 목록 조회에 실패하셨습니다.");
+    ERROR_VIEW_BREEDERS(HttpStatus.OK, "VIEWBREEDERS4002", "최근 본 브리더 목록 조회에 실패하셨습니다."),
 
     // 로그인 관련 응답
     SUCCESS_LOGIN_USER(HttpStatus.OK, "USERLOGIN2000", "로그인에 성공했습니다."),

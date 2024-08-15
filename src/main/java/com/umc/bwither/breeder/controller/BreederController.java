@@ -6,7 +6,6 @@ import com.umc.bwither.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-=======
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.service.AnimalService;

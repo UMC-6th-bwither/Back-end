@@ -3,6 +3,7 @@ package com.umc.bwither.animal.service;
 import com.umc.bwither.animal.dto.AnimalRequestDTO.AnimalCreateDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalDetailDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalPreViewListDTO;
 import com.umc.bwither.animal.entity.enums.AnimalType;
@@ -33,4 +34,6 @@ public interface AnimalService {
   BreederAnimalPreViewListDTO getBreederAnimals(long breederId, Gender gender, String breed, Integer page);
 
     List<AnimalResponseDTO.MissingFilesDTO> getAnimalsWithMissingFiles(Long breederId);
+
+  AnimalPreViewListDTO getAnimalList(String region, AnimalType animalType, Gender gender, String breed, Status status, String sortField, Integer page);
 }

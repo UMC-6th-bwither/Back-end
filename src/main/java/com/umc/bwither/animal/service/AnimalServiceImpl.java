@@ -5,6 +5,8 @@ import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.dto.AnimalRequestDTO.AnimalCreateDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalDetailDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalPreViewDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalDTO;
@@ -32,11 +34,15 @@ import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
+import com.umc.bwither.user.entity.User;
+import jakarta.persistence.criteria.Join;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -472,6 +478,70 @@ public class AnimalServiceImpl implements AnimalService {
       }
     }
     return missingFilesList;
+  }
+
+  @Override
+  public AnimalPreViewListDTO getAnimalList(String region, AnimalType animalType, Gender gender,
+      String breed, Status status, String sortField, Integer page) {
+
+    Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, sortField));
+
+    Page<Animal> animals = animalRepository.findAll(pageable);
+    List<Animal> animalList = new ArrayList<>(animals.getContent());
+
+    if (gender != null) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getGender() == gender)
+          .collect(Collectors.toList());
+    }
+
+    if (breed != null && !breed.isEmpty()) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getBreed().equalsIgnoreCase(breed))
+          .collect(Collectors.toList());
+    }
+
+    if (status != null) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getStatus() == status)
+          .collect(Collectors.toList());
+    }
+
+    if (region != null && !region.isEmpty()) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getBreeder().getUser().getAddress().contains(region))
+          .collect(Collectors.toList());
+    }
+
+    List<AnimalPreViewDTO> animalDTOs = animalList.stream()
+        .map(animal -> {
+            int waitListCount = waitListRepository.countByAnimal(animal);
+            return AnimalPreViewDTO.builder()
+            .animalId(animal.getAnimalId())
+            .status(animal.getStatus())
+            .location(animal.getBreeder().getUser().getAddress())
+            .name(animal.getName())
+            .breed(animal.getBreed())
+            .birthDate(animal.getBirthDate())
+            .gender(animal.getGender())
+            .breederName(animal.getBreeder().getTradeName())
+            .waitList(waitListCount)
+            .type(animal.getType())
+            .createdAt(animal.getCreatedAt())
+            .updatedAt(animal.getUpdatedAt())
+            .imageUrl(animal.getAnimalFiles().isEmpty() ? null : animal.getAnimalFiles().get(0).getAnimalFilePath())
+            .build();
+        })
+        .collect(Collectors.toList());
+
+    return AnimalPreViewListDTO.builder()
+        .animalList(animalDTOs)
+        .listSize(animalDTOs.size())
+        .totalPage(animals.getTotalPages())
+        .totalElements(animals.getTotalElements())
+        .isFirst(animals.isFirst())
+        .isLast(animals.isLast())
+        .build();
   }
 
 }
