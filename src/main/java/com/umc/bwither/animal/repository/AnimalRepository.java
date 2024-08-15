@@ -16,4 +16,6 @@ public interface AnimalRepository extends JpaRepository<Animal, Long> {
   Integer countByBreeder(Breeder breeder);
 
   Page<Animal> findByBreeder(Breeder breeder, Pageable pageable);
+
+  boolean existsByAnimalId(Long animalId);
 }
