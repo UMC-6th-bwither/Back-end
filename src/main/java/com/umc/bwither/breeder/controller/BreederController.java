@@ -10,7 +10,6 @@ import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.service.AnimalService;
 import com.umc.bwither.breeder.dto.BreederResponseDTO;
-import com.umc.bwither.breeder.entity.enums.Animal;
 import com.umc.bwither.breeder.service.BreederService;
 import com.umc.bwither.user.dto.BreederJoinDTO;
 import io.swagger.annotations.Api;

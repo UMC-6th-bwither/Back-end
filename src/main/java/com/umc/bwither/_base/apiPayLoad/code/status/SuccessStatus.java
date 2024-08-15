@@ -26,6 +26,9 @@ public enum SuccessStatus implements BaseCode {
     // BREEDER 관련 응답
     SUCCESS_FETCH_BREEDER_LIST(HttpStatus.OK, "BREEDER200", "브리더 목록을 성공적으로 가져왔습니다."),
     SUCCESS_FETCH_BREEDER(HttpStatus.OK, "BREEDER200", "브리더 상세 정보를 성공적으로 가져왔습니다."),
+    SUCCESS_BOOKMARK_BREEDER(HttpStatus.OK, "BREEDER200", "브리더이 성공적으로 북마크되었습니다."),
+    SUCCESS_REMOVE_BOOKMARK_BREEDER(HttpStatus.OK, "BREEDER200", "브리더의 북마크가 성공적으로 해제되었습니다."),
+    SUCCESS_FETCH_BOOKMARK_BREEDERS_LIST(HttpStatus.OK, "BREEDER200", "저장한 브리더 목록을 성공적으로 가져왔습니다."),
 
 
     // 이메일 인증 관련 응답
@@ -37,13 +40,13 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_JOIN_BREEDER(HttpStatus.OK, "BREEDERJOIN2001", "회원가입에 성공했습니다."),
     ERROR_JOIN_BREEDER(HttpStatus.OK, "BREEDERJOIN4001", "회원가입에 실패했습니다."),
 
-    // 멤버 회원가입 관련 응답
+    // 브리더 로그인 관련 응답
+    SUCCESS_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN2000", "로그인에 성공했습니다."),
+    ERROR_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN4000", "로그인에 실패했습니다."),
+
+    //멤버 회원가입 관련 응답
     SUCCESS_JOIN_MEMBER(HttpStatus.OK, "MEMBERJOIN2001", "회원가입에 성공했습니다."),
     ERROR_JOIN_MEMBER(HttpStatus.OK, "MEMBERJOIN4001", "회원가입에 실패했습니다."),
-
-    //멤버 로그인 관련 응답
-    SUCCESS_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN2000", "로그인에 성공했습니다."),
-    ERROR_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN4000", "로그인에 실패했습니다."),
 
     //최근 본 브리더 목록 관련 응답
     SUCCESS_VIEW_BREEDER(HttpStatus.OK, "VIEWBREEDER2000", "브리더 세부사항 목록저장에 성공하셨습니다."),
@@ -55,8 +58,18 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_LOGIN_USER(HttpStatus.OK, "USERLOGIN2000", "로그인에 성공했습니다."),
     ERROR_LOGIN_USER(HttpStatus.OK, "USERLOGIN4000", "로그인에 실패했습니다."),
 
+    //멤버 로그인 관련 응답
+    SUCCESS_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN2000", "로그인에 성공했습니다."),
+    ERROR_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN4000", "로그인에 실패했습니다."),
+
     // 업로드 안된 항목 관련 응답
-    SUCCESS_MISSING_PHOTO(HttpStatus.OK, "MISSINGPHOTO2000", "업로드 안된 항목 조회에 성공했습니다.");
+    SUCCESS_MISSING_PHOTO(HttpStatus.OK, "MISSINGPHOTO2000", "업로드 안된 항목 조회에 성공했습니다."),
+
+    // 마이페이지 관련 응답
+    SUCCESS_GET_USERINFO(HttpStatus.OK, "GETUSERINFO2000", "마이페이지 조회에 성공했습니다"),
+    SUCCESS_UPDATE_MEMBER(HttpStatus.OK, "UPDATEMEMBER2000", "일반 유저 프로필 설정에 성공했습니다"),
+    SUCCESS_UPDATE_BREEDER(HttpStatus.OK, "UPDATEBREEDER2000", "브리더 프로필 설정에 성공했습니다"),
+    SUCCESS_GET_USERRESERVATION(HttpStatus.OK, "GETUSERRESERVATION2000", "예약 조회에 성공했습니다");
 
     private final HttpStatus httpStatus;
     private final String code;
