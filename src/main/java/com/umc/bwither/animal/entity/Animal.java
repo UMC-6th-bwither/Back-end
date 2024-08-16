@@ -75,6 +75,9 @@ public class Animal extends BaseEntity {
     @OneToMany(mappedBy = "animal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AnimalParents> animalParents;
 
+    @Column
+    private Integer animalMemberCount;
+
     public Integer getAge() {
         return Period.between(this.birthDate, LocalDate.now()).getYears();
     }

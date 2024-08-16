@@ -13,4 +13,6 @@ public interface AnimalMemberRepository extends JpaRepository<AnimalMember, Long
   Optional<AnimalMember> findByAnimalAndMember(Animal animal, Member member);
 
   Page<AnimalMember> findByMember(Member member, Pageable pageable);
+
+  Integer countByAnimal(Animal animal);
 }

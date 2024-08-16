@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Breeder {
-  
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long breederId;
@@ -64,7 +64,7 @@ public class Breeder {
     @Column(nullable = false)
     private EmploymentStatus employmentStatus;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     @Column
     private Integer trustLevel = 5;
 

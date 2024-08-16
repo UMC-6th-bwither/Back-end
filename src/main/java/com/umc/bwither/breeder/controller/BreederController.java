@@ -2,18 +2,23 @@ package com.umc.bwither.breeder.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
-import com.umc.bwither.breeder.dto.BreederResponseDTO;
-import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.member.service.MemberService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import com.umc.bwither.animal.dto.AnimalResponseDTO;
+import com.umc.bwither.animal.entity.enums.Gender;
+import com.umc.bwither.animal.service.AnimalService;
+import com.umc.bwither.breeder.dto.BreederResponseDTO;
+import com.umc.bwither.breeder.service.BreederService;
+import com.umc.bwither.user.dto.BreederJoinDTO;
+import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.umc.bwither.animal.dto.AnimalResponseDTO;
-import com.umc.bwither.animal.service.AnimalService;
-import com.umc.bwither.breeder.service.BreederService;
-import io.swagger.v3.oas.annotations.Operation;
 
 import java.util.HashMap;
 import java.util.List;
@@ -33,42 +38,6 @@ public class BreederController {
         BreederResponseDTO.BreederDetailDTO result = breederService.getBreederDetail(breederId);
         return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_BREEDER,result);
     }
-
-    @PostMapping("/{breederId}/bookmark")
-    @Operation(summary = "브리더 저장 API", description = "브리더 저장 API")
-    public ApiResponse bookmarkBreeder(
-            @PathVariable(name = "breederId") Long breederId,
-            @RequestParam String memberId) {
-        breederService.bookmarkBreeder(Long.parseLong(memberId), breederId);
-        return ApiResponse.onSuccess(SuccessStatus.SUCCESS_BOOKMARK_BREEDER);
-    }
-
-    @DeleteMapping("/{breederId}/bookmark")
-    @Operation(summary = "브리더 저장 취소 API", description = "사용자가 저장한 동물을 취소하는 API")
-    public ApiResponse unbookmarkBreeder(
-            @PathVariable(name = "breederId") Long breederId,
-            @RequestParam String memberId) {
-        breederService.unbookmarkBreeder(Long.parseLong(memberId), breederId);
-        return ApiResponse.onSuccess(SuccessStatus.SUCCESS_REMOVE_BOOKMARK_BREEDER);
-    }
-
-    @GetMapping("/bookmark")
-    @Operation(summary = "내가 저장한 브리더 조회 API", description = "내가 저장한 브리더 조회 API.")
-    @Parameters({
-            @Parameter(name = "page", description = "페이지 번호, 0번이 1 페이지입니다."),
-            @Parameter(name = "animalType", description = "동물 타입 (DOG, CAT)"),
-            @Parameter(name = "species", description = "종")
-    })
-    public ApiResponse<BreederResponseDTO.BookmarkBreederPreViewListDTO> getBookmarkAnimal(
-            @RequestParam String memberId,
-            @RequestParam(name = "page", defaultValue = "0") Integer page,
-            @RequestParam(name = "animalType", required = false) AnimalType type,
-            @RequestParam(name = "species", required = false) String species) {
-        BreederResponseDTO.BookmarkBreederPreViewListDTO result = breederService.getBookmarkedBreeders(
-                Long.parseLong(memberId), type, species, page);
-        return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_BOOKMARK_BREEDERS_LIST, result);
-    }
-
 
     @GetMapping("/{breederId}/trust-level")
     @Operation(summary = "신뢰등급 조회 API", description = "신뢰등급 조회 API")
