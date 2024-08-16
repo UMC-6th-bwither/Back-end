@@ -561,6 +561,18 @@ public class AnimalServiceImpl implements AnimalService {
     waitListRepository.save(waitList);
   }
 
+  @Override
+  public void unwaitAnimal(long memberId, Long animalId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    WaitList waitList = waitListRepository.findByAnimalAndMember(animal, member)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_WAIT));
+
+    waitListRepository.delete(waitList);
+  }
+
 }
 
 

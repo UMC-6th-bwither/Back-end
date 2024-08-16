@@ -10,5 +10,5 @@ public interface WaitListRepository extends JpaRepository<WaitList, Long> {
 
   Integer countByAnimal(Animal animal);
 
-  Optional<Object> findByAnimalAndMember(Animal animal, Member member);
+  Optional<WaitList> findByAnimalAndMember(Animal animal, Member member);
 }

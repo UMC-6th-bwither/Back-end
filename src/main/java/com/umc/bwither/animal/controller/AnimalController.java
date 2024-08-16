@@ -215,9 +215,17 @@ public class AnimalController {
       @PathVariable(name = "animalId") Long animalId,
       @RequestParam String memberId) {
     animalService.waitAnimal(Long.parseLong(memberId), animalId);
-    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_BOOKMARK_ANIMAL);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_WAIT_ANIMAL);
   }
 
+  @DeleteMapping("/{animalId}/wait")
+  @Operation(summary = "대기 예약 취소 API", description = "대기 예약 취소 API. 동물 아이디(animalId) PathVariable")
+  public ApiResponse unwaitAnimal(
+      @PathVariable(name = "animalId") Long animalId,
+      @RequestParam String memberId) {
+    animalService.unwaitAnimal(Long.parseLong(memberId), animalId);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_REMOVE_WAIT_ANIMAL);
+  }
 
 }
 
