@@ -64,7 +64,7 @@ public class Breeder {
     @Column(nullable = false)
     private EmploymentStatus employmentStatus;
 
-//    @Column(nullable = false)
+    //    @Column(nullable = false)
     @Column
     private Integer trustLevel = 5;
 

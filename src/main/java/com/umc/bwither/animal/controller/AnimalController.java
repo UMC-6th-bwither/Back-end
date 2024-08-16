@@ -209,6 +209,15 @@ public class AnimalController {
     return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_MY_ANIMALS_LIST, result);
   }
 
+  @PostMapping("/{animalId}/wait")
+  @Operation(summary = "대기 예약하기 API", description = "대기 예약하기 API. 동물 아이디(animalId) PathVariable")
+  public ApiResponse waitAnimal(
+      @PathVariable(name = "animalId") Long animalId,
+      @RequestParam String memberId) {
+    animalService.waitAnimal(Long.parseLong(memberId), animalId);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_BOOKMARK_ANIMAL);
+  }
+
 
 }
 

@@ -19,6 +19,7 @@ import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.animal.entity.AnimalMember;
 import com.umc.bwither.animal.entity.AnimalParents;
 import com.umc.bwither.animal.entity.HealthCheckImage;
+import com.umc.bwither.animal.entity.WaitList;
 import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
 import com.umc.bwither.animal.entity.enums.Gender;
@@ -542,6 +543,22 @@ public class AnimalServiceImpl implements AnimalService {
         .isFirst(animals.isFirst())
         .isLast(animals.isLast())
         .build();
+  }
+
+  @Override
+  public void waitAnimal(long memberId, Long animalId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    waitListRepository.findByAnimalAndMember(animal, member)
+        .ifPresent(mb -> { throw new TestHandler(ErrorStatus.ANIMAL_ALREADY_WAIT); });
+
+    WaitList waitList = WaitList.builder()
+        .animal(animal)
+        .member(member)
+        .build();
+    waitListRepository.save(waitList);
   }
 
 }

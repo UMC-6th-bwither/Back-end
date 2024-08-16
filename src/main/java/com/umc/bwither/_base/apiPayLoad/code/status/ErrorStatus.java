@@ -22,6 +22,7 @@ public enum ErrorStatus implements BaseErrorCode {
     INVALID_FILE_TYPE(HttpStatus.BAD_REQUEST, "ANIMAL4003", "존재하지 않는 파일 타입입니다."),
     ANIMAL_ALREADY_BOOKMARK(HttpStatus.BAD_REQUEST, "ANIMAL4004", "이미 사용자가 저장(북마크)한 동물입니다."),
     ANIMAL_NOT_BOOKMARK(HttpStatus.BAD_REQUEST, "ANIMAL4005", "사용자가 저장하지 않은 동물입니다."),
+    ANIMAL_ALREADY_WAIT(HttpStatus.BAD_REQUEST, "ANIMAL4006", "이미 예약되었습니다."),
 
     //BREEDER 관련 에러
     BREEDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "BREEDER4001", "존재하지 않는 브리더입니다."),
