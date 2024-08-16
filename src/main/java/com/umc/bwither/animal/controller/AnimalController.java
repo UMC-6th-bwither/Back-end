@@ -49,7 +49,7 @@ public class AnimalController {
       @Parameter(name = "gender", description = "성별 (MALE, FEMALE)"),
       @Parameter(name = "breed", description = "종"),
       @Parameter(name = "status", description = "예약 여부 (BOOKING, COMPLETE, BEFORE)"),
-      @Parameter(name = "sort", description = "정렬 필드 (createdDate, popularity, distance)")
+      @Parameter(name = "sort", description = "정렬 필드 (createdAt, animalMemberCount, distance)")
   })
   public ApiResponse<AnimalPreViewListDTO> getAnimalList(
       @RequestParam(name = "page", defaultValue = "0") Integer page,

@@ -35,15 +35,11 @@ import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
-import com.umc.bwither.user.entity.User;
-import jakarta.persistence.criteria.Join;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -156,6 +152,7 @@ public class AnimalServiceImpl implements AnimalService {
             .parasitic(animalCreateDTO.getParasitic())
             .healthCheck(animalCreateDTO.getHealthCheck())
             .status(Status.BEFORE)
+            .animalMemberCount(0)
             .build());
 
     if (animalFiles != null) {
@@ -254,6 +251,10 @@ public class AnimalServiceImpl implements AnimalService {
             .member(member)
             .build();
     animalMemberRepository.save(animalMember);
+
+    Integer count = animalMemberRepository.countByAnimal(animal);
+    animal.setAnimalMemberCount(count);
+    animalRepository.save(animal);
   }
 
   @Override
@@ -266,6 +267,10 @@ public class AnimalServiceImpl implements AnimalService {
             .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_BOOKMARK));
 
     animalMemberRepository.delete(animalMember);
+
+    Integer count = animalMemberRepository.countByAnimal(animal);
+    animal.setAnimalMemberCount(count);
+    animalRepository.save(animal);
   }
 
   @Override
@@ -485,10 +490,17 @@ public class AnimalServiceImpl implements AnimalService {
   public AnimalPreViewListDTO getAnimalList(String region, AnimalType animalType, Gender gender,
       String breed, Status status, String sortField, Integer page) {
 
-    Pageable pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, sortField));
+    Pageable pageable;
+    if ("animalMemberCount".equals(sortField)) {
+      pageable = PageRequest.of(page, 6,
+          Sort.by(Sort.Order.desc("animalMemberCount"), Sort.Order.desc("createdAt")));
+    } else {
+      pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, sortField));
+    }
 
     Page<Animal> animals = animalRepository.findAll(pageable);
     List<Animal> animalList = new ArrayList<>(animals.getContent());
+
 
     if (gender != null) {
       animalList = animalList.stream()
@@ -499,6 +511,12 @@ public class AnimalServiceImpl implements AnimalService {
     if (breed != null && !breed.isEmpty()) {
       animalList = animalList.stream()
           .filter(animal -> animal.getBreed().equalsIgnoreCase(breed))
+          .collect(Collectors.toList());
+    }
+
+    if (animalType != null) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getType() == animalType)
           .collect(Collectors.toList());
     }
 
