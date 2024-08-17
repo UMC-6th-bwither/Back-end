@@ -18,7 +18,7 @@ public interface BreederService {
 
     void saveBreederFile(BreederFile breederFile);
 
-    BreederDetailDTO getBreederDetail(Long breederId);
+    BreederDetailDTO getBreederDetail(Long breederId, String sortField);
 
     BreederPreViewListDTO getBreederList(String region, AnimalType animalType, String species, String sortField, Integer page);
 

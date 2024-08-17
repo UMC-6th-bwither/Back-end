@@ -24,6 +24,10 @@ import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.breeder.repository.BreedingRepository;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
+import com.umc.bwither.post.dto.BlockDTO;
+import com.umc.bwither.post.entity.enums.Category;
+import com.umc.bwither.post.entity.enums.DataType;
+import com.umc.bwither.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -48,6 +52,7 @@ public class BreederServiceImpl implements BreederService {
     private final MemberRepository memberRepository;
     private final BreederMemberRepository breederMemberRepository;
     private final WaitListRepository waitListRepository;
+    private final PostRepository postRepository;
 
 
     @Override
@@ -62,11 +67,26 @@ public class BreederServiceImpl implements BreederService {
     public void saveBreederFile(final BreederFile breederFile) { breederFileRepository.save(breederFile); }
 
     @Override
-    public BreederDetailDTO getBreederDetail(Long breederId) {
+    public BreederDetailDTO getBreederDetail(Long breederId, String sortField) {
         Breeder breeder = breederRepository.findById(breederId).
                 orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");  // 기본값: 최신순
+
+        switch (sortField.toLowerCase()) {
+            case "rating_asc":
+                sort = Sort.by(Sort.Direction.ASC, "rating");  // 별점 낮은 순
+                break;
+            case "rating_desc":
+                sort = Sort.by(Sort.Direction.DESC, "rating");  // 별점 높은 순
+                break;
+            case "createdAt":
+            default:
+                break;  // 기본값: 최신순
+        }
+
         Integer totalAnimals = animalRepository.countByBreeder(breeder);
         Integer careerYear = breedingRepository.findTotalCareerYearsByBreederId(breederId);
+        int reviewCount = postRepository.countReviewsByBreederId(breeder.getBreederId());
 
         List<BreederFileDTO> files = breeder.getBreederFiles().stream()
                 .map(file -> new BreederFileDTO(file.getBreederFileId(), file.getType(), file.getBreederFilePath()))
@@ -104,9 +124,40 @@ public class BreederServiceImpl implements BreederService {
                 .map(entry -> entry.getKey() + " " + entry.getValue() + "마리")
                 .collect(Collectors.toList());
 
-        //List<BreederResponseDTO.ReviewDTO> reviews =
+        String formattedRating = breeder.getAverageRating() != null
+                ? String.format("%.1f", breeder.getAverageRating())
+                : "0.0";
 
-        //List<BreederResponseDTO.BreederTipsDTO> breederTips =
+
+        List<BreederResponseDTO.ReviewDTO> reviews = postRepository.findByBreederAndCategory(breeder, Category.BREEDER_REVIEWS, sort)
+                .stream()
+                .map(review -> new BreederResponseDTO.ReviewDTO(
+                        review.getPostId(),
+                        review.getUser().getName(),
+                        review.getPetType().name(),
+                        review.getRating(),
+                        review.getBlocks().stream()
+                                .map(block -> new BlockDTO(
+                                        block.getDataType(),
+                                        BlockDTO.DataDTO.of(
+                                                block.getDataType(),
+                                                block.getText(),
+                                                new BlockDTO.ImageUrlDTO(block.getImageUrl())
+                                        )
+                                ))
+                                .collect(Collectors.toList())
+                )).collect(Collectors.toList());
+
+        List<BreederResponseDTO.BreederTipsDTO> breederTips = postRepository.findByBreederAndCategory(breeder, Category.TIPS)
+                .stream()
+                .map(tip -> new BreederResponseDTO.BreederTipsDTO(
+                        tip.getPostId(),
+                        tip.getBlocks().stream()
+                                .filter(block -> block.getDataType() == DataType.IMAGE)
+                                .map(block -> block.getImageUrl())
+                                .findFirst().orElse(null),
+                        tip.getTitle()
+                )).collect(Collectors.toList());
 
         BreederDetailDTO breederDetailDTO = BreederDetailDTO.builder()
                 .breederId(breeder.getBreederId())
@@ -117,8 +168,8 @@ public class BreederServiceImpl implements BreederService {
                 .address(breeder.getUser().getAddress())
                 .description(breeder.getDescription())
                 .totalAnimals(totalAnimals)
-                .breederRating(breeder.getAverageRating())
-                //.reviewCount(reviewCount)
+                .breederRating(Double.valueOf(formattedRating))
+                .reviewCount(reviewCount)
                 .careerYear(careerYear)
                 .trustLevel(breeder.getTrustLevel())
                 .tradePhone(breeder.getTradePhone())
@@ -140,8 +191,8 @@ public class BreederServiceImpl implements BreederService {
                 .files(files)
                 .breedingCareers(breedingCareers)
                 .breedingAnimals(breedingAnimals)
-                //.reviews(reviews)
-                //.breederTips(breederTips)
+                .reviews(reviews)
+                .breederTips(breederTips)
                 .build();
 
         return breederDetailDTO;
@@ -185,7 +236,10 @@ public class BreederServiceImpl implements BreederService {
                     int certificateCount = breederFileRepository.countCertificatesByBreederId(breeder.getBreederId());
                     int waitAnimalCount = waitListRepository.countAnimalsByBreederId(breeder.getBreederId());
                     int waitListCount = waitListRepository.countMembersByBreederId(breeder.getBreederId());
-                    //int reviewCount =
+                    int reviewCount = postRepository.countReviewsByBreederId(breeder.getBreederId());
+                    String formattedRating = breeder.getAverageRating() != null
+                            ? String.format("%.1f", breeder.getAverageRating())
+                            : "0.0";
                     return BreederPreviewDTO.builder()
                             .breederId(breeder.getBreederId())
                             .profileUrl(breeder.getUser().getProfileImage())
@@ -197,8 +251,8 @@ public class BreederServiceImpl implements BreederService {
                             .certificateCount(certificateCount)
                             .waitAnimal(waitAnimalCount)
                             .waitList(waitListCount)
-                            .breederRating(breeder.getAverageRating())
-                            //.reviewCount(reviewCount)
+                            .breederRating(Double.valueOf(formattedRating))
+                            .reviewCount(reviewCount)
                             .createdAt(breeder.getCreatedAt())
                             .updatedAt(breeder.getUpdatedAt())
                             .build();
@@ -280,7 +334,10 @@ public class BreederServiceImpl implements BreederService {
                     int certificateCount = breederFileRepository.countCertificatesByBreederId(b.getBreederId());
                     int waitAnimalCount = waitListRepository.countAnimalsByBreederId(b.getBreederId());
                     int waitListCount = waitListRepository.countMembersByBreederId(b.getBreederId());
-                    //int reviewCount =
+                    int reviewCount = postRepository.countReviewsByBreederId(b.getBreederId());
+                    String formattedRating = b.getAverageRating() != null
+                            ? String.format("%.1f", b.getAverageRating())
+                            : "0.0";
                     return BreederResponseDTO.BookmarkBreederDTO.builder()
                             .breederId(b.getBreederId())
                             .profileUrl(b.getUser().getProfileImage())
@@ -292,8 +349,8 @@ public class BreederServiceImpl implements BreederService {
                             .certificateCount(certificateCount)
                             .waitAnimal(waitAnimalCount)
                             .waitList(waitListCount)
-                            .breederRating(b.getAverageRating())
-                            //.reviewCount(reviewCount)
+                            .breederRating(Double.valueOf(formattedRating))
+                            .reviewCount(reviewCount)
                             .build();
                 })
                 .collect(Collectors.toList());

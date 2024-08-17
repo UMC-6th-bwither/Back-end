@@ -34,8 +34,11 @@ public class BreederController {
 
     @Operation(summary = "브리더 상세페이지 조회 API", description = "브리더 상세페이지 조회 API")
     @GetMapping("/{breederId}")
-    public ApiResponse<BreederResponseDTO.BreederDetailDTO> getBreederDetail(@PathVariable("breederId") Long breederId) {
-        BreederResponseDTO.BreederDetailDTO result = breederService.getBreederDetail(breederId);
+    @Parameter(name = "sort", description = "정렬 필드 (createdAt, rating_asc, rating_desc)")
+    public ApiResponse<BreederResponseDTO.BreederDetailDTO> getBreederDetail(
+            @PathVariable("breederId") Long breederId,
+            @RequestParam(name = "sort", defaultValue = "createdAt") String sortField) {
+        BreederResponseDTO.BreederDetailDTO result = breederService.getBreederDetail(breederId, sortField);
         return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_BREEDER,result);
     }
 
