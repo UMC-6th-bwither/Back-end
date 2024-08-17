@@ -1,6 +1,5 @@
 package com.umc.bwither.post.service;
 
-import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.post.dto.BlockDTO;
 import com.umc.bwither.post.dto.PostRequestDTO;
@@ -9,7 +8,6 @@ import com.umc.bwither.post.entity.Block;
 import com.umc.bwither.post.entity.Bookmark;
 import com.umc.bwither.post.entity.Post;
 import com.umc.bwither.post.entity.enums.Category;
-import com.umc.bwither.post.entity.enums.DataType; // DataType Enum을 import
 import com.umc.bwither.post.repository.BookmarkRepository;
 import com.umc.bwither.post.repository.PostRepository;
 import com.umc.bwither.user.entity.User;
@@ -18,7 +16,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -30,8 +27,6 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final BreederRepository breederRepository;
     private final BookmarkRepository bookmarkRepository;
-
-
     @Override
     @Transactional
     public void createTips(PostRequestDTO.GetTipDTO tipDTO) {
@@ -40,38 +35,49 @@ public class PostServiceImpl implements PostService {
         User user = userRepository.findById(tipDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + tipDTO.getUserId()));
 
-        // 블록 리스트 생성
-        List<Block> blocks = new ArrayList<>();
-        tipDTO.getBlocks().forEach(blockDTO -> {
-            Block block = new Block();
-            block.setDataType(blockDTO.getType());
-
-            // 타입에 따른 텍스트 또는 이미지 URL 처리 로직
-            if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
-                block.setImageUrl(blockDTO.getData().getFile().getUrl());
-            } else if (blockDTO.getType() == DataType.TEXT) {
-                block.setText(blockDTO.getData().getText());
-            } else {
-                throw new IllegalArgumentException("Unsupported data type: " + blockDTO.getType());
-            }
-
-            blocks.add(block);
-        });
-
         Post post = Post.builder()
-                .user(user)
-                .petType(tipDTO.getPetType())
                 .title(tipDTO.getTitle())
                 .category(tipDTO.getCategory())
-                .blocks(blocks)
+                .petType(tipDTO.getPetType())
+                .user(user) // Assuming you have a way to fetch the User entity
                 .build();
 
-        blocks.forEach(block -> block.setPost(post)); // Block 객체에도 Post 참조 설정
+        List<Block> blocks = tipDTO.getBlocks().stream()
+                .map(dto -> Block.builder()
+                        .block(createBlockJson(dto))
+                        .post(post)
+                        .build())
+                .collect(Collectors.toList());
 
+        post.setBlocks(blocks);
         postRepository.save(post);
     }
 
-    @Override
+    private String createBlockJson(BlockDTO blockDTO) {
+        // Convert BlockDTO to JSON string if necessary, or use directly
+        // This method assumes blockDTO is in a suitable format for saving
+        return String.format("{\"id\":\"%s\",\"type\":\"%s\",\"data\":%s}",
+                blockDTO.getId(),
+                blockDTO.getType(),
+                convertBlockDataToJson(blockDTO.getData()));
+    }
+
+    private String convertBlockDataToJson(BlockDTO.BlockDataDTO blockDataDTO) {
+        // Convert BlockDataDTO to JSON string if necessary
+        return String.format("{\"text\":\"%s\",\"caption\":\"%s\",\"withBorder\":%b,\"withBackground\":%b,\"stretched\":%b,\"file\":{\"url\":\"%s\"}}",
+                blockDataDTO.getText(),
+                blockDataDTO.getCaption(),
+                blockDataDTO.getWithBorder(),
+                blockDataDTO.getWithBackground(),
+                blockDataDTO.getStretched(),
+                blockDataDTO.getStyle(),
+                blockDataDTO.getItems(),
+                blockDataDTO.getFile() != null ? blockDataDTO.getFile().getUrl() : "");
+    }
+
+
+
+ /*   @Override
     @Transactional
     public void createReviews(PostRequestDTO.GetReviewDTO reviewDTO) {
         // 브리더 조회
@@ -115,7 +121,7 @@ public class PostServiceImpl implements PostService {
 
         // 전체 게시글의 평균 별점 계산 및 업데이트
         updateAverageRating(post);
-    }
+    }*/
 
 
     // 평균 별점 계산 및 업데이트
@@ -199,7 +205,7 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
-    @Override
+   /* @Override
     public void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -268,7 +274,7 @@ public class PostServiceImpl implements PostService {
         post.getBlocks().addAll(blocks);
 
         postRepository.save(post);
-    }
+    }*/
 
     @Override
     @Transactional

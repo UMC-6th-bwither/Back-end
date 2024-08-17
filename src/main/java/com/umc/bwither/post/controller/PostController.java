@@ -26,7 +26,7 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
     }
 
-    @PostMapping("/create/review")
+    /*@PostMapping("/create/review")
     public ResponseEntity<?> createReview(@RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
         postService.createReviews(requestDTO);
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
@@ -94,5 +94,5 @@ public class PostController {
     public ResponseEntity<ApiResponse> getBookmarkedPosts(@PathVariable Long userId) {
         List<PostResponseDTO> posts = postService.getBookmarkedPosts(userId);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
-    }
+    }*/
 }

@@ -10,7 +10,7 @@ import java.util.List;
 public interface PostService {
 //    void createPost(PostRequestDTO requestDTO);
     void createTips(PostRequestDTO.GetTipDTO tipDTO);
-    void createReviews(PostRequestDTO.GetReviewDTO reviewDTO);
+//    void createReviews(PostRequestDTO.GetReviewDTO reviewDTO);
     void increaseViewCount(Long postId);
     //    void scrapPost(Long postId, String userName);
     int getViewCount(Long postId);
@@ -23,9 +23,9 @@ public interface PostService {
 
     void deletePost(Long postId);
 
-    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
+//    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
 
-    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
+//    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
 
     void bookmarkPost(Long memberId, Long postId);
 

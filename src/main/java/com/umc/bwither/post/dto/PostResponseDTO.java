@@ -55,7 +55,15 @@ public class PostResponseDTO {
     @AllArgsConstructor
     public static class GetBlockDTO{
 
-        private DataType type;
+        private String block;
+        public static GetBlockDTO getBlockDTO(Block block) {
+
+            return GetBlockDTO.builder()
+                    .block(block.getBlock())
+                    .build();
+        }
+
+        /*private DataType type;
         private BlockDTO.DataDTO data;
 
         public static GetBlockDTO getBlockDTO(Block block) {
@@ -74,7 +82,7 @@ public class PostResponseDTO {
                     .type(block.getDataType())
                     .data(dataDTO)
                     .build();
-        }
+        }*/
     }
 
 
