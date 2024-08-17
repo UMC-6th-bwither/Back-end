@@ -12,7 +12,6 @@ public interface PostService {
     void increaseViewCount(Long postId);
     //    void scrapPost(Long postId, String userName);
     int getViewCount(Long postId);
-/*
 
     PostResponseDTO getPost(Long postId);
 
@@ -20,8 +19,7 @@ public interface PostService {
 
     void deletePost(Long postId);
 
-    void updatePost(Long postId, PostRequestDTO requestDTO);
-*/
+//    void updatePost(Long postId, PostRequestDTO requestDTO);
 
     void bookmarkPost(Long memberId, Long postId);
 

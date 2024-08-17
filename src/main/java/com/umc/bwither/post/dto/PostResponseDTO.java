@@ -10,97 +10,45 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Data
+@Data @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class PostResponseDTO {
-    /*private Long id;
+    private Long id;
     private String title;
     private PetType petType;
     private Integer rating;
-    private double averageRating;
+    private Double averageRating;
     private Category category;
     private String kennelName;
     private String author;
     private LocalDateTime createdAt;
     private Boolean isSaved;
-    private List<BlockDTO> blocks;
+    private List<GetBlockDTO> blocks;
     private Integer viewCount;
-    private Integer bookmarkCount;*/
+    private Integer bookmarkCount;
 
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class GetTipDTO {
-        private Long id;
-        private String title;
-        private PetType petType;
-        private String author;
-        private LocalDateTime createdAt;
-        private Boolean isSaved;
-        private List<GetBlockDTO> blocks;
-        private Integer viewCount;
-        private Integer bookmarkCount;
+    public static PostResponseDTO getPostDTO(Post post, BookmarkRepository bookmarkRepository) {
+        List<GetBlockDTO> blockDTOS = post.getBlocks().stream()
+                .map(GetBlockDTO::getBlockDTO).toList();
+        // 사용자가 해당 게시글을 북마크했는지 여부 확인
+        boolean isSaved = bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent();
 
-        public static PostResponseDTO.GetTipDTO getTipDTO(Post post, BookmarkRepository bookmarkRepository) {
-            List<GetBlockDTO> blockDTOS = post.getBlocks().stream()
-                    .map(GetBlockDTO::getBlockDTO).toList();
-
-            // 사용자가 해당 게시글을 북마크했는지 여부 확인
-            boolean isSaved = bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent();
-
-            return GetTipDTO.builder()
-                    .id(post.getPostId())
-                    .title(post.getTitle())
-                    .petType(post.getPetType())
-                    .author(post.getUser().getName())
-                    .createdAt(post.getCreatedAt())
-                    .isSaved(isSaved)
-                    .blocks(blockDTOS)
-                    .viewCount(post.getViewCount())
-                    .bookmarkCount(post.getBookmarkCount())
-                    .build();
-        }
-    }
-
-    @Builder
-    @Getter
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class GetReviewDTO {
-        private Long id;
-        private String title;
-        private PetType petType;
-        private Integer rating;
-        private Category category;
-        private String kennelName;
-        private String author;
-        private LocalDateTime createdAt;
-        private Boolean isSaved;
-        private List<GetBlockDTO> blocks;
-        private Integer viewCount;
-        private Integer bookmarkCount;
-
-        public static PostResponseDTO.GetReviewDTO getReviewDTO(Post post, BookmarkRepository bookmarkRepository) {
-            List<GetBlockDTO> blockDTOS = post.getBlocks().stream()
-                    .map(GetBlockDTO::getBlockDTO).toList();
-            // 사용자가 해당 게시글을 북마크했는지 여부 확인
-            boolean isSaved = bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent();
-
-            return GetReviewDTO.builder()
-                    .id(post.getPostId())
-                    .title(post.getTitle())
-                    .petType(post.getPetType())
-                    .rating(post.getRating())
-                    .category(post.getCategory())
-                    .kennelName(post.getBreeder().getTradeName())
-                    .author(post.getUser().getName())
-                    .createdAt(post.getCreatedAt())
-                    .isSaved(isSaved)
-                    .blocks(blockDTOS)
-                    .viewCount(post.getViewCount())
-                    .bookmarkCount(post.getBookmarkCount())
-                    .build();
-        }
+        return PostResponseDTO.builder()
+                .id(post.getPostId())
+                .title(post.getTitle())
+                .petType(post.getPetType())
+                .rating(post.getRating())
+                .averageRating(post.getBreeder().getAverageRating())
+                .category(post.getCategory())
+                .kennelName(post.getBreeder().getTradeName())
+                .author(post.getUser().getName())
+                .createdAt(post.getCreatedAt())
+                .isSaved(isSaved)
+                .blocks(blockDTOS)
+                .viewCount(post.getViewCount())
+                .bookmarkCount(post.getBookmarkCount())
+                .build();
     }
 
     @Builder

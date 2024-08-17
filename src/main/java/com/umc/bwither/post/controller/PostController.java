@@ -31,7 +31,7 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
     }
 
-    /*@DeleteMapping("/{postId}")
+    @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
         return ResponseEntity.noContent().build(); // 204 No Content
@@ -49,11 +49,11 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
 
-    @PutMapping("/{postId}")
-    public ResponseEntity<ApiResponse> updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO requestDTO) {
-        postService.updatePost(postId, requestDTO);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
-    }*/
+//    @PutMapping("/{postId}")
+//    public ResponseEntity<ApiResponse> updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO requestDTO) {
+//        postService.updatePost(postId, requestDTO);
+//        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
+//    }
 
     @PostMapping("/{postId}/bookmark")
     public ResponseEntity<?> bookmarkPost(
