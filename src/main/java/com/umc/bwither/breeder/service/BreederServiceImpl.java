@@ -4,6 +4,7 @@ import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.entity.Animal;
 import com.umc.bwither.animal.repository.AnimalRepository;
+import com.umc.bwither.animal.repository.WaitListRepository;
 import com.umc.bwither.breeder.dto.BreederFileDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO.BreederPreviewDTO;
@@ -46,6 +47,7 @@ public class BreederServiceImpl implements BreederService {
     private final AnimalRepository animalRepository;
     private final MemberRepository memberRepository;
     private final BreederMemberRepository breederMemberRepository;
+    private final WaitListRepository waitListRepository;
 
 
     @Override
@@ -180,9 +182,9 @@ public class BreederServiceImpl implements BreederService {
         List<BreederPreviewDTO> breederDTOs = breederList.stream()
                 .map(breeder -> {
                     int careerYear = breedingRepository.findTotalCareerYearsByBreederId(breeder.getBreederId());
-                    //int certificateCount =
-                    //int waitAnimalCount =
-                    //int waitListCount =
+                    int certificateCount = breederFileRepository.countCertificatesByBreederId(breeder.getBreederId());
+                    int waitAnimalCount = waitListRepository.countAnimalsByBreederId(breeder.getBreederId());
+                    int waitListCount = waitListRepository.countMembersByBreederId(breeder.getBreederId());
                     //int reviewCount =
                     return BreederPreviewDTO.builder()
                             .breederId(breeder.getBreederId())
@@ -192,8 +194,9 @@ public class BreederServiceImpl implements BreederService {
                             .animalType(breeder.getAnimal())
                             .species(breeder.getSpecies())
                             .careerYear(careerYear)
-                            //.waitAnimal(waitAnimalCount)
-                            //.waitList(waitListCount)
+                            .certificateCount(certificateCount)
+                            .waitAnimal(waitAnimalCount)
+                            .waitList(waitListCount)
                             .breederRating(breeder.getAverageRating())
                             //.reviewCount(reviewCount)
                             .createdAt(breeder.getCreatedAt())
@@ -274,9 +277,9 @@ public class BreederServiceImpl implements BreederService {
         List<BreederResponseDTO.BookmarkBreederDTO> breederDTOs = sortedBreeders.stream()
                 .map(b -> {
                     int careerYear = breedingRepository.findTotalCareerYearsByBreederId(b.getBreederId());
-                    //int certificateCount =
-                    //int waitAnimalCount =
-                    //int waitListCount =
+                    int certificateCount = breederFileRepository.countCertificatesByBreederId(b.getBreederId());
+                    int waitAnimalCount = waitListRepository.countAnimalsByBreederId(b.getBreederId());
+                    int waitListCount = waitListRepository.countMembersByBreederId(b.getBreederId());
                     //int reviewCount =
                     return BreederResponseDTO.BookmarkBreederDTO.builder()
                             .breederId(b.getBreederId())
@@ -286,8 +289,9 @@ public class BreederServiceImpl implements BreederService {
                             .animalType(b.getAnimal())
                             .species(b.getSpecies())
                             .careerYear(careerYear)
-                            //.waitAnimal(waitAnimalCount)
-                            //.waitList(waitListCount)
+                            .certificateCount(certificateCount)
+                            .waitAnimal(waitAnimalCount)
+                            .waitList(waitListCount)
                             .breederRating(b.getAverageRating())
                             //.reviewCount(reviewCount)
                             .build();
