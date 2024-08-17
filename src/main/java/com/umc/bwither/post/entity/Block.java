@@ -1,11 +1,7 @@
 package com.umc.bwither.post.entity;
 
-import com.umc.bwither.post.dto.BlockDTO;
-import com.umc.bwither.post.entity.enums.DataType;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.Map;
 
 @Data @Entity @Builder
 @NoArgsConstructor

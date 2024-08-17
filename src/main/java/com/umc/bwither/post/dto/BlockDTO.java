@@ -52,6 +52,7 @@ public class BlockDTO {
         private Boolean stretched;
         private FileDTO file;
         private String style;
+        private Integer level;
         private List<String> items;
 
         @Data

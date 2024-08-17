@@ -1,5 +1,8 @@
 package com.umc.bwither.post.service;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.post.dto.BlockDTO;
 import com.umc.bwither.post.dto.PostRequestDTO;
@@ -27,9 +30,15 @@ public class PostServiceImpl implements PostService {
     private final UserRepository userRepository;
     private final BreederRepository breederRepository;
     private final BookmarkRepository bookmarkRepository;
+    private final ObjectMapper mapper;
+
+
     @Override
     @Transactional
     public void createTips(PostRequestDTO.GetTipDTO tipDTO) {
+
+        //mapper 설정
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
 
         // 사용자 조회
         User user = userRepository.findById(tipDTO.getUserId())
@@ -43,36 +52,20 @@ public class PostServiceImpl implements PostService {
                 .build();
 
         List<Block> blocks = tipDTO.getBlocks().stream()
-                .map(dto -> Block.builder()
-                        .block(createBlockJson(dto))
-                        .post(post)
-                        .build())
+                .map(dto -> {
+                    try {
+                        return Block.builder()
+                                .block(mapper.writeValueAsString(dto))
+                                .post(post)
+                                .build();
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("Error serializing block data to JSON", e);
+                    }
+                })
                 .collect(Collectors.toList());
 
         post.setBlocks(blocks);
         postRepository.save(post);
-    }
-
-    private String createBlockJson(BlockDTO blockDTO) {
-        // Convert BlockDTO to JSON string if necessary, or use directly
-        // This method assumes blockDTO is in a suitable format for saving
-        return String.format("{\"id\":\"%s\",\"type\":\"%s\",\"data\":%s}",
-                blockDTO.getId(),
-                blockDTO.getType(),
-                convertBlockDataToJson(blockDTO.getData()));
-    }
-
-    private String convertBlockDataToJson(BlockDTO.BlockDataDTO blockDataDTO) {
-        // Convert BlockDataDTO to JSON string if necessary
-        return String.format("{\"text\":\"%s\",\"caption\":\"%s\",\"withBorder\":%b,\"withBackground\":%b,\"stretched\":%b,\"file\":{\"url\":\"%s\"}}",
-                blockDataDTO.getText(),
-                blockDataDTO.getCaption(),
-                blockDataDTO.getWithBorder(),
-                blockDataDTO.getWithBackground(),
-                blockDataDTO.getStretched(),
-                blockDataDTO.getStyle(),
-                blockDataDTO.getItems(),
-                blockDataDTO.getFile() != null ? blockDataDTO.getFile().getUrl() : "");
     }
 
 
