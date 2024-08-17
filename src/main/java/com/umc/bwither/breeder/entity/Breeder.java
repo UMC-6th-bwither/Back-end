@@ -107,7 +107,7 @@ public class Breeder {
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Breeding> breedingCareer;
     @Column
-    private double averageRating;
+    private Double averageRating;
     public Breeder(Long breederId) {
         this.breederId = breederId;
     }

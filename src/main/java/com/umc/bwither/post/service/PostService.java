@@ -6,7 +6,9 @@ import com.umc.bwither.post.dto.PostResponseDTO;
 import java.util.List;
 
 public interface PostService {
-    void createPost(PostRequestDTO requestDTO);
+//    void createPost(PostRequestDTO requestDTO);
+    void createTips(PostRequestDTO.GetTipDTO tipDTO);
+    void createReviews(PostRequestDTO.GetReviewDTO reviewDTO);
     void increaseViewCount(Long postId);
     //    void scrapPost(Long postId, String userName);
     int getViewCount(Long postId);
@@ -15,12 +17,17 @@ public interface PostService {
 
     List<PostResponseDTO> getAllPosts();
 
+    List<PostResponseDTO> getPostsByCategory(String category);
+
     void deletePost(Long postId);
 
-    void updatePost(Long postId, PostRequestDTO requestDTO);
+    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
+
+    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
 
     void bookmarkPost(Long memberId, Long postId);
 
     void unbookmarkPost(Long memberId, Long postId);
 
+    List<PostResponseDTO> getBookmarkedPosts(Long userId);
 }

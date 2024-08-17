@@ -28,7 +28,7 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Category category;
 
-    @Column(nullable = false, length = 65)
+    @Column(nullable = true, length = 65)
     private String title;
 
     @Enumerated(EnumType.STRING)
@@ -47,24 +47,12 @@ public class Post extends BaseEntity {
     private User user;
 
     @Column(nullable = true)
-    private Integer scrapCount;
+    private Integer bookmarkCount;
 
     @Column(nullable = true)
     private Integer viewCount;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
     private List<Block> blocks;
-
-    public static Post create( Breeder breeder, User user, PetType petType, Integer rating, String title, Category category, List<Block> blocks) {
-        Post post = new Post();
-        post.breeder = breeder;
-        post.user = user;
-        post.petType = petType;
-        post.rating = rating;
-        post.title = title;
-        post.category = category;
-        post.blocks = blocks;
-        return post;
-    }
 
 }
