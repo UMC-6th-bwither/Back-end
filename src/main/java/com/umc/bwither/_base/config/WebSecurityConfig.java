@@ -31,7 +31,7 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/","/breeder/join", "/login", "/user/join", "/breeder/{breederId}/member/{memberId}", "/user/{memberId}/view-breeders").permitAll()
 
                                 .requestMatchers("/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html").permitAll() // Swagger 경로 허용
-                                .requestMatchers("/**").permitAll()
+                                .requestMatchers("/**", "/health").permitAll()
                                 .anyRequest().authenticated());
 
         http.addFilterAfter(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
