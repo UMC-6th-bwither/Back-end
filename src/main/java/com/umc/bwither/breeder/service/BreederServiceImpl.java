@@ -6,6 +6,8 @@ import com.umc.bwither.animal.entity.Animal;
 import com.umc.bwither.animal.repository.AnimalRepository;
 import com.umc.bwither.breeder.dto.BreederFileDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO;
+import com.umc.bwither.breeder.dto.BreederResponseDTO.BreederPreviewDTO;
+import com.umc.bwither.breeder.dto.BreederResponseDTO.BreederPreViewListDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO.BreedingAnimalDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO.TrustLevelResponseDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO.BreederDetailDTO;
@@ -28,6 +30,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -120,6 +123,61 @@ public class BreederServiceImpl implements BreederService {
                 .build();
 
         return breederDetailDTO;
+    }
+
+    @Override
+    public BreederPreViewListDTO getBreederList(String region, AnimalType animalType, String species, String sortField, Integer page) {
+        Pageable pageable;
+        if ("breederMemberCount".equals(sortField)) {
+            pageable = PageRequest.of(page, 5,
+                    Sort.by(Sort.Order.desc("breederMemberCount"), Sort.Order.desc("createdAt")));
+        } else {
+            pageable = PageRequest.of(page, 5, Sort.by(Sort.Direction.DESC, sortField));
+        }
+
+        Page<Breeder> breeders = breederRepository.findAll(pageable);
+        List<Breeder> breederList = new ArrayList<>(breeders.getContent());
+
+
+        if (species != null && !species.isEmpty()) {
+            breederList = breederList.stream()
+                    .filter(b -> b.getSpecies() != null && b.getSpecies().stream().anyMatch(s -> s.equalsIgnoreCase(species)))
+                    .collect(Collectors.toList());
+        }
+
+        if (animalType != null) {
+            breederList = breederList.stream()
+                    .filter(b -> b.getAnimal().equals(animalType))
+                    .collect(Collectors.toList());
+        }
+
+        if (region != null && !region.isEmpty()) {
+            breederList = breederList.stream()
+                    .filter(b -> b.getUser().getAddress().contains(region))
+                    .collect(Collectors.toList());
+        }
+
+        List<BreederPreviewDTO> breederDTOs = breederList.stream()
+                .map(breeder -> {
+                    return BreederPreviewDTO.builder()
+                            .breederId(breeder.getBreederId())
+                            .profileUrl(breeder.getBreederFiles().isEmpty() ? null : breeder.getBreederFiles().get(0).getBreederFilePath())
+                            .address(breeder.getUser().getAddress())
+                            .breederName(breeder.getTradeName())
+                            .createdAt(breeder.getUser().getCreatedAt())
+                            .updatedAt(breeder.getUser().getUpdatedAt())
+                            .build();
+                })
+                .collect(Collectors.toList());
+
+        return BreederPreViewListDTO.builder()
+                .breederList(breederDTOs)
+                .listSize(breederDTOs.size())
+                .totalPage(breeders.getTotalPages())
+                .totalElements(breeders.getTotalElements())
+                .isFirst(breeders.isFirst())
+                .isLast(breeders.isLast())
+                .build();
     }
 
     @Override

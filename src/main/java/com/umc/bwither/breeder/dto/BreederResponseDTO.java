@@ -6,6 +6,7 @@ import com.umc.bwither.animal.entity.enums.Status;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BreederResponseDTO {
@@ -86,12 +87,31 @@ public class BreederResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BreederPreViewListDTO {
-        List<BreedersDTO> animalList;
+        List<BreederPreviewDTO> breederList;
         Integer listSize;
         Integer totalPage;
         Long totalElements;
         Boolean isFirst;
         Boolean isLast;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BreederPreviewDTO {
+        Long breederId;
+        String profileUrl;
+        String address;
+        String breederName;
+        //TODO    Integer careerYear;
+        //TODO    Integer certificateCount;
+        //TODO    Integer waitAnimal;
+        //TODO    Integer waitList;
+        //TODO    Double breederRating;
+        //TODO    Integer reviewCount;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
     }
 
     @Builder

@@ -1,6 +1,7 @@
 package com.umc.bwither.breeder.service;
 
 import com.umc.bwither.breeder.dto.BreederResponseDTO;
+import com.umc.bwither.breeder.dto.BreederResponseDTO.BreederPreViewListDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO.BreederDetailDTO;
 import com.umc.bwither.breeder.dto.BreederResponseDTO.TrustLevelResponseDTO;
 import com.umc.bwither.breeder.entity.Breeder;
@@ -18,6 +19,8 @@ public interface BreederService {
     void saveBreederFile(BreederFile breederFile);
 
     BreederDetailDTO getBreederDetail(Long breederId);
+
+    BreederPreViewListDTO getBreederList(String region, AnimalType animalType, String species, String sortField, Integer page);
 
     void bookmarkBreeder(long memberId, Long breederId);
 
