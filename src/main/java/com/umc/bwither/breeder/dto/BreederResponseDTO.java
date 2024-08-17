@@ -3,6 +3,7 @@ package com.umc.bwither.breeder.dto;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.Status;
+import com.umc.bwither.breeder.entity.enums.AnimalType;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -18,6 +19,7 @@ public class BreederResponseDTO {
     public static class BreederDetailDTO {
         Long breederId;
         String profileUrl;
+        String backgroundUrl;
         String tradeName;
         List<String> species;
         String address;
@@ -28,12 +30,16 @@ public class BreederResponseDTO {
         Integer careerYear;
         Integer trustLevel;
         String tradePhone;
+        String contactableTime;
         String snsAddress;
         String detailDescription;
         String schoolName;
         String departmentName;
         LocalDate enrollmentDate;
         LocalDate graduationDate;
+        String kennelAddress;
+        String businessTime;
+        List<String> animalCount;
         String questionGuarantee;
         String questionPedigree;
         String questionBaby;
@@ -43,6 +49,7 @@ public class BreederResponseDTO {
         List<BreedingCareerDTO> breedingCareers;
         List<BreedingAnimalDTO> breedingAnimals;
         List<ReviewDTO> reviews;
+        List<BreederTipsDTO> breederTips;
     }
 
     @Builder
@@ -60,26 +67,23 @@ public class BreederResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReviewDTO {
-        Long reviewId;
-        Integer age;
-        String gender;
+        Long postId;
+        Long userId;
+        String species;
+        List<String> fileUrl;
+        Integer rating;
+        String content;
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BreedersDTO {
+    public static class BreederTipsDTO {
+        Long postId;
         Long breederId;
-        String profileUrl;
-        String tradeName;
-        String address;
-        // Todo   Integer careerYear;
-        // Todo   Integer certificateCount;
-        // Todo   Integer waitAnimal;
-        // Todo   Integer waitList;
-        //TODO    Double breederRating;
-        //TODO    Integer reviewCount;
+        String fileUrl;
+        String title;
     }
 
     @Builder
@@ -104,12 +108,14 @@ public class BreederResponseDTO {
         String profileUrl;
         String address;
         String breederName;
-        //TODO    Integer careerYear;
-        //TODO    Integer certificateCount;
-        //TODO    Integer waitAnimal;
-        //TODO    Integer waitList;
-        //TODO    Double breederRating;
-        //TODO    Integer reviewCount;
+        AnimalType animalType;
+        List<String> species;
+        Integer careerYear;
+        Integer certificateCount;
+        Integer waitAnimal;
+        Integer waitList;
+        Double breederRating;
+        Integer reviewCount;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
     }
@@ -121,14 +127,16 @@ public class BreederResponseDTO {
     public static class BookmarkBreederDTO {
         Long breederId;
         String profileUrl;
-        String tradeName;
+        String breederName;
         String address;
-        // Todo   Integer careerYear;
-        // Todo   Integer certificateCount;
-        // Todo   Integer waitAnimal;
-        // Todo   Integer waitList;
-        //TODO    Double breederRating;
-        //TODO    Integer reviewCount;
+        AnimalType animalType;
+        List<String> species;
+        Integer careerYear;
+        Integer certificateCount;
+        Integer waitAnimal;
+        Integer waitList;
+        Double breederRating;
+        Integer reviewCount;
     }
 
     @Builder

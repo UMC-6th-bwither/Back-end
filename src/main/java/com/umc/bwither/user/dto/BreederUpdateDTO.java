@@ -21,8 +21,10 @@ public class BreederUpdateDTO {
     // Breeder
     private AnimalType animal; // 브리딩하는 동물 종류
     private List<String> species; // 종
+    private String backgroundImage; // 배경 이미지
     private String tradeName; // 상호명
     private String tradePhone; // 전화번호
+    private String contactableTime; // 연락 가능 시간
     private String tradeEmail; // 이메일
     private String representative; // 대표자명
     private String registrationNumber; // 사업자 등록 번호
@@ -40,6 +42,8 @@ public class BreederUpdateDTO {
     private String departmentName; // 학과명
     private LocalDate enrollmentDate; // 입학연월
     private LocalDate graduationDate; // 졸업연월
+
+    private String businessTime; // 영업시간
 
     // 자주 물어보는 질문
     private String questionGuarantee;

@@ -90,27 +90,46 @@ public class BreederServiceImpl implements BreederService {
                 ))
                 .collect(Collectors.toList());
 
-        // Todo ReviewDTO
+        // 종별로 개체 수를 그룹화
+        Map<String, Long> animalCountMap = animals.stream()
+                .collect(Collectors.groupingBy(
+                        Animal::getBreed,  // 종으로 그룹화
+                        Collectors.counting() // 각 그룹의 개체 수를 셈
+                ));
+
+        // 개체 수 정보를 문자열 리스트로 변환
+        List<String> animalCountList = animalCountMap.entrySet().stream()
+                .map(entry -> entry.getKey() + " " + entry.getValue() + "마리")
+                .collect(Collectors.toList());
+
+        //List<BreederResponseDTO.ReviewDTO> reviews =
+
+        //List<BreederResponseDTO.BreederTipsDTO> breederTips =
 
         BreederDetailDTO breederDetailDTO = BreederDetailDTO.builder()
                 .breederId(breeder.getBreederId())
                 .profileUrl(breeder.getUser().getProfileImage())
+                .backgroundUrl(breeder.getBackgroundImage())
                 .tradeName(breeder.getTradeName())
                 .species(breeder.getSpecies())
                 .address(breeder.getUser().getAddress())
                 .description(breeder.getDescription())
                 .totalAnimals(totalAnimals)
-                //.breederRating(breederRating)
+                .breederRating(breeder.getAverageRating())
                 //.reviewCount(reviewCount)
                 .careerYear(careerYear)
                 .trustLevel(breeder.getTrustLevel())
                 .tradePhone(breeder.getTradePhone())
+                .contactableTime(breeder.getContactableTime())
                 .snsAddress(breeder.getSnsAddress())
                 .detailDescription(breeder.getDescriptionDetail())
                 .schoolName(breeder.getSchoolName())
                 .departmentName(breeder.getDepartmentName())
                 .enrollmentDate(breeder.getEnrollmentDate())
                 .graduationDate(breeder.getGraduationDate())
+                .kennelAddress(breeder.getUser().getAddress() + " " + breeder.getUser().getAddressDetail())
+                .animalCount(animalCountList)
+                .businessTime(breeder.getBusinessTime())
                 .questionGuarantee(breeder.getQuestionGuarantee())
                 .questionPedigree(breeder.getQuestionPedigree())
                 .questionBaby(breeder.getQuestionBaby())
@@ -119,7 +138,8 @@ public class BreederServiceImpl implements BreederService {
                 .files(files)
                 .breedingCareers(breedingCareers)
                 .breedingAnimals(breedingAnimals)
-                // .reviews(reviews) // ReviewDTO 리스트
+                //.reviews(reviews)
+                //.breederTips(breederTips)
                 .build();
 
         return breederDetailDTO;
@@ -159,13 +179,25 @@ public class BreederServiceImpl implements BreederService {
 
         List<BreederPreviewDTO> breederDTOs = breederList.stream()
                 .map(breeder -> {
+                    int careerYear = breedingRepository.findTotalCareerYearsByBreederId(breeder.getBreederId());
+                    //int certificateCount =
+                    //int waitAnimalCount =
+                    //int waitListCount =
+                    //int reviewCount =
                     return BreederPreviewDTO.builder()
                             .breederId(breeder.getBreederId())
-                            .profileUrl(breeder.getBreederFiles().isEmpty() ? null : breeder.getBreederFiles().get(0).getBreederFilePath())
+                            .profileUrl(breeder.getUser().getProfileImage())
                             .address(breeder.getUser().getAddress())
                             .breederName(breeder.getTradeName())
-                            .createdAt(breeder.getUser().getCreatedAt())
-                            .updatedAt(breeder.getUser().getUpdatedAt())
+                            .animalType(breeder.getAnimal())
+                            .species(breeder.getSpecies())
+                            .careerYear(careerYear)
+                            //.waitAnimal(waitAnimalCount)
+                            //.waitList(waitListCount)
+                            .breederRating(breeder.getAverageRating())
+                            //.reviewCount(reviewCount)
+                            .createdAt(breeder.getCreatedAt())
+                            .updatedAt(breeder.getUpdatedAt())
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -240,12 +272,26 @@ public class BreederServiceImpl implements BreederService {
 
         // DTO로 변환
         List<BreederResponseDTO.BookmarkBreederDTO> breederDTOs = sortedBreeders.stream()
-                .map(b -> BreederResponseDTO.BookmarkBreederDTO.builder()
-                        .breederId(b.getBreederId())
-                        .profileUrl(b.getBreederFiles().isEmpty() ? null : b.getBreederFiles().get(0).getBreederFilePath())
-                        .tradeName(b.getTradeName())
-                        .address(b.getUser().getAddress())
-                        .build())
+                .map(b -> {
+                    int careerYear = breedingRepository.findTotalCareerYearsByBreederId(b.getBreederId());
+                    //int certificateCount =
+                    //int waitAnimalCount =
+                    //int waitListCount =
+                    //int reviewCount =
+                    return BreederResponseDTO.BookmarkBreederDTO.builder()
+                            .breederId(b.getBreederId())
+                            .profileUrl(b.getUser().getProfileImage())
+                            .breederName(b.getTradeName())
+                            .address(b.getUser().getAddress())
+                            .animalType(b.getAnimal())
+                            .species(b.getSpecies())
+                            .careerYear(careerYear)
+                            //.waitAnimal(waitAnimalCount)
+                            //.waitList(waitListCount)
+                            .breederRating(b.getAverageRating())
+                            //.reviewCount(reviewCount)
+                            .build();
+                })
                 .collect(Collectors.toList());
 
         // 최종 결과 반환
