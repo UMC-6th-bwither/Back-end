@@ -19,13 +19,19 @@ public class PostController {
 
     private final PostService postService;
 
-    @PostMapping("/create")
-    public ResponseEntity<?> createPost(@RequestBody PostRequestDTO requestDTO) {
-        postService.createPost(requestDTO);
+    @PostMapping("/create/tip")
+    public ResponseEntity<?> createTip(@RequestBody PostRequestDTO.GetTipDTO requestDTO) {
+        postService.createTips(requestDTO);
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
     }
 
-    @DeleteMapping("/{postId}")
+    @PostMapping("/create/review")
+    public ResponseEntity<?> createReview(@RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
+        postService.createReviews(requestDTO);
+        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
+    }
+
+    /*@DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
         return ResponseEntity.noContent().build(); // 204 No Content
@@ -47,7 +53,7 @@ public class PostController {
     public ResponseEntity<ApiResponse> updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO requestDTO) {
         postService.updatePost(postId, requestDTO);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
-    }
+    }*/
 
     @PostMapping("/{postId}/bookmark")
     public ResponseEntity<?> bookmarkPost(

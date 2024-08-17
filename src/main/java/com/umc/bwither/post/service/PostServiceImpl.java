@@ -30,9 +30,9 @@ public class PostServiceImpl implements PostService {
     private final BreederRepository breederRepository;
     private final BookmarkRepository bookmarkRepository;
 
-    @Override
-    @Transactional
-    public void createPost(PostRequestDTO requestDTO) {
+//    @Override
+//    @Transactional
+    /*public void createPost(PostRequestDTO requestDTO) {
         // 브리더 조회
         Breeder breeder = breederRepository.findById(requestDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("Breeder not found"));
@@ -73,26 +73,121 @@ public class PostServiceImpl implements PostService {
 
         // 전체 게시글의 평균 별점 계산 및 업데이트
         updateAverageRating(post);
+    }*/
+
+    @Override
+    @Transactional
+    public void createTips(PostRequestDTO.GetTipDTO tipDTO) {
+
+        // 사용자 조회
+        User user = userRepository.findById(tipDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + tipDTO.getUserId()));
+
+        // 블록 리스트 생성
+        List<Block> blocks = new ArrayList<>();
+        tipDTO.getBlocks().forEach(blockDTO -> {
+            Block block = new Block();
+            block.setDataType(blockDTO.getType());
+
+            // 타입에 따른 텍스트 또는 이미지 URL 처리 로직
+            if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
+                block.setImageUrl(blockDTO.getData().getFile().getUrl());
+            } else if (blockDTO.getType() == DataType.TEXT) {
+                block.setText(blockDTO.getData().getText());
+            } else {
+                throw new IllegalArgumentException("Unsupported data type: " + blockDTO.getType());
+            }
+
+            blocks.add(block);
+        });
+
+        Post post = Post.builder()
+                .user(user)
+                .petType(tipDTO.getPetType())
+                .title(tipDTO.getTitle())
+                .category(tipDTO.getCategory())
+                .blocks(blocks)
+                .build();
+
+        blocks.forEach(block -> block.setPost(post)); // Block 객체에도 Post 참조 설정
+
+        postRepository.save(post);
     }
+
+    @Override
+    @Transactional
+    public void createReviews(PostRequestDTO.GetReviewDTO reviewDTO) {
+        // 사용자 조회
+        Breeder breeder = breederRepository.findById(reviewDTO.getBreederId())
+                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + reviewDTO.getUserId()));
+
+        // 사용자 조회
+        User user = userRepository.findById(reviewDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + reviewDTO.getUserId()));
+
+        // 블록 리스트 생성
+        List<Block> blocks = new ArrayList<>();
+        reviewDTO.getBlocks().forEach(blockDTO -> {
+            Block block = new Block();
+            block.setDataType(blockDTO.getType());
+
+            // 타입에 따른 텍스트 또는 이미지 URL 처리 로직
+            if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
+                block.setImageUrl(blockDTO.getData().getFile().getUrl());
+            } else if (blockDTO.getType() == DataType.TEXT) {
+                block.setText(blockDTO.getData().getText());
+            } else {
+                throw new IllegalArgumentException("Unsupported data type: " + blockDTO.getType());
+            }
+
+            blocks.add(block);
+        });
+
+        Post post = Post.builder()
+                .breeder(breeder)
+                .user(user)
+                .petType(reviewDTO.getPetType())
+                .rating(reviewDTO.getRating())
+                .category(reviewDTO.getCategory())
+                .blocks(blocks)
+                .build();
+
+        blocks.forEach(block -> block.setPost(post)); // Block 객체에도 Post 참조 설정
+
+        postRepository.save(post);
+
+        // 전체 게시글의 평균 별점 계산 및 업데이트
+        updateAverageRating(post);
+    }
+
 
     // 평균 별점 계산 및 업데이트
     @Transactional
     public void updateAverageRating(Post newPost) {
+        // Breeder가 null이면 평균 별점 업데이트를 건너뜁니다.
+        if (newPost.getBreeder() == null) {
+            return;
+        }
+
         List<Post> allPosts = postRepository.findAll();
         double totalRating = 0.0;
         int count = 0;
 
         for (Post post : allPosts) {
-            totalRating += post.getRating(); // 각 게시글의 별점 합산
-            count++;
+            if (post.getRating() != null) {
+                totalRating += post.getRating(); // 각 게시글의 별점 합산
+                count++;
+            }
         }
 
-        double averageRating = totalRating / count; // 평균 계산
+        if (count > 0) {
+            double averageRating = totalRating / count;
+            newPost.getBreeder().setAverageRating(averageRating);
+        }
 
-        // 새로운 게시글에 평균 별점 설정
-        newPost.getBreeder().setAverageRating(averageRating);
-        postRepository.save(newPost); // 게시글 저장 후 평균 별점 업데이트
+        postRepository.save(newPost);
     }
+
 
     @Override
     @Transactional
@@ -110,7 +205,7 @@ public class PostServiceImpl implements PostService {
         return post.getViewCount();
     }
 
-    @Override
+    /*@Override
     @Transactional
     public PostResponseDTO getPost(Long postId) {
         Post post = postRepository.findById(postId)
@@ -210,7 +305,7 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(post);
     }
-
+*/
     @Override
     @Transactional
     public void bookmarkPost(Long memberId, Long postId) {

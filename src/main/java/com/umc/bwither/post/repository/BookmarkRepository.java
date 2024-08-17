@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface BookmarkRepository extends JpaRepository<Bookmark, Long> {
     Optional<Bookmark> findByUserAndPost(User user, Post post);
+    Optional<Bookmark> findByUserUserIdAndPostPostId(Long userId, Long postId);
 }

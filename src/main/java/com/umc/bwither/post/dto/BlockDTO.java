@@ -19,9 +19,8 @@ public class BlockDTO {
     @AllArgsConstructor
     public static class DataDTO {
         private String text;
-        private ImageUrlDTO file;  // file 필드는 ImageUrlDTO 타입
+        private ImageUrlDTO file;
 
-        // Factory method to create appropriate DataDTO instance
         public static DataDTO of(DataType type, String text, ImageUrlDTO file) {
             if (type == DataType.TEXT) {
                 return new DataDTO(text, null);
@@ -37,6 +36,6 @@ public class BlockDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ImageUrlDTO {
-        private String url;  // JSON의 "url" 필드와 일치
+        private String url;
     }
 }
