@@ -8,6 +8,7 @@ import com.umc.bwither.post.dto.PostResponseDTO;
 import com.umc.bwither.post.entity.Block;
 import com.umc.bwither.post.entity.Bookmark;
 import com.umc.bwither.post.entity.Post;
+import com.umc.bwither.post.entity.enums.Category;
 import com.umc.bwither.post.entity.enums.DataType; // DataType Enum을 import
 import com.umc.bwither.post.repository.BookmarkRepository;
 import com.umc.bwither.post.repository.PostRepository;
@@ -167,26 +168,26 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        return PostResponseDTO.getPostDTO(post, bookmarkRepository);
+        return PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent());
     }
 
     @Override
     @Transactional
-    public List<PostResponseDTO> getAllPosts() {
+    public List<PostResponseDTO> getAllPosts(Long userId) {
         // DB에서 가져와서 DTO로 변환
         List<Post> postList = postRepository.findAll();
         return postList.stream()
-                .map(template3 -> PostResponseDTO.getPostDTO(template3,bookmarkRepository))
+                .map(post -> PostResponseDTO.getPostDTO(post,bookmarkRepository.findByUserUserIdAndPostPostId(userId, post.getPostId()).isPresent()))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public List<PostResponseDTO> getPostsByCategory(String category) {
+    public List<PostResponseDTO> getPostsByCategory(Category category) {
         // 카테고리에 따라 게시글을 필터링
         List<Post> postList = postRepository.findByCategory(category);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository))
+                .map(post -> PostResponseDTO.getPostDTO(post, null))
                 .collect(Collectors.toList());
     }
 
@@ -318,7 +319,7 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
 
         return posts.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository))
+                .map(post -> PostResponseDTO.getPostDTO(post, null))
                 .collect(Collectors.toList());
     }
 }

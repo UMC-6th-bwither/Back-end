@@ -28,11 +28,9 @@ public class PostResponseDTO {
     private Integer viewCount;
     private Integer bookmarkCount;
 
-    public static PostResponseDTO getPostDTO(Post post, BookmarkRepository bookmarkRepository) {
+    public static PostResponseDTO getPostDTO(Post post, Boolean isSaved) {
         List<GetBlockDTO> blockDTOS = post.getBlocks().stream()
                 .map(GetBlockDTO::getBlockDTO).toList();
-        // 사용자가 해당 게시글을 북마크했는지 여부 확인
-        boolean isSaved = bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent();
 
         return PostResponseDTO.builder()
                 .id(post.getPostId())
