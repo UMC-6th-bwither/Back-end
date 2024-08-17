@@ -17,6 +17,8 @@ public interface PostService {
 
     List<PostResponseDTO> getAllPosts();
 
+    List<PostResponseDTO> getPostsByCategory(String category);
+
     void deletePost(Long postId);
 
     void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
@@ -27,4 +29,5 @@ public interface PostService {
 
     void unbookmarkPost(Long memberId, Long postId);
 
+    List<PostResponseDTO> getBookmarkedPosts(Long userId);
 }

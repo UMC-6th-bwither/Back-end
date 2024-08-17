@@ -182,6 +182,16 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
+    public List<PostResponseDTO> getPostsByCategory(String category) {
+        // 카테고리에 따라 게시글을 필터링
+        List<Post> postList = postRepository.findByCategory(category);
+        return postList.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
     public void deletePost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
@@ -293,5 +303,22 @@ public class PostServiceImpl implements PostService {
 
         // 북마크 삭제
         bookmarkRepository.delete(bookmark);
+    }
+
+    @Override
+    @Transactional
+    public List<PostResponseDTO> getBookmarkedPosts(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        List<Bookmark> bookmarks = bookmarkRepository.findByUser(user);
+
+        List<Post> posts = bookmarks.stream()
+                .map(Bookmark::getPost)
+                .collect(Collectors.toList());
+
+        return posts.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository))
+                .collect(Collectors.toList());
     }
 }

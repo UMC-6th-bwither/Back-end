@@ -49,6 +49,18 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
 
+    @GetMapping("/tips")
+    public ResponseEntity<ApiResponse> getAllTipPosts() {
+        List<PostResponseDTO> posts = postService.getPostsByCategory("TIP");
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
+    }
+
+    @GetMapping("/reviews")
+    public ResponseEntity<ApiResponse> getAllReviewPosts() {
+        List<PostResponseDTO> posts = postService.getPostsByCategory("REVIEW");
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
+    }
+
     @PutMapping("/tip/{postId}")
     public ResponseEntity<ApiResponse> updateTip(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
         postService.updateTips(postId, requestDTO);
@@ -77,4 +89,9 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
     }
 
+    @GetMapping("/{userId}/bookmarks")
+    public ResponseEntity<ApiResponse> getBookmarkedPosts(@PathVariable Long userId) {
+        List<PostResponseDTO> posts = postService.getBookmarkedPosts(userId);
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
+    }
 }
