@@ -30,20 +30,18 @@ public class PostServiceImpl implements PostService {
     private final BreederRepository breederRepository;
     private final BookmarkRepository bookmarkRepository;
 
+
     @Override
     @Transactional
-    public void createPost(PostRequestDTO requestDTO) {
-        // 브리더 조회
-        Breeder breeder = breederRepository.findById(requestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("Breeder not found"));
+    public void createTips(PostRequestDTO.GetTipDTO tipDTO) {
 
         // 사용자 조회
-        User user = userRepository.findById(requestDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + requestDTO.getUserId()));
+        User user = userRepository.findById(tipDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + tipDTO.getUserId()));
 
-
+        // 블록 리스트 생성
         List<Block> blocks = new ArrayList<>();
-        requestDTO.getBlocks().forEach(blockDTO -> {
+        tipDTO.getBlocks().forEach(blockDTO -> {
             Block block = new Block();
             block.setDataType(blockDTO.getType());
 
@@ -52,20 +50,63 @@ public class PostServiceImpl implements PostService {
                 block.setImageUrl(blockDTO.getData().getFile().getUrl());
             } else if (blockDTO.getType() == DataType.TEXT) {
                 block.setText(blockDTO.getData().getText());
+            } else {
+                throw new IllegalArgumentException("Unsupported data type: " + blockDTO.getType());
             }
 
             blocks.add(block);
         });
 
-        Post post = Post.create(
-                breeder,
-                user,
-                requestDTO.getPetType(),
-                requestDTO.getRating(),
-                requestDTO.getTitle(),
-                requestDTO.getCategory(),
-                blocks
-        );
+        Post post = Post.builder()
+                .user(user)
+                .petType(tipDTO.getPetType())
+                .title(tipDTO.getTitle())
+                .category(tipDTO.getCategory())
+                .blocks(blocks)
+                .build();
+
+        blocks.forEach(block -> block.setPost(post)); // Block 객체에도 Post 참조 설정
+
+        postRepository.save(post);
+    }
+
+    @Override
+    @Transactional
+    public void createReviews(PostRequestDTO.GetReviewDTO reviewDTO) {
+        // 브리더 조회
+        Breeder breeder = breederRepository.findById(reviewDTO.getBreederId())
+                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + reviewDTO.getUserId()));
+
+        // 사용자 조회
+        User user = userRepository.findById(reviewDTO.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + reviewDTO.getUserId()));
+
+        // 블록 리스트 생성
+        List<Block> blocks = new ArrayList<>();
+        reviewDTO.getBlocks().forEach(blockDTO -> {
+            Block block = new Block();
+            block.setDataType(blockDTO.getType());
+
+            // 타입에 따른 텍스트 또는 이미지 URL 처리 로직
+            if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
+                block.setImageUrl(blockDTO.getData().getFile().getUrl());
+            } else if (blockDTO.getType() == DataType.TEXT) {
+                block.setText(blockDTO.getData().getText());
+            } else {
+                throw new IllegalArgumentException("Unsupported data type: " + blockDTO.getType());
+            }
+
+            blocks.add(block);
+        });
+
+        Post post = Post.builder()
+                .breeder(breeder)
+                .user(user)
+                .petType(reviewDTO.getPetType())
+                .rating(reviewDTO.getRating())
+                .category(reviewDTO.getCategory())
+                .blocks(blocks)
+                .build();
 
         blocks.forEach(block -> block.setPost(post)); // Block 객체에도 Post 참조 설정
 
@@ -75,24 +116,34 @@ public class PostServiceImpl implements PostService {
         updateAverageRating(post);
     }
 
+
     // 평균 별점 계산 및 업데이트
     @Transactional
     public void updateAverageRating(Post newPost) {
+        // Breeder가 null이면 평균 별점 업데이트를 건너뜁니다.
+        if (newPost.getBreeder() == null) {
+            return;
+        }
+
         List<Post> allPosts = postRepository.findAll();
         double totalRating = 0.0;
         int count = 0;
 
         for (Post post : allPosts) {
-            totalRating += post.getRating(); // 각 게시글의 별점 합산
-            count++;
+            if (post.getRating() != null) {
+                totalRating += post.getRating(); // 각 게시글의 별점 합산
+                count++;
+            }
         }
 
-        double averageRating = totalRating / count; // 평균 계산
+        if (count > 0) {
+            double averageRating = totalRating / count;
+            newPost.getBreeder().setAverageRating(averageRating);
+        }
 
-        // 새로운 게시글에 평균 별점 설정
-        newPost.getBreeder().setAverageRating(averageRating);
-        postRepository.save(newPost); // 게시글 저장 후 평균 별점 업데이트
+        postRepository.save(newPost);
     }
+
 
     @Override
     @Transactional
@@ -116,55 +167,26 @@ public class PostServiceImpl implements PostService {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        Breeder breeder =post.getBreeder();
-
-        List<BlockDTO> blockDTOs = post.getBlocks().stream()
-                .map(block -> {
-                    BlockDTO.DataDTO dataDTO = block.getImageUrl() != null
-                            ? new BlockDTO.DataDTO(null, new BlockDTO.ImageUrlDTO(block.getImageUrl()))
-                            : new BlockDTO.DataDTO(block.getText(), null);
-
-                    return BlockDTO.builder()
-                            .type(block.getDataType())
-                            .data(dataDTO)
-                            .build();
-                })
-                .collect(Collectors.toList());
-
-        return new PostResponseDTO(post.getPostId(), post.getTitle(), post.getPetType(), post.getRating(), breeder.getAverageRating(), post.getCategory(),post.getBreeder().getTradeName(), post.getUser().getName(), blockDTOs, post.getCreatedAt());
+        return PostResponseDTO.getPostDTO(post, bookmarkRepository);
     }
 
     @Override
     @Transactional
     public List<PostResponseDTO> getAllPosts() {
-        return postRepository.findAll().stream()
-                .map(post -> {
-                    List<BlockDTO> blockDTOs = post.getBlocks().stream()
-                            .map(block -> {
-                                BlockDTO.DataDTO dataDTO = block.getImageUrl() != null
-                                        ? new BlockDTO.DataDTO(null, new BlockDTO.ImageUrlDTO(block.getImageUrl()))
-                                        : new BlockDTO.DataDTO(block.getText(), null);
+        // DB에서 가져와서 DTO로 변환
+        List<Post> postList = postRepository.findAll();
+        return postList.stream()
+                .map(template3 -> PostResponseDTO.getPostDTO(template3,bookmarkRepository))
+                .collect(Collectors.toList());
+    }
 
-                                return BlockDTO.builder()
-                                        .type(block.getDataType())
-                                        .data(dataDTO)
-                                        .build();
-                            })
-                            .collect(Collectors.toList());
-
-                    return new PostResponseDTO(
-                            post.getPostId(),
-                            post.getTitle(),
-                            post.getPetType(),
-                            post.getRating(),
-                            post.getBreeder().getAverageRating(),
-                            post.getCategory(),
-                            post.getBreeder().getUser().getName(),
-                            post.getUser().getName(),
-                            blockDTOs,
-                            post.getCreatedAt()
-                    );
-                })
+    @Override
+    @Transactional
+    public List<PostResponseDTO> getPostsByCategory(String category) {
+        // 카테고리에 따라 게시글을 필터링
+        List<Post> postList = postRepository.findByCategory(category);
+        return postList.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository))
                 .collect(Collectors.toList());
     }
 
@@ -177,14 +199,50 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    @Transactional
-    public void updatePost(Long postId, PostRequestDTO requestDTO) {
+    public void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 게시글 제목 및 카테고리 업데이트
+        post.setPetType(requestDTO.getPetType());
         post.setTitle(requestDTO.getTitle());
-        post.setCategory(requestDTO.getCategory());
+
+        // 기존 블록 삭제
+        post.getBlocks().clear();
+
+        // 새로운 블록 추가
+        List<Block> blocks = requestDTO.getBlocks().stream()
+                .map(blockDTO -> {
+                    Block block = new Block();
+                    block.setDataType(blockDTO.getType());
+
+                    if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
+                        block.setImageUrl(blockDTO.getData().getFile().getUrl());
+                    } else if (blockDTO.getType() == DataType.TEXT) {
+                        block.setText(blockDTO.getData().getText());
+                    }
+
+                    return block;
+                })
+                .collect(Collectors.toList());
+
+        blocks.forEach(block -> block.setPost(post));
+        post.getBlocks().addAll(blocks);
+
+        postRepository.save(post);
+    }
+
+    @Override
+    public void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO) {
+        // 브리더 조회
+        Breeder breeder = breederRepository.findById(requestDTO.getBreederId())
+                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + requestDTO.getUserId()));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        post.setBreeder(breeder);
+        post.setPetType(requestDTO.getPetType());
+        post.setRating(requestDTO.getRating());
 
         // 기존 블록 삭제
         post.getBlocks().clear();
@@ -245,5 +303,22 @@ public class PostServiceImpl implements PostService {
 
         // 북마크 삭제
         bookmarkRepository.delete(bookmark);
+    }
+
+    @Override
+    @Transactional
+    public List<PostResponseDTO> getBookmarkedPosts(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        List<Bookmark> bookmarks = bookmarkRepository.findByUser(user);
+
+        List<Post> posts = bookmarks.stream()
+                .map(Bookmark::getPost)
+                .collect(Collectors.toList());
+
+        return posts.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository))
+                .collect(Collectors.toList());
     }
 }
