@@ -73,7 +73,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void createReviews(PostRequestDTO.GetReviewDTO reviewDTO) {
-        // 사용자 조회
+        // 브리더 조회
         Breeder breeder = breederRepository.findById(reviewDTO.getBreederId())
                 .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + reviewDTO.getUserId()));
 
@@ -188,15 +188,13 @@ public class PostServiceImpl implements PostService {
         postRepository.delete(post);
     }
 
-    /*@Override
-    @Transactional
-    public void updatePost(Long postId, PostRequestDTO requestDTO) {
+    @Override
+    public void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
-        // 게시글 제목 및 카테고리 업데이트
+        post.setPetType(requestDTO.getPetType());
         post.setTitle(requestDTO.getTitle());
-        post.setCategory(requestDTO.getCategory());
 
         // 기존 블록 삭제
         post.getBlocks().clear();
@@ -221,7 +219,46 @@ public class PostServiceImpl implements PostService {
         post.getBlocks().addAll(blocks);
 
         postRepository.save(post);
-    }*/  // Todo : 게시글 수정
+    }
+
+    @Override
+    public void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO) {
+        // 브리더 조회
+        Breeder breeder = breederRepository.findById(requestDTO.getBreederId())
+                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + requestDTO.getUserId()));
+
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        post.setBreeder(breeder);
+        post.setPetType(requestDTO.getPetType());
+        post.setRating(requestDTO.getRating());
+
+        // 기존 블록 삭제
+        post.getBlocks().clear();
+
+        // 새로운 블록 추가
+        List<Block> blocks = requestDTO.getBlocks().stream()
+                .map(blockDTO -> {
+                    Block block = new Block();
+                    block.setDataType(blockDTO.getType());
+
+                    if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
+                        block.setImageUrl(blockDTO.getData().getFile().getUrl());
+                    } else if (blockDTO.getType() == DataType.TEXT) {
+                        block.setText(blockDTO.getData().getText());
+                    }
+
+                    return block;
+                })
+                .collect(Collectors.toList());
+
+        blocks.forEach(block -> block.setPost(post));
+        post.getBlocks().addAll(blocks);
+
+        postRepository.save(post);
+    }
+
     @Override
     @Transactional
     public void bookmarkPost(Long memberId, Long postId) {

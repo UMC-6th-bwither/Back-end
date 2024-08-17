@@ -49,11 +49,17 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
 
-//    @PutMapping("/{postId}")
-//    public ResponseEntity<ApiResponse> updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO requestDTO) {
-//        postService.updatePost(postId, requestDTO);
-//        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
-//    }
+    @PutMapping("/tip/{postId}")
+    public ResponseEntity<ApiResponse> updateTip(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
+        postService.updateTips(postId, requestDTO);
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
+    }
+
+    @PutMapping("/review/{postId}")
+    public ResponseEntity<ApiResponse> updateReview(@PathVariable Long postId, @RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
+        postService.updateReviews(postId, requestDTO);
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
+    }
 
     @PostMapping("/{postId}/bookmark")
     public ResponseEntity<?> bookmarkPost(
