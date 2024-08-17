@@ -6,20 +6,15 @@ import lombok.*;
 @Data @Entity @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "block")
 public class Block {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "json")
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
     private String block;
-
-    /*@Column
-    private DataType dataType;
-    @Column
-    private String text;
-    @Column
-    private String imageUrl;*/
 
     @ManyToOne
     @JoinColumn(name = "post_id")

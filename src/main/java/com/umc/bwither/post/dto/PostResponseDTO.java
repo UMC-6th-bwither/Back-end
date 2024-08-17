@@ -5,6 +5,7 @@ import com.umc.bwither.post.entity.Post;
 import com.umc.bwither.post.entity.enums.Category;
 import com.umc.bwither.post.entity.enums.PetType;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -52,36 +53,11 @@ public class PostResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class GetBlockDTO{
-
         private String block;
         public static GetBlockDTO getBlockDTO(Block block) {
-
             return GetBlockDTO.builder()
                     .block(block.getBlock())
                     .build();
         }
-
-        /*private DataType type;
-        private BlockDTO.DataDTO data;
-
-        public static GetBlockDTO getBlockDTO(Block block) {
-            BlockDTO.DataDTO dataDTO = null;
-
-            if (block.getDataType() == DataType.TEXT) {
-                dataDTO = new BlockDTO.DataDTO(block.getText(), null);
-            } else if (block.getDataType() == DataType.IMAGE) {
-                BlockDTO.ImageUrlDTO imageUrlDTO = new BlockDTO.ImageUrlDTO(block.getImageUrl());
-                dataDTO = new BlockDTO.DataDTO(null, imageUrlDTO);
-            } else {
-                throw new IllegalArgumentException("지원되지 않는 데이터 유형 : " + block.getDataType());
-            }
-
-            return GetBlockDTO.builder()
-                    .type(block.getDataType())
-                    .data(dataDTO)
-                    .build();
-        }*/
     }
-
-
 }

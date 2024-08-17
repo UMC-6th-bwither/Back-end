@@ -11,6 +11,7 @@ import com.umc.bwither.post.entity.Block;
 import com.umc.bwither.post.entity.Bookmark;
 import com.umc.bwither.post.entity.Post;
 import com.umc.bwither.post.entity.enums.Category;
+import com.umc.bwither.post.repository.BlockRepository;
 import com.umc.bwither.post.repository.BookmarkRepository;
 import com.umc.bwither.post.repository.PostRepository;
 import com.umc.bwither.user.entity.User;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 public class PostServiceImpl implements PostService {
 
     private final PostRepository postRepository;
+    private final BlockRepository blockRepository;
     private final UserRepository userRepository;
     private final BreederRepository breederRepository;
     private final BookmarkRepository bookmarkRepository;
@@ -37,37 +39,37 @@ public class PostServiceImpl implements PostService {
     @Transactional
     public void createTips(PostRequestDTO.GetTipDTO tipDTO) {
 
-        //mapper 설정
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-
         // 사용자 조회
         User user = userRepository.findById(tipDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + tipDTO.getUserId()));
 
         Post post = Post.builder()
+                .user(user)
+                .petType(tipDTO.getPetType())
                 .title(tipDTO.getTitle())
                 .category(tipDTO.getCategory())
-                .petType(tipDTO.getPetType())
-                .user(user) // Assuming you have a way to fetch the User entity
                 .build();
 
+        Post savedPost = postRepository.save(post);
+
         List<Block> blocks = tipDTO.getBlocks().stream()
-                .map(dto -> {
+                .map(blockDTO -> {
+                    Block block = new Block();
                     try {
-                        return Block.builder()
-                                .block(mapper.writeValueAsString(dto))
-                                .post(post)
-                                .build();
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException("Error serializing block data to JSON", e);
+                        // json 직렬화
+                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        block.setPost(post);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error serializing blockDTO", e);
                     }
+                    return block;
                 })
                 .collect(Collectors.toList());
 
-        post.setBlocks(blocks);
-        postRepository.save(post);
-    }
+        blockRepository.saveAll(blocks);
 
+        savedPost.setBlocks(blocks);
+    }
 
 
  /*   @Override
