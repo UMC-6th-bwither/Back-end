@@ -34,8 +34,11 @@ public class BreederController {
 
     @Operation(summary = "브리더 상세페이지 조회 API", description = "브리더 상세페이지 조회 API")
     @GetMapping("/{breederId}")
-    public ApiResponse<BreederResponseDTO.BreederDetailDTO> getBreederDetail(@PathVariable("breederId") Long breederId) {
-        BreederResponseDTO.BreederDetailDTO result = breederService.getBreederDetail(breederId);
+    @Parameter(name = "sort", description = "정렬 필드 (createdAt, rating_asc, rating_desc)")
+    public ApiResponse<BreederResponseDTO.BreederDetailDTO> getBreederDetail(
+            @PathVariable("breederId") Long breederId,
+            @RequestParam(name = "sort", defaultValue = "createdAt") String sortField) {
+        BreederResponseDTO.BreederDetailDTO result = breederService.getBreederDetail(breederId, sortField);
         return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_BREEDER,result);
     }
 
@@ -46,7 +49,7 @@ public class BreederController {
             @Parameter(name = "region", description = "지역 (서울, 세종, 강원, 인천, 경기, 충청북도, 충청남도, 경상북도, 대전, 대구, 전라북도, 경상남도, 울산, 광주, 부산, 전라남도, 제주)"),
             @Parameter(name = "animalType", description = "동물 타입 (DOG, CAT)"),
             @Parameter(name = "species", description = "종"),
-            @Parameter(name = "sort", description = "정렬 필드 (createdAt, animalMemberCount, distance)")
+            @Parameter(name = "sort", description = "정렬 필드 (createdAt, breederMemberCount, distance, animalCount)")
     })
     public ApiResponse<BreederResponseDTO.BreederPreViewListDTO> getBreederList(
             @RequestParam(name = "page", defaultValue = "0") Integer page,
