@@ -3,6 +3,7 @@ package com.umc.bwither.post.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.post.dto.BlockDTO;
 import com.umc.bwither.post.dto.PostRequestDTO;
@@ -20,6 +21,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,51 +74,52 @@ public class PostServiceImpl implements PostService {
     }
 
 
- /*   @Override
+    @Override
     @Transactional
     public void createReviews(PostRequestDTO.GetReviewDTO reviewDTO) {
         // 브리더 조회
         Breeder breeder = breederRepository.findById(reviewDTO.getBreederId())
-                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + reviewDTO.getUserId()));
+                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + reviewDTO.getBreederId()));
 
         // 사용자 조회
         User user = userRepository.findById(reviewDTO.getUserId())
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + reviewDTO.getUserId()));
 
-        // 블록 리스트 생성
-        List<Block> blocks = new ArrayList<>();
-        reviewDTO.getBlocks().forEach(blockDTO -> {
-            Block block = new Block();
-            block.setDataType(blockDTO.getType());
-
-            // 타입에 따른 텍스트 또는 이미지 URL 처리 로직
-            if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
-                block.setImageUrl(blockDTO.getData().getFile().getUrl());
-            } else if (blockDTO.getType() == DataType.TEXT) {
-                block.setText(blockDTO.getData().getText());
-            } else {
-                throw new IllegalArgumentException("Unsupported data type: " + blockDTO.getType());
-            }
-
-            blocks.add(block);
-        });
-
+        // 포스트 생성
         Post post = Post.builder()
                 .breeder(breeder)
                 .user(user)
                 .petType(reviewDTO.getPetType())
                 .rating(reviewDTO.getRating())
                 .category(reviewDTO.getCategory())
-                .blocks(blocks)
                 .build();
 
-        blocks.forEach(block -> block.setPost(post)); // Block 객체에도 Post 참조 설정
+        // 먼저 Post를 저장해야 Block의 외래키 관계가 올바르게 설정됨
+        Post savedPost = postRepository.save(post);
 
-        postRepository.save(post);
+        // 블록 리스트 생성 및 각 블록에 포스트 설정
+        List<Block> blocks = reviewDTO.getBlocks().stream()
+                .map(blockDTO -> {
+                    Block block = new Block();
+                    try {
+                        // json 직렬화
+                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        block.setPost(post);
+                    } catch (Exception e) {
+                        throw new RuntimeException("Error serializing blockDTO", e);
+                    }
+                    return block;
+                })
+                .collect(Collectors.toList());
+
+        // 블록 리스트 저장
+        blockRepository.saveAll(blocks);
+        savedPost.setBlocks(blocks);
 
         // 전체 게시글의 평균 별점 계산 및 업데이트
         updateAverageRating(post);
-    }*/
+    }
+
 
 
     // 평균 별점 계산 및 업데이트

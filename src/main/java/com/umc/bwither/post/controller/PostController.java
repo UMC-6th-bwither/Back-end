@@ -26,7 +26,7 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
     }
 
-    /*@PostMapping("/create/review")
+    @PostMapping("/create/review")
     public ResponseEntity<?> createReview(@RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
         postService.createReviews(requestDTO);
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
@@ -62,7 +62,7 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
 
-    @PutMapping("/tip/{postId}")
+    /*@PutMapping("/tip/{postId}")
     public ResponseEntity<ApiResponse> updateTip(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
         postService.updateTips(postId, requestDTO);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
@@ -72,7 +72,7 @@ public class PostController {
     public ResponseEntity<ApiResponse> updateReview(@PathVariable Long postId, @RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
         postService.updateReviews(postId, requestDTO);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
-    }
+    }*/
 
     @PostMapping("/{postId}/bookmark")
     public ResponseEntity<?> bookmarkPost(
@@ -94,5 +94,5 @@ public class PostController {
     public ResponseEntity<ApiResponse> getBookmarkedPosts(@PathVariable Long userId) {
         List<PostResponseDTO> posts = postService.getBookmarkedPosts(userId);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
-    }*/
+    }
 }
