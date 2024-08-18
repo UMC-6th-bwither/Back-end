@@ -31,14 +31,18 @@ public class PostResponseDTO {
         List<GetBlockDTO> blockDTOS = post.getBlocks().stream()
                 .map(GetBlockDTO::getBlockDTO).toList();
 
+        // Breeder가 null일 경우 처리
+        Double averageRating = (post.getBreeder() != null) ? post.getBreeder().getAverageRating() : null;
+        String kennelName = (post.getBreeder() != null) ? post.getBreeder().getTradeName() : null;
+
         return PostResponseDTO.builder()
                 .id(post.getPostId())
                 .title(post.getTitle())
                 .petType(post.getPetType())
                 .rating(post.getRating())
-                .averageRating(post.getBreeder().getAverageRating())
+                .averageRating(averageRating)
                 .category(post.getCategory())
-                .kennelName(post.getBreeder().getTradeName())
+                .kennelName(kennelName)
                 .author(post.getUser().getName())
                 .createdAt(post.getCreatedAt())
                 .isSaved(isSaved)
@@ -46,6 +50,7 @@ public class PostResponseDTO {
                 .viewCount(post.getViewCount())
                 .bookmarkCount(post.getBookmarkCount())
                 .build();
+
     }
 
     @Builder
