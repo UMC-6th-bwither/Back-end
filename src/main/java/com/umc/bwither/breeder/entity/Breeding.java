@@ -28,9 +28,8 @@ public class Breeding extends BaseEntity {
     @Column
     private LocalDate leaveDate;
 
-    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private EmploymentStatus currentlyEmployed;  // 재직 중 여부
+    private Boolean currentlyEmployed;  // 재직 중 여부
 
     @Column(columnDefinition = "TEXT")
     private String description;
