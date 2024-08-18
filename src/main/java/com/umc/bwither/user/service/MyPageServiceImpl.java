@@ -88,7 +88,6 @@ public class MyPageServiceImpl implements MyPageService{
                     .licenseNumber(breeder.getLicenseNumber())
                     .snsAddress(breeder.getSnsAddress())
                     .animalHospital(breeder.getAnimalHospital())
-                    .employmentStatus(breeder.getEmploymentStatus())
                     .trustLevel(breeder.getTrustLevel())
                     .description(breeder.getDescription())
                     .descriptionDetail(breeder.getDescriptionDetail())
@@ -203,9 +202,6 @@ public class MyPageServiceImpl implements MyPageService{
         if (breederUpdateDTO.getAnimalHospital() != null) {
             breeder.setAnimalHospital(breederUpdateDTO.getAnimalHospital());
         }
-        if (breederUpdateDTO.getEmploymentStatus() != null) {
-            breeder.setEmploymentStatus(breederUpdateDTO.getEmploymentStatus());
-        }
         if (breederUpdateDTO.getTrustLevel() != null) {
             breeder.setTrustLevel(breederUpdateDTO.getTrustLevel());
         }
@@ -302,7 +298,6 @@ public class MyPageServiceImpl implements MyPageService{
                 .licenseNumber(breeder.getLicenseNumber())
                 .snsAddress(breeder.getSnsAddress())
                 .animalHospital(breeder.getAnimalHospital())
-                .employmentStatus(breeder.getEmploymentStatus())
                 .trustLevel(breeder.getTrustLevel())
                 .description(breeder.getDescription())
                 .descriptionDetail(breeder.getDescriptionDetail())

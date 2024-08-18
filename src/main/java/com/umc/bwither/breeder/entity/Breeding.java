@@ -1,6 +1,7 @@
 package com.umc.bwither.breeder.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
+import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -21,14 +22,15 @@ public class Breeding extends BaseEntity {
     @Column(nullable = false, length = 50)
     private String tradeName;
 
-    @Column
+    @Column(nullable = false)
     private LocalDate joinDate;
 
     @Column
     private LocalDate leaveDate;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Boolean currentlyEmployed;  // 재직 중 여부
+    private EmploymentStatus currentlyEmployed;  // 재직 중 여부
 
     @Column(columnDefinition = "TEXT")
     private String description;
