@@ -12,9 +12,7 @@ import java.util.List;
 @Getter
 @Builder
 public class BreederJoinDTO {
-    private String token;
     // User 관련 필드
-    private String userId;
     private String name;           // 이름
     private String phone;          // 전화번호
     private String email;          // 이메일
