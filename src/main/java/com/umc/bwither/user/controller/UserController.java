@@ -213,6 +213,7 @@ public class UserController {
                 final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
                         .username(user.getUsername())
                         .token(token)
+                        .role(user.getRole())
                         .build();
 
                 return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_USER, responseDTO));
