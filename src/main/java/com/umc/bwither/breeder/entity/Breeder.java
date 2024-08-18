@@ -6,6 +6,7 @@ import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import com.umc.bwither.user.entity.User;
 import jakarta.persistence.*;
+import java.time.temporal.ChronoUnit;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -124,5 +125,20 @@ public class Breeder extends BaseEntity {
     private Double averageRating;
     public Breeder(Long breederId) {
         this.breederId = breederId;
+    }
+
+    public int getExperienceYears() {
+        if (breedingCareer == null || breedingCareer.isEmpty()) {
+            return 0;
+        }
+
+        long totalMonths = breedingCareer.stream()
+            .mapToLong(breeding -> {
+                LocalDate endDate = (breeding.getLeaveDate() != null) ? breeding.getLeaveDate() : LocalDate.now();
+                return ChronoUnit.MONTHS.between(breeding.getJoinDate(), endDate);
+            })
+            .sum();
+
+        return (int) (totalMonths / 12);
     }
 }
