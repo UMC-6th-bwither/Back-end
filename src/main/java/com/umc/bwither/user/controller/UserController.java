@@ -99,7 +99,7 @@ public class UserController {
                     .licenseNumber(breederJoinDTO.getLicenseNumber())
                     .snsAddress(breederJoinDTO.getSnsAddress())
                     .animalHospital(breederJoinDTO.getAnimalHospital())
-                    .employmentStatus(breederJoinDTO.getEmploymentStatus())
+                    .certificateName(breederJoinDTO.getCertificateName())
                     .trustLevel(5)
                     .build();
 
@@ -211,6 +211,7 @@ public class UserController {
                 // 토큰 생성
                 final String token = tokenProvider.create(user);
                 final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
+                        .userId(user.getUserId())
                         .username(user.getUsername())
                         .token(token)
                         .role(user.getRole())

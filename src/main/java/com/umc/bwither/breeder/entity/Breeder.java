@@ -66,11 +66,14 @@ public class Breeder extends BaseEntity {
     private String snsAddress;
 
     @Column(length = 100)
+    private String certificateName;
+
+    @Column(length = 100)
     private String animalHospital;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private EmploymentStatus employmentStatus;
+    //@Enumerated(EnumType.STRING)
+    //@Column(nullable = false)
+    //private EmploymentStatus employmentStatus;
 
     //    @Column(nullable = false)
     @Column
