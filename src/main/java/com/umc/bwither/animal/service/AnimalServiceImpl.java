@@ -5,6 +5,8 @@ import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.dto.AnimalRequestDTO.AnimalCreateDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalDetailDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalPreViewDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BreederAnimalDTO;
@@ -17,6 +19,7 @@ import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.animal.entity.AnimalMember;
 import com.umc.bwither.animal.entity.AnimalParents;
 import com.umc.bwither.animal.entity.HealthCheckImage;
+import com.umc.bwither.animal.entity.WaitList;
 import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
 import com.umc.bwither.animal.entity.enums.Gender;
@@ -149,6 +152,7 @@ public class AnimalServiceImpl implements AnimalService {
             .parasitic(animalCreateDTO.getParasitic())
             .healthCheck(animalCreateDTO.getHealthCheck())
             .status(Status.BEFORE)
+            .animalMemberCount(0)
             .build());
 
     if (animalFiles != null) {
@@ -247,6 +251,10 @@ public class AnimalServiceImpl implements AnimalService {
             .member(member)
             .build();
     animalMemberRepository.save(animalMember);
+
+    Integer count = animalMemberRepository.countByAnimal(animal);
+    animal.setAnimalMemberCount(count);
+    animalRepository.save(animal);
   }
 
   @Override
@@ -259,6 +267,10 @@ public class AnimalServiceImpl implements AnimalService {
             .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_BOOKMARK));
 
     animalMemberRepository.delete(animalMember);
+
+    Integer count = animalMemberRepository.countByAnimal(animal);
+    animal.setAnimalMemberCount(count);
+    animalRepository.save(animal);
   }
 
   @Override
@@ -472,6 +484,111 @@ public class AnimalServiceImpl implements AnimalService {
       }
     }
     return missingFilesList;
+  }
+
+  @Override
+  public AnimalPreViewListDTO getAnimalList(String region, AnimalType animalType, Gender gender,
+      String breed, Status status, String sortField, Integer page) {
+
+    Pageable pageable;
+    if ("animalMemberCount".equals(sortField)) {
+      pageable = PageRequest.of(page, 6,
+          Sort.by(Sort.Order.desc("animalMemberCount"), Sort.Order.desc("createdAt")));
+    } else {
+      pageable = PageRequest.of(page, 6, Sort.by(Sort.Direction.DESC, sortField));
+    }
+
+    Page<Animal> animals = animalRepository.findAll(pageable);
+    List<Animal> animalList = new ArrayList<>(animals.getContent());
+
+
+    if (gender != null) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getGender() == gender)
+          .collect(Collectors.toList());
+    }
+
+    if (breed != null && !breed.isEmpty()) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getBreed().equalsIgnoreCase(breed))
+          .collect(Collectors.toList());
+    }
+
+    if (animalType != null) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getType() == animalType)
+          .collect(Collectors.toList());
+    }
+
+    if (status != null) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getStatus() == status)
+          .collect(Collectors.toList());
+    }
+
+    if (region != null && !region.isEmpty()) {
+      animalList = animalList.stream()
+          .filter(animal -> animal.getBreeder().getUser().getAddress().contains(region))
+          .collect(Collectors.toList());
+    }
+
+    List<AnimalPreViewDTO> animalDTOs = animalList.stream()
+        .map(animal -> {
+            int waitListCount = waitListRepository.countByAnimal(animal);
+            return AnimalPreViewDTO.builder()
+            .animalId(animal.getAnimalId())
+            .status(animal.getStatus())
+            .location(animal.getBreeder().getUser().getAddress())
+            .name(animal.getName())
+            .breed(animal.getBreed())
+            .birthDate(animal.getBirthDate())
+            .gender(animal.getGender())
+            .breederName(animal.getBreeder().getTradeName())
+            .waitList(waitListCount)
+            .type(animal.getType())
+            .createdAt(animal.getCreatedAt())
+            .updatedAt(animal.getUpdatedAt())
+            .imageUrl(animal.getAnimalFiles().isEmpty() ? null : animal.getAnimalFiles().get(0).getAnimalFilePath())
+            .build();
+        })
+        .collect(Collectors.toList());
+
+    return AnimalPreViewListDTO.builder()
+        .animalList(animalDTOs)
+        .listSize(animalDTOs.size())
+        .totalPage(animals.getTotalPages())
+        .totalElements(animals.getTotalElements())
+        .isFirst(animals.isFirst())
+        .isLast(animals.isLast())
+        .build();
+  }
+
+  @Override
+  public void waitAnimal(long memberId, Long animalId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    waitListRepository.findByAnimalAndMember(animal, member)
+        .ifPresent(mb -> { throw new TestHandler(ErrorStatus.ANIMAL_ALREADY_WAIT); });
+
+    WaitList waitList = WaitList.builder()
+        .animal(animal)
+        .member(member)
+        .build();
+    waitListRepository.save(waitList);
+  }
+
+  @Override
+  public void unwaitAnimal(long memberId, Long animalId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+    WaitList waitList = waitListRepository.findByAnimalAndMember(animal, member)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_WAIT));
+
+    waitListRepository.delete(waitList);
   }
 
 }

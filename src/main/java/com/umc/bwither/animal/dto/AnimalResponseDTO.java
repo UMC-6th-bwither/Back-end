@@ -6,6 +6,7 @@ import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.ParentType;
 import com.umc.bwither.animal.entity.enums.Status;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -13,6 +14,39 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 public class AnimalResponseDTO {
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AnimalPreViewListDTO {
+    List<AnimalPreViewDTO> animalList;
+    Integer listSize;
+    Integer totalPage;
+    Long totalElements;
+    Boolean isFirst;
+    Boolean isLast;
+  }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AnimalPreViewDTO {
+    Long animalId;
+    Status status;
+    String location;
+    String name;
+    String breed;
+    LocalDate birthDate;
+    Gender gender;
+    String breederName;
+    Integer waitList;
+    AnimalType type;
+    String imageUrl;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
+  }
 
   @Builder
   @Getter

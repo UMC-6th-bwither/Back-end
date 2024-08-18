@@ -6,6 +6,7 @@ import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.dto.AnimalRequestDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
+import com.umc.bwither.animal.dto.AnimalResponseDTO.AnimalPreViewListDTO;
 import com.umc.bwither.animal.dto.AnimalResponseDTO.BookmarkAnimalPreViewListDTO;
 import com.umc.bwither.animal.entity.enums.AnimalType;
 import com.umc.bwither.animal.entity.enums.FileType;
@@ -38,6 +39,29 @@ import org.springframework.web.multipart.MultipartFile;
 public class AnimalController {
 
   private final AnimalService animalService;
+
+  @GetMapping("")
+  @Operation(summary = "분양대기동물 목록 조회 API", description = "분양대기동물 목록 조회 API.")
+  @Parameters({
+      @Parameter(name = "page", description = "페이지 번호, 0번이 1 페이지입니다."),
+      @Parameter(name = "region", description = "지역 (서울, 세종, 강원, 인천, 경기, 충청북도, 충청남도, 경상북도, 대전, 대구, 전라북도, 경상남도, 울산, 광주, 부산, 전라남도, 제주)"),
+      @Parameter(name = "animalType", description = "동물 타입 (DOG, CAT)"),
+      @Parameter(name = "gender", description = "성별 (MALE, FEMALE)"),
+      @Parameter(name = "breed", description = "종"),
+      @Parameter(name = "status", description = "예약 여부 (BOOKING, COMPLETE, BEFORE)"),
+      @Parameter(name = "sort", description = "정렬 필드 (createdAt, animalMemberCount, distance)")
+  })
+  public ApiResponse<AnimalPreViewListDTO> getAnimalList(
+      @RequestParam(name = "page", defaultValue = "0") Integer page,
+      @RequestParam(name = "region", required = false) String region,
+      @RequestParam(name = "animalType", required = false) AnimalType animalType,
+      @RequestParam(name = "gender", required = false) Gender gender,
+      @RequestParam(name = "breed", required = false) String breed,
+      @RequestParam(name = "status", required = false) Status status,
+      @RequestParam(name = "sort", defaultValue = "createdAt") String sortField) {
+    AnimalPreViewListDTO result = animalService.getAnimalList( region, animalType, gender, breed, status, sortField, page);
+    return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_ANIMALS_LIST, result);
+  }
 
   @Operation(summary = "분양대기동물 상세페이지 조회 API", description = "분양대기동물 상세페이지 조회 API / 분양대기동물 아이디(animalId) PathVariable")
   @GetMapping("/{animalId}")
@@ -185,6 +209,23 @@ public class AnimalController {
     return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_MY_ANIMALS_LIST, result);
   }
 
+  @PostMapping("/{animalId}/wait")
+  @Operation(summary = "대기 예약하기 API", description = "대기 예약하기 API. 동물 아이디(animalId) PathVariable")
+  public ApiResponse waitAnimal(
+      @PathVariable(name = "animalId") Long animalId,
+      @RequestParam String memberId) {
+    animalService.waitAnimal(Long.parseLong(memberId), animalId);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_WAIT_ANIMAL);
+  }
+
+  @DeleteMapping("/{animalId}/wait")
+  @Operation(summary = "대기 예약 취소 API", description = "대기 예약 취소 API. 동물 아이디(animalId) PathVariable")
+  public ApiResponse unwaitAnimal(
+      @PathVariable(name = "animalId") Long animalId,
+      @RequestParam String memberId) {
+    animalService.unwaitAnimal(Long.parseLong(memberId), animalId);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_REMOVE_WAIT_ANIMAL);
+  }
 
 }
 

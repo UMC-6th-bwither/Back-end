@@ -3,9 +3,13 @@ package com.umc.bwither.breeder.dto;
 import com.umc.bwither.animal.dto.AnimalResponseDTO;
 import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.Status;
+import com.umc.bwither.breeder.entity.enums.AnimalType;
+import com.umc.bwither.post.dto.BlockDTO;
+import com.umc.bwither.post.entity.Block;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public class BreederResponseDTO {
@@ -17,6 +21,7 @@ public class BreederResponseDTO {
     public static class BreederDetailDTO {
         Long breederId;
         String profileUrl;
+        String backgroundUrl;
         String tradeName;
         List<String> species;
         String address;
@@ -27,12 +32,16 @@ public class BreederResponseDTO {
         Integer careerYear;
         Integer trustLevel;
         String tradePhone;
+        String contactableTime;
         String snsAddress;
         String detailDescription;
         String schoolName;
         String departmentName;
         LocalDate enrollmentDate;
         LocalDate graduationDate;
+        String kennelAddress;
+        String businessTime;
+        List<String> animalCount;
         String questionGuarantee;
         String questionPedigree;
         String questionBaby;
@@ -42,6 +51,7 @@ public class BreederResponseDTO {
         List<BreedingCareerDTO> breedingCareers;
         List<BreedingAnimalDTO> breedingAnimals;
         List<ReviewDTO> reviews;
+        List<BreederTipsDTO> breederTips;
     }
 
     @Builder
@@ -59,26 +69,22 @@ public class BreederResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class ReviewDTO {
-        Long reviewId;
-        Integer age;
-        String gender;
+        Long postId;
+        String userName;
+        String species;
+        Integer rating;
+        List<BlockDTO> content;
     }
 
     @Builder
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class BreedersDTO {
-        Long breederId;
-        String profileUrl;
-        String tradeName;
-        String address;
-        // Todo   Integer careerYear;
-        // Todo   Integer certificateCount;
-        // Todo   Integer waitAnimal;
-        // Todo   Integer waitList;
-        //TODO    Double breederRating;
-        //TODO    Integer reviewCount;
+    public static class BreederTipsDTO {
+        Long postId;
+//        String fileUrl;
+        List<Block> blocks;
+        String title;
     }
 
     @Builder
@@ -86,7 +92,7 @@ public class BreederResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BreederPreViewListDTO {
-        List<BreedersDTO> animalList;
+        List<BreederPreviewDTO> breederList;
         Integer listSize;
         Integer totalPage;
         Long totalElements;
@@ -98,17 +104,40 @@ public class BreederResponseDTO {
     @Getter
     @NoArgsConstructor
     @AllArgsConstructor
+    public static class BreederPreviewDTO {
+        Long breederId;
+        String profileUrl;
+        String address;
+        String breederName;
+        AnimalType animalType;
+        List<String> species;
+        Integer careerYear;
+        Integer certificateCount;
+        Integer waitAnimal;
+        Integer waitList;
+        Double breederRating;
+        Integer reviewCount;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class BookmarkBreederDTO {
         Long breederId;
         String profileUrl;
-        String tradeName;
+        String breederName;
         String address;
-        // Todo   Integer careerYear;
-        // Todo   Integer certificateCount;
-        // Todo   Integer waitAnimal;
-        // Todo   Integer waitList;
-        //TODO    Double breederRating;
-        //TODO    Integer reviewCount;
+        AnimalType animalType;
+        List<String> species;
+        Integer careerYear;
+        Integer certificateCount;
+        Integer waitAnimal;
+        Integer waitList;
+        Double breederRating;
+        Integer reviewCount;
     }
 
     @Builder

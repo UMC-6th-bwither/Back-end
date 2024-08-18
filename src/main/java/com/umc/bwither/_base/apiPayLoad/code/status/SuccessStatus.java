@@ -22,6 +22,8 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_REMOVE_BOOKMARK_ANIMAL(HttpStatus.OK, "COMMON200", "동물의 북마크가 성공적으로 해제되었습니다."),
     SUCCESS_FETCH_BOOKMARK_ANIMALS_LIST(HttpStatus.OK, "COMMON200", "저장한 동물 목록을 성공적으로 가져왔습니다."),
     SUCCESS_FETCH_MY_ANIMALS_LIST(HttpStatus.OK, "COMMON200", "관리 중인 동물 목록을 성공적으로 가져왔습니다."),
+    SUCCESS_WAIT_ANIMAL(HttpStatus.OK, "COMMON200", "동물이 성공적으로 대기예약되었습니다."),
+    SUCCESS_REMOVE_WAIT_ANIMAL(HttpStatus.OK, "COMMON200", "동물의 예약이 성공적으로 해제되었습니다."),
 
     // BREEDER 관련 응답
     SUCCESS_FETCH_BREEDER_LIST(HttpStatus.OK, "BREEDER200", "브리더 목록을 성공적으로 가져왔습니다."),
