@@ -35,6 +35,7 @@ import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
+import com.umc.bwither.post.repository.PostRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,6 +63,7 @@ public class AnimalServiceImpl implements AnimalService {
   private final WaitListRepository waitListRepository;
   private final MemberRepository memberRepository;
   private final AnimalMemberRepository animalMemberRepository;
+  private final PostRepository postRepository;
   private final S3Uploader s3Uploader;
 
   @Override
@@ -70,6 +72,8 @@ public class AnimalServiceImpl implements AnimalService {
             .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
     Integer waitList = waitListRepository.countByAnimal(animal);
     Integer totalAnimals = animalRepository.countByBreeder(animal.getBreeder());
+
+    int reviewCount = postRepository.countByBreederAndBreederReviewsCategory(animal.getBreeder().getBreederId());
 
     List<FileDTO> files = animal.getAnimalFiles().stream()
             .map(file -> new FileDTO(file.getAnimalFileId(), file.getType(), file.getAnimalFilePath()))
@@ -98,9 +102,9 @@ public class AnimalServiceImpl implements AnimalService {
             animal.getBreeder().getUser().getAddress(),
             animal.getBreeder().getDescription(),
             totalAnimals,
-//        animal.getBreeder().getRating(), //TODO
-//        animal.getBreeder().getReviewCount(), //TODO
-//        animal.getBreeder().getExperienceYears(), //TODO
+            animal.getBreeder().getAverageRating(),
+            reviewCount,
+            animal.getBreeder().getExperienceYears(),
             animal.getBreeder().getTrustLevel()
     );
 

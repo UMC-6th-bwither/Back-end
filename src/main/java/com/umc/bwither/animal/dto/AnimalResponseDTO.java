@@ -110,9 +110,9 @@ public class AnimalResponseDTO {
     String location;
     String description;
     Integer totalAnimals;
-//TODO    Double breederRating;
-//TODO    Integer reviewCount;
-//TODO    Integer experienceYears;
+    Double breederRating;
+    Integer reviewCount;
+    Integer experienceYears;
     Integer trustLevel;
     //TODO 브리더 태그
   }
