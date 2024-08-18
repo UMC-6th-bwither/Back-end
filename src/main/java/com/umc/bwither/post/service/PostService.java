@@ -2,7 +2,9 @@ package com.umc.bwither.post.service;
 
 import com.umc.bwither.post.dto.PostRequestDTO;
 import com.umc.bwither.post.dto.PostResponseDTO;
+import com.umc.bwither.post.entity.enums.Category;
 
+import java.util.Calendar;
 import java.util.List;
 
 public interface PostService {
@@ -15,15 +17,15 @@ public interface PostService {
 
     PostResponseDTO getPost(Long postId);
 
-    List<PostResponseDTO> getAllPosts();
+    List<PostResponseDTO> getAllPosts(Long userId);
 
-    List<PostResponseDTO> getPostsByCategory(String category);
+    List<PostResponseDTO> getPostsByCategory(Category category);
 
     void deletePost(Long postId);
 
-    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
+//    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
 
-    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
+//    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
 
     void bookmarkPost(Long memberId, Long postId);
 

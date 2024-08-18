@@ -26,7 +26,6 @@ import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
 import com.umc.bwither.post.dto.BlockDTO;
 import com.umc.bwither.post.entity.enums.Category;
-import com.umc.bwither.post.entity.enums.DataType;
 import com.umc.bwither.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -138,12 +137,6 @@ public class BreederServiceImpl implements BreederService {
                         review.getRating(),
                         review.getBlocks().stream()
                                 .map(block -> new BlockDTO(
-                                        block.getDataType(),
-                                        BlockDTO.DataDTO.of(
-                                                block.getDataType(),
-                                                block.getText(),
-                                                new BlockDTO.ImageUrlDTO(block.getImageUrl())
-                                        )
                                 ))
                                 .collect(Collectors.toList())
                 )).collect(Collectors.toList());
@@ -152,10 +145,7 @@ public class BreederServiceImpl implements BreederService {
                 .stream()
                 .map(tip -> new BreederResponseDTO.BreederTipsDTO(
                         tip.getPostId(),
-                        tip.getBlocks().stream()
-                                .filter(block -> block.getDataType() == DataType.IMAGE)
-                                .map(block -> block.getImageUrl())
-                                .findFirst().orElse(null),
+                        tip.getBlocks(),
                         tip.getTitle()
                 )).collect(Collectors.toList());
 

@@ -4,6 +4,7 @@ import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.post.dto.PostRequestDTO;
 import com.umc.bwither.post.dto.PostResponseDTO;
+import com.umc.bwither.post.entity.enums.Category;
 import com.umc.bwither.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -44,24 +45,24 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse> getAllPosts() {
-        List<PostResponseDTO> posts = postService.getAllPosts();
+    public ResponseEntity<ApiResponse> getAllPosts(@RequestParam Long userId) {
+        List<PostResponseDTO> posts = postService.getAllPosts(userId);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
 
     @GetMapping("/tips")
     public ResponseEntity<ApiResponse> getAllTipPosts() {
-        List<PostResponseDTO> posts = postService.getPostsByCategory("TIP");
+        List<PostResponseDTO> posts = postService.getPostsByCategory(Category.TIPS);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
 
     @GetMapping("/reviews")
     public ResponseEntity<ApiResponse> getAllReviewPosts() {
-        List<PostResponseDTO> posts = postService.getPostsByCategory("REVIEW");
+        List<PostResponseDTO> posts = postService.getPostsByCategory(Category.BREEDER_REVIEWS);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
 
-    @PutMapping("/tip/{postId}")
+    /*@PutMapping("/tip/{postId}")
     public ResponseEntity<ApiResponse> updateTip(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
         postService.updateTips(postId, requestDTO);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
@@ -71,7 +72,7 @@ public class PostController {
     public ResponseEntity<ApiResponse> updateReview(@PathVariable Long postId, @RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
         postService.updateReviews(postId, requestDTO);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,null));
-    }
+    }*/
 
     @PostMapping("/{postId}/bookmark")
     public ResponseEntity<?> bookmarkPost(

@@ -1,41 +1,18 @@
 package com.umc.bwither.post.dto;
 
-import com.umc.bwither.post.entity.enums.DataType;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.Map;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class BlockDTO {
-    private DataType type;
-    private DataDTO data;
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class DataDTO {
-        private String text;
-        private ImageUrlDTO file;
-
-        public static DataDTO of(DataType type, String text, ImageUrlDTO file) {
-            if (type == DataType.TEXT) {
-                return new DataDTO(text, null);
-            } else if (type == DataType.IMAGE) {
-                return new DataDTO(null, file);
-            } else {
-                throw new IllegalArgumentException("Unsupported data type: " + type);
-            }
-        }
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class ImageUrlDTO {
-        private String url;
-    }
+    private String id;
+    private String type;
+    private Map<String, Object> data;
 }

@@ -1,28 +1,20 @@
 package com.umc.bwither.post.entity;
 
-import com.umc.bwither.post.entity.enums.DataType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Map;
-
-@Entity
-@Getter
-@Setter
-@Builder
+@Data @Entity @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "block")
 public class Block {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private DataType dataType;
-    @Column
-    private String text;
-    @Column
-    private String imageUrl;
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String block;
 
     @ManyToOne
     @JoinColumn(name = "post_id")

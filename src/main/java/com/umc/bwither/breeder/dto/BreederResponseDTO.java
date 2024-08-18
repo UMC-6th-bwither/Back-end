@@ -5,6 +5,7 @@ import com.umc.bwither.animal.entity.enums.Gender;
 import com.umc.bwither.animal.entity.enums.Status;
 import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.post.dto.BlockDTO;
+import com.umc.bwither.post.entity.Block;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -81,7 +82,8 @@ public class BreederResponseDTO {
     @AllArgsConstructor
     public static class BreederTipsDTO {
         Long postId;
-        String fileUrl;
+//        String fileUrl;
+        List<Block> blocks;
         String title;
     }
 
