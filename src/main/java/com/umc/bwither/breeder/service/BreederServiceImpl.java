@@ -145,7 +145,7 @@ public class BreederServiceImpl implements BreederService {
                 .stream()
                 .map(tip -> new BreederResponseDTO.BreederTipsDTO(
                         tip.getPostId(),
-                        tip.getBlocks(),
+                        tip.getBlocks(), //Todo : 추후 수정
                         tip.getTitle()
                 )).collect(Collectors.toList());
 
