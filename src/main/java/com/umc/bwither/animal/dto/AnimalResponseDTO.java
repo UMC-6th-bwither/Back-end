@@ -71,6 +71,8 @@ public class AnimalResponseDTO {
     List<FileDTO> files;
     List<ParentDTO> animalParents;
     BreederDTO breeder;
+    String vaccinationStatus;
+    String virusStatus;
   }
 
   @Builder

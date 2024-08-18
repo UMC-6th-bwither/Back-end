@@ -96,6 +96,16 @@ public class AnimalServiceImpl implements AnimalService {
             ))
             .collect(Collectors.toList());
 
+    String vaccinationStatus = null;
+    if (animal.getVaccination() != null && animal.getVaccination().contains("완료")) {
+      vaccinationStatus = "예방접종완료";
+    }
+
+    String virusStatus = null;
+    if (animal.getVirusCheck() != null && animal.getVirusCheck().contains("음성")) {
+      virusStatus = "바이러스음성";
+    }
+
     BreederDTO breeder = new BreederDTO(
             animal.getBreeder().getBreederId(),
             animal.getBreeder().getTradeName(),
@@ -127,7 +137,9 @@ public class AnimalServiceImpl implements AnimalService {
             .files(files)
             .animalParents(animalParents)
             .breeder(breeder)
-            .build();
+            .vaccinationStatus(vaccinationStatus)
+            .virusStatus(virusStatus)
+        .build();
     return animalDetailDTO;
   }
 
