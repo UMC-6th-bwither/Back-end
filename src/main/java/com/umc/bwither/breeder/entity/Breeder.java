@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -18,7 +19,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Breeder {
+public class Breeder extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,11 +38,17 @@ public class Breeder {
     @Column(name = "species", nullable = false)
     private List<String> species;
 
+    @Column(length = 255)
+    private String backgroundImage;
+
     @Column(nullable = false, length = 50)
     private String tradeName;
 
     @Column(nullable = false, length = 50)
     private String tradePhone;
+
+    @Column(length = 50)
+    private String contactableTime;
 
     @Column(nullable = false, length = 50)
     private String tradeEmail;
@@ -87,6 +94,9 @@ public class Breeder {
     @Column
     private LocalDate graduationDate;
 
+    @Column(length = 50)
+    private String businessTime;
+
     @Column(columnDefinition = "TEXT")
     private String questionGuarantee;
 
@@ -107,6 +117,10 @@ public class Breeder {
 
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Breeding> breedingCareer;
+
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
+
     @Column
     private Double averageRating;
     public Breeder(Long breederId) {

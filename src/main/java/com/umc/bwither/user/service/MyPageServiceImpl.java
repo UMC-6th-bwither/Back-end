@@ -78,8 +78,10 @@ public class MyPageServiceImpl implements MyPageService{
             BreederDTO breederDTO = BreederDTO.builder()
                     .animal(breeder.getAnimal())
                     .species(breeder.getSpecies()) // 이미 리스트이므로 toString() 호출 불필요
+                    .backgroundImage(breeder.getBackgroundImage())
                     .tradeName(breeder.getTradeName())
                     .tradePhone(breeder.getTradePhone())
+                    .contactableTime(breeder.getContactableTime())
                     .tradeEmail(breeder.getTradeEmail())
                     .representative(breeder.getRepresentative())
                     .registrationNumber(breeder.getRegistrationNumber())
@@ -93,6 +95,7 @@ public class MyPageServiceImpl implements MyPageService{
                     .schoolName(breeder.getSchoolName())
                     .departmentName(breeder.getDepartmentName())
                     .enrollmentDate(breeder.getEnrollmentDate())
+                    .businessTime(breeder.getBusinessTime())
                     .graduationDate(breeder.getGraduationDate())
                     .questionGuarantee(breeder.getQuestionGuarantee())
                     .questionPedigree(breeder.getQuestionPedigree())
@@ -170,11 +173,17 @@ public class MyPageServiceImpl implements MyPageService{
         if (breederUpdateDTO.getSpecies() != null) {
             breeder.setSpecies(breederUpdateDTO.getSpecies());
         }
+        if (breederUpdateDTO.getBackgroundImage() != null) {
+            breeder.setBackgroundImage(breederUpdateDTO.getBackgroundImage());
+        }
         if (breederUpdateDTO.getTradeName() != null) {
             breeder.setTradeName(breederUpdateDTO.getTradeName());
         }
         if (breederUpdateDTO.getTradePhone() != null) {
             breeder.setTradePhone(breederUpdateDTO.getTradePhone());
+        }
+        if (breederUpdateDTO.getContactableTime() != null) {
+            breeder.setContactableTime(breederUpdateDTO.getContactableTime());
         }
         if (breederUpdateDTO.getTradeEmail() != null) {
             breeder.setTradeEmail(breederUpdateDTO.getTradeEmail());
@@ -217,6 +226,9 @@ public class MyPageServiceImpl implements MyPageService{
         }
         if (breederUpdateDTO.getGraduationDate() != null) {
             breeder.setGraduationDate(breederUpdateDTO.getGraduationDate());
+        }
+        if (breederUpdateDTO.getBusinessTime() != null) {
+            breeder.setBusinessTime(breederUpdateDTO.getBusinessTime());
         }
         if (breederUpdateDTO.getQuestionGuarantee() != null) {
             breeder.setQuestionGuarantee(breederUpdateDTO.getQuestionGuarantee());
@@ -280,8 +292,10 @@ public class MyPageServiceImpl implements MyPageService{
         BreederDTO breederDTO = BreederDTO.builder()
                 .animal(breeder.getAnimal())
                 .species(breeder.getSpecies())
+                .backgroundImage(breeder.getBackgroundImage())
                 .tradeName(breeder.getTradeName())
                 .tradePhone(breeder.getTradePhone())
+                .contactableTime(breeder.getContactableTime())
                 .tradeEmail(breeder.getTradeEmail())
                 .representative(breeder.getRepresentative())
                 .registrationNumber(breeder.getRegistrationNumber())
@@ -296,6 +310,7 @@ public class MyPageServiceImpl implements MyPageService{
                 .departmentName(breeder.getDepartmentName())
                 .enrollmentDate(breeder.getEnrollmentDate())
                 .graduationDate(breeder.getGraduationDate())
+                .businessTime(breeder.getBusinessTime())
                 .questionGuarantee(breeder.getQuestionGuarantee())
                 .questionPedigree(breeder.getQuestionPedigree())
                 .questionBaby(breeder.getQuestionBaby())
