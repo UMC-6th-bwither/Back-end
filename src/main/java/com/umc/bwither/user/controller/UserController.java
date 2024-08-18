@@ -211,6 +211,7 @@ public class UserController {
                 // 토큰 생성
                 final String token = tokenProvider.create(user);
                 final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
+                        .userId(user.getUserId())
                         .username(user.getUsername())
                         .token(token)
                         .role(user.getRole())
