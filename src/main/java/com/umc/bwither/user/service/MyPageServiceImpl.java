@@ -474,9 +474,9 @@ public class MyPageServiceImpl implements MyPageService{
         viewsList.remove(animalId.toString());
         viewsList.add(0, animalId.toString());
 
-        // 최대 5개만 저장
-        if (viewsList.size() > 5) {
-            viewsList = viewsList.subList(0, 5);
+        // 최대 30개만 저장
+        if (viewsList.size() > 30) {
+            viewsList = viewsList.subList(0, 30);
         }
 
         return String.join(",", viewsList);
