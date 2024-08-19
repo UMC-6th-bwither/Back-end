@@ -4,7 +4,6 @@ import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.animal.service.S3Uploader;
-import com.umc.bwither.breeder.dto.BreedingCareerDTO;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.entity.BreederFile;
 import com.umc.bwither.breeder.entity.Breeding;
@@ -16,16 +15,14 @@ import com.umc.bwither.member.entity.enums.FamilyAgreement;
 import com.umc.bwither.member.entity.enums.FuturePlan;
 import com.umc.bwither.member.entity.enums.PetAllowed;
 import com.umc.bwither.member.service.MemberService;
-import com.umc.bwither.user.dto.BreederJoinDTO;
-import com.umc.bwither.user.dto.LoginRequestDTO;
-import com.umc.bwither.user.dto.LoginResponseDTO;
-import com.umc.bwither.user.dto.MemberJoinDTO;
+import com.umc.bwither.user.dto.*;
 import com.umc.bwither.user.entity.User;
 import com.umc.bwither.user.entity.enums.Role;
 import com.umc.bwither.user.entity.enums.Status;
 import com.umc.bwither.user.security.TokenProvider;
 import com.umc.bwither.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -54,10 +51,9 @@ public class UserController {
     @PostMapping(value = "/breeder/join", consumes = "multipart/form-data")
     @Operation(summary = "브리더 회원가입 API", description = "브리더 회원가입 API")
     public ResponseEntity<?> registerUser(
-            @ModelAttribute BreederJoinDTO breederJoinDTO,
+            @RequestPart("breederJoinDTO") @Valid BreederJoinDTO breederJoinDTO,
             @RequestPart(value = "certificateImages", required = false) List<MultipartFile> certificateImages,
-            @RequestPart(value = "kennelImages", required = false) List<MultipartFile> kennelImages,
-            @RequestParam Map<String, String> breedingCareerDTOs
+            @RequestPart(value = "kennelImages", required = false) List<MultipartFile> kennelImages
     ) {
         try {
             if (breederJoinDTO == null || breederJoinDTO.getPassword() == null) {
@@ -104,21 +100,21 @@ public class UserController {
 
             breederService.saveBreeder(breeder);
 
-            // Breeding 객체 생성 및 초기화
-            for (int i = 0; breedingCareerDTOs.containsKey("breedingCareerDTOs[" + i + "].breedingTradeName"); i++) {
-                String tradeName = breedingCareerDTOs.get("breedingCareerDTOs[" + i + "].breedingTradeName");
-                String joinDateStr = breedingCareerDTOs.get("breedingCareerDTOs[" + i + "].breedingJoinDate");
-                String leaveDateStr = breedingCareerDTOs.get("breedingCareerDTOs[" + i + "].breedingLeaveDate");
-                Boolean currentlyEmployed = Boolean.parseBoolean(breedingCareerDTOs.get("breedingCareerDTOs[" + i + "].breedingCurrentlyEmployed"));
+            for (BreedingJoinDTO breedingJoinDTO : breederJoinDTO.getBreedingCareers()) {
+                LocalDate joinDate = (breedingJoinDTO.getJoinDate() != null && !breedingJoinDTO.getJoinDate().isEmpty())
+                        ? LocalDate.parse(breedingJoinDTO.getJoinDate() + "-01")
+                        : null;
 
-                LocalDate joinDate = (joinDateStr != null && !joinDateStr.isEmpty()) ? LocalDate.parse(joinDateStr + "-01") : null;
-                LocalDate leaveDate = (leaveDateStr != null && !leaveDateStr.isEmpty()) ? LocalDate.parse(leaveDateStr + "-01") : null;
+                LocalDate leaveDate = (breedingJoinDTO.getLeaveDate() != null && !breedingJoinDTO.getLeaveDate().isEmpty())
+                        ? LocalDate.parse(breedingJoinDTO.getLeaveDate() + "-01")
+                        : null;
+
 
                 Breeding breeding = Breeding.builder()
-                        .tradeName(tradeName)
+                        .tradeName(breedingJoinDTO.getTradeName())
                         .joinDate(joinDate)
                         .leaveDate(leaveDate)
-                        .currentlyEmployed(currentlyEmployed)
+                        .currentlyEmployed(breedingJoinDTO.getCurrentlyEmployed())
                         .breeder(breeder)
                         .build();
 
