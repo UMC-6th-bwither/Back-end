@@ -132,6 +132,7 @@ public class MyPageServiceImpl implements MyPageService{
             MemberDTO memberDTO = MemberDTO.builder()
                     .petAllowed(member.getPetAllowed())
                     .cohabitant(member.getCohabitant())
+                    .cohabitantCount(member.getCohabitantCount())
                     .familyAgreement(member.getFamilyAgreement())
                     .employmentStatus(member.getEmploymentStatus())
                     .commuteTime(member.getCommuteTime())
@@ -354,6 +355,9 @@ public class MyPageServiceImpl implements MyPageService{
         if (memberUpdateDTO.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(memberUpdateDTO.getPassword()));
         }
+        if (memberUpdateDTO.getPhone() != null) {
+            user.setPhone(memberUpdateDTO.getPhone());
+        }
         if (memberUpdateDTO.getZipcode() != null) {
             user.setZipcode(memberUpdateDTO.getZipcode());
         }
@@ -370,6 +374,9 @@ public class MyPageServiceImpl implements MyPageService{
         }
         if (memberUpdateDTO.getCohabitant() != null) {
             member.setCohabitant(memberUpdateDTO.getCohabitant());
+        }
+        if (memberUpdateDTO.getCohabitantCount() != null) {
+            member.setCohabitantCount(memberUpdateDTO.getCohabitantCount());
         }
         if (memberUpdateDTO.getFamilyAgreement() != null) {
             member.setFamilyAgreement(memberUpdateDTO.getFamilyAgreement());
@@ -411,6 +418,7 @@ public class MyPageServiceImpl implements MyPageService{
         MemberDTO memberDTO = MemberDTO.builder()
                 .petAllowed(member.getPetAllowed())
                 .cohabitant(member.getCohabitant())
+                .cohabitantCount(member.getCohabitantCount())
                 .familyAgreement(member.getFamilyAgreement())
                 .employmentStatus(member.getEmploymentStatus())
                 .commuteTime(member.getCommuteTime())
