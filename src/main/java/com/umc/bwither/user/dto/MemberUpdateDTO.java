@@ -15,6 +15,7 @@ public class MemberUpdateDTO {
     // User
     private String profileImage;
     private String password;
+    private String phone;
     private String zipcode;
     private String address;
     private String addressDetail;
@@ -22,6 +23,7 @@ public class MemberUpdateDTO {
     // Member
     private PetAllowed petAllowed;
     private String cohabitant;
+    private Long cohabitantCount;
     private FamilyAgreement familyAgreement;
     private EmploymentStatus employmentStatus;
     private String commuteTime;
