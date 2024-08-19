@@ -34,7 +34,7 @@ public class MyPageController {
 
     @GetMapping("")
     public ApiResponse<?> getUserInfo() {
-        Long userId = userAuthorizationUtil.getCurrentUserId();;
+        Long userId = userAuthorizationUtil.getCurrentUserId();
         System.out.println("id: "+userId);
         UserInfoDTO userInfo = myPageService.getUserInfo(userId);
         System.out.println(userInfo);
