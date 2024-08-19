@@ -10,9 +10,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class MemberJoinDTO {
-    private String token;
     // User
-    private String userId;
     private String name;           // 이름
     private String phone;          // 전화번호
     private String email;          // 이메일

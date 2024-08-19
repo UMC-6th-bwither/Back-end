@@ -1,5 +1,6 @@
 package com.umc.bwither.breeder.dto;
 
+import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

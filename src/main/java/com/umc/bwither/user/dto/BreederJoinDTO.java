@@ -12,9 +12,7 @@ import java.util.List;
 @Getter
 @Builder
 public class BreederJoinDTO {
-    private String token;
     // User 관련 필드
-    private String userId;
     private String name;           // 이름
     private String phone;          // 전화번호
     private String email;          // 이메일
@@ -36,7 +34,7 @@ public class BreederJoinDTO {
     private String licenseNumber;  // 동물생산업 허가 번호
     private String snsAddress;     // 홈페이지/SNS 주소 (선택 사항)
     private String animalHospital; // 이용 중인 동물병원 (선택 사항)
-    private EmploymentStatus employmentStatus; // 재직 상태
+    private String certificateName; // 자격증 명
     private List<BreedingCareerDTO> breedingCareer;
 
 }

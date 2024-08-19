@@ -1,6 +1,8 @@
 package com.umc.bwither.user.dto;
 
 import java.time.LocalDate;
+
+import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
 import lombok.*;
 
 @Getter
