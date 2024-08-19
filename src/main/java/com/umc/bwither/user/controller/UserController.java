@@ -55,7 +55,6 @@ public class UserController {
     @Operation(summary = "브리더 회원가입 API", description = "브리더 회원가입 API")
     public ResponseEntity<?> registerUser(
             @ModelAttribute BreederJoinDTO breederJoinDTO,
-            @RequestPart(value = "registrationImage", required = false) MultipartFile registrationImage,
             @RequestPart(value = "certificateImages", required = false) List<MultipartFile> certificateImages,
             @RequestPart(value = "kennelImages", required = false) List<MultipartFile> kennelImages,
             @RequestParam Map<String, String> breedingCareerDTOs
@@ -67,7 +66,6 @@ public class UserController {
 
             // 브리더 파일
             Map<FileType, List<MultipartFile>> breederFiles = new HashMap<>();
-            breederFiles.put(FileType.REGISTRATION, registrationImage != null ? List.of(registrationImage) : List.of());
             breederFiles.put(FileType.CERTIFICATE, certificateImages);
             breederFiles.put(FileType.KENNEL, kennelImages);
 
