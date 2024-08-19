@@ -8,7 +8,8 @@ import java.util.List;
 
 public interface MyPageService {
     UserInfoDTO getUserInfo(Long userId);
-    UserInfoDTO updateBreeder(Long id, BreederUpdateDTO breederUpdateDTO);
+    UserInfoDTO updateBreederProfile(Long id, BreederProfileUpdateDTO breederInfoUpdateDTO);
+    UserInfoDTO updateBreederInfo(Long id, BreederInfoUpdateDTO breederInfoUpdateDTO);
     UserInfoDTO updateMember(Long id, MemberUpdateDTO userMemberDTO);
     Object getUserReservation(Long userId);
     void saveAnimalView(Long userId, Long animalId, HttpServletRequest request, HttpServletResponse response);
