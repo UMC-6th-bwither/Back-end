@@ -33,7 +33,7 @@ public enum ErrorStatus implements BaseErrorCode {
     BREEDER_NOT_BOOKMARK(HttpStatus.BAD_REQUEST, "BREEDER4004", "사용자가 저장하지 않은 브리더입니다."),
 
     //MEMBER 관련 에러
-    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "존재하지 멤버입니다.");
+    MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "존재하지 않는 멤버입니다.");
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;
