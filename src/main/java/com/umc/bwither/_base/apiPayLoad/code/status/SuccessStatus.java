@@ -70,13 +70,20 @@ public enum SuccessStatus implements BaseCode {
     // 마이페이지 관련 응답
     SUCCESS_GET_USERINFO(HttpStatus.OK, "GETUSERINFO2000", "마이페이지 조회에 성공했습니다"),
     SUCCESS_UPDATE_MEMBER(HttpStatus.OK, "UPDATEMEMBER2000", "일반 유저 프로필 설정에 성공했습니다"),
-    SUCCESS_UPDATE_BREEDER(HttpStatus.OK, "UPDATEBREEDER2000", "브리더 프로필 설정에 성공했습니다"),
+    SUCCESS_UPDATE_BREEDERPROFILE(HttpStatus.OK, "UPDATEBREEDER2000", "브리더 프로필 수정에 성공했습니다"),
+    SUCCESS_UPDATE_BREEDERINFO(HttpStatus.OK, "UPDATEBREEDER2001", "브리더 정보 수정에 성공했습니다"),
     SUCCESS_GET_USERRESERVATION(HttpStatus.OK, "GETUSERRESERVATION2000", "예약 조회에 성공했습니다"),
     SUCCESS_SAVE_RECENTANIMAL(HttpStatus.OK, "SAVERECENTANIMAL2000", "최근 본 동물 저장에 성공했습니다"),
     SUCCESS_GET_RECENTANIMAL(HttpStatus.OK, "GETRECENTANIMAL2000", "최근 본 동물 조회에 성공했습니다"),
 
+
     // 메인페이지 관련 응답
-    SUCCESS_FETCH_PET_TIPS(HttpStatus.OK, "MAINTIPS2000", "브리더가 말해주는 반려동물 꿀정보를 성공적으로 가져왔습니다.");
+    SUCCESS_FETCH_PET_TIPS(HttpStatus.OK, "MAINTIPS2000", "브리더가 말해주는 반려동물 꿀정보를 성공적으로 가져왔습니다."),
+
+    // 문의 관련 응답
+    SUCCESS_CREATE_INQUIRY(HttpStatus.OK, "INQUIRY2000", "문의 요청에 성공했습니다."),
+    SUCCESS_GET_INQUIRYBREEDER(HttpStatus.OK, "INQUIRY2001", "문의 요청 브리더 목록 조회에 성공했습니다");
+
 
     private final HttpStatus httpStatus;
     private final String code;

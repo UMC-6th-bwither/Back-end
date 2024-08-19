@@ -2,6 +2,7 @@ package com.umc.bwither.breeder.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
+import com.umc.bwither._base.common.UserAuthorizationUtil;
 import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
@@ -31,6 +32,7 @@ public class BreederController {
     private final BreederService breederService;
     private final AnimalService animalService;
     private final MemberService memberService;
+    private final UserAuthorizationUtil userAuthorizationUtil;
 
     @Operation(summary = "브리더 상세페이지 조회 API", description = "브리더 상세페이지 조회 API")
     @GetMapping("/{breederId}")
@@ -64,18 +66,18 @@ public class BreederController {
     @PostMapping("/{breederId}/bookmark")
     @Operation(summary = "브리더 저장 API", description = "브리더 저장 API")
     public ApiResponse bookmarkBreeder(
-            @PathVariable(name = "breederId") Long breederId,
-            @RequestParam String memberId) {
-        breederService.bookmarkBreeder(Long.parseLong(memberId), breederId);
+            @PathVariable(name = "breederId") Long breederId) {
+        Long memberId = userAuthorizationUtil.getCurrentMemberId();
+        breederService.bookmarkBreeder(memberId, breederId);
         return ApiResponse.onSuccess(SuccessStatus.SUCCESS_BOOKMARK_BREEDER);
     }
 
     @DeleteMapping("/{breederId}/bookmark")
     @Operation(summary = "브리더 저장 취소 API", description = "사용자가 저장한 동물을 취소하는 API")
     public ApiResponse unbookmarkBreeder(
-            @PathVariable(name = "breederId") Long breederId,
-            @RequestParam String memberId) {
-        breederService.unbookmarkBreeder(Long.parseLong(memberId), breederId);
+            @PathVariable(name = "breederId") Long breederId) {
+        Long memberId = userAuthorizationUtil.getCurrentMemberId();
+        breederService.unbookmarkBreeder(memberId, breederId);
         return ApiResponse.onSuccess(SuccessStatus.SUCCESS_REMOVE_BOOKMARK_BREEDER);
     }
 
@@ -87,12 +89,13 @@ public class BreederController {
             @Parameter(name = "species", description = "종")
     })
     public ApiResponse<BreederResponseDTO.BookmarkBreederPreViewListDTO> getBookmarkAnimal(
-            @RequestParam String memberId,
             @RequestParam(name = "page", defaultValue = "0") Integer page,
             @RequestParam(name = "animalType", required = false) AnimalType type,
             @RequestParam(name = "species", required = false) String species) {
+        Long memberId = userAuthorizationUtil.getCurrentMemberId();
+        System.out.println("Fetched memberUserId: " + memberId);
         BreederResponseDTO.BookmarkBreederPreViewListDTO result = breederService.getBookmarkedBreeders(
-                Long.parseLong(memberId), type, species, page);
+                memberId, type, species, page);
         return ApiResponse.of(SuccessStatus.SUCCESS_FETCH_BOOKMARK_BREEDERS_LIST, result);
     }
 

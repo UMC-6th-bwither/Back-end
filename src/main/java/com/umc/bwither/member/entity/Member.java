@@ -32,6 +32,9 @@ public class Member{
     @Column(nullable = false, columnDefinition = "TEXT")
     private String cohabitant;
 
+    @Column(nullable = false)
+    private Long cohabitantCount;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private FamilyAgreement familyAgreement;

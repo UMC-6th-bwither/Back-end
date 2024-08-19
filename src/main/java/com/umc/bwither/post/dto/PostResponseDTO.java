@@ -1,5 +1,7 @@
 package com.umc.bwither.post.dto;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.bwither.post.entity.Block;
 import com.umc.bwither.post.entity.Post;
 import com.umc.bwither.post.entity.enums.Category;
@@ -8,6 +10,8 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data @Builder
 @NoArgsConstructor
@@ -28,21 +32,27 @@ public class PostResponseDTO {
     private Integer bookmarkCount;
 
     public static PostResponseDTO getPostDTO(Post post, Boolean isSaved) {
+        ObjectMapper mapper = new ObjectMapper();
         List<GetBlockDTO> blockDTOS = post.getBlocks().stream()
-                .map(GetBlockDTO::getBlockDTO).toList();
-
-        // Breeder가 null일 경우 처리
-        Double averageRating = (post.getBreeder() != null) ? post.getBreeder().getAverageRating() : null;
-        String kennelName = (post.getBreeder() != null) ? post.getBreeder().getTradeName() : null;
+                .map(block -> {
+                    try {
+                        // JSON 문자열을 Map으로 변환 후 GetBlockDTO로 변환
+                        Map<String, Object> blockMap = mapper.readValue(block.getBlock(), Map.class);
+                        return GetBlockDTO.fromMap(blockMap);
+                    } catch (JsonProcessingException e) {
+                        throw new RuntimeException("Error deserializing block data from JSON", e);
+                    }
+                })
+                .collect(Collectors.toList());
 
         return PostResponseDTO.builder()
                 .id(post.getPostId())
                 .title(post.getTitle())
                 .petType(post.getPetType())
                 .rating(post.getRating())
-                .averageRating(averageRating)
+                .averageRating(post.getBreeder() != null ? post.getBreeder().getAverageRating() : null)
                 .category(post.getCategory())
-                .kennelName(kennelName)
+                .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : "Unknown")
                 .author(post.getUser().getName())
                 .createdAt(post.getCreatedAt())
                 .isSaved(isSaved)
@@ -50,18 +60,22 @@ public class PostResponseDTO {
                 .viewCount(post.getViewCount())
                 .bookmarkCount(post.getBookmarkCount())
                 .build();
-
     }
 
+    @Data
     @Builder
-    @Getter
     @NoArgsConstructor
     @AllArgsConstructor
-    public static class GetBlockDTO{
-        private String block;
-        public static GetBlockDTO getBlockDTO(Block block) {
+    public static class GetBlockDTO {
+        private String id;
+        private String type;
+        private Map<String, Object> data;
+
+        public static GetBlockDTO fromMap(Map<String, Object> map) {
             return GetBlockDTO.builder()
-                    .block(block.getBlock())
+                    .id((String) map.get("id"))
+                    .type((String) map.get("type"))
+                    .data((Map<String, Object>) map.get("data"))
                     .build();
         }
     }
