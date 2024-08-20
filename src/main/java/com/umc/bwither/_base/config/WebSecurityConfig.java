@@ -47,7 +47,7 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                     .allowedMethods("*")
-                    .allowedOrigins("http://localhost:3000", "http://localhost:5173")
+                    .allowedOrigins("http://localhost:3000", "http://localhost:5173", "http://ec2-15-165-235-78.ap-northeast-2.compute.amazonaws.com")
                     .allowCredentials(true);
             }
         };
