@@ -317,7 +317,7 @@ public class BreederServiceImpl implements BreederService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
         breederMemberRepository.findByBreederAndMember(breeder, member)
-                .ifPresent(mb -> { throw new TestHandler(ErrorStatus.ANIMAL_ALREADY_BOOKMARK); });
+                .ifPresent(mb -> { throw new TestHandler(ErrorStatus.BREEDER_ALREADY_BOOKMARK); });
 
         BreederMember breederMember = BreederMember.builder()
                 .breeder(breeder)
