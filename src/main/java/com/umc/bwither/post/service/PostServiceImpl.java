@@ -169,6 +169,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostResponseDTO getPost(Long postId) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -177,7 +178,7 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(post);
 
-        return PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent());
+        return PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent());
     }
 
     @Override
@@ -192,19 +193,31 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO> getPostsByUser(Long userId) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         List<Post> postList = postRepository.findByUser(user);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public List<PostResponseDTO> getPostsByCategory(Category category) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
         List<Post> postList = postRepository.findByCategory(category);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<PostResponseDTO> getPostsByBreederId(Long breederId) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
+        Breeder breeder = breederRepository.findById(breederId).orElseThrow(()-> new RuntimeException("Breeder not found"));
+        List<Post> postList = postRepository.findByBreeder(breeder);
+        return postList.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
                 .collect(Collectors.toList());
     }
 
@@ -329,6 +342,8 @@ public class PostServiceImpl implements PostService {
 
         // 북마크 추가
         Bookmark bookmark = new Bookmark(user, post);
+        post.setBookmarkCount(post.getBookmarkCount() + 1);
+        postRepository.save(post);
         bookmarkRepository.save(bookmark);
     }
 
@@ -346,6 +361,8 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Bookmark not found"));
 
         // 북마크 삭제
+        post.setBookmarkCount(post.getBookmarkCount() - 1);
+        postRepository.save(post);
         bookmarkRepository.delete(bookmark);
     }
 
@@ -362,7 +379,7 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
 
         return posts.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .map(post -> PostResponseDTO.getPostDTO(post, true))
                 .collect(Collectors.toList());
     }
 }

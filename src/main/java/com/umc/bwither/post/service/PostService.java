@@ -31,4 +31,5 @@ public interface PostService {
 
     List<PostResponseDTO> getBookmarkedPosts(Long userId);
 
+    List<PostResponseDTO> getPostsByBreederId(Long breederId);
 }
