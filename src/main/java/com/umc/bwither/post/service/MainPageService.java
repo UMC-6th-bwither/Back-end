@@ -14,4 +14,6 @@ public interface MainPageService {
   List<PopularBreedersDTO> getMainBreeders(AnimalType animalType);
 
   List<AnimalReviewDTO> getMainReviewPosts(Category category);
+
+  Integer getMainTitle();
 }
