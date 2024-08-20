@@ -177,16 +177,33 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_CREATE_REVIEW));
     }
 
-    @Operation(summary = "게시글 삭제 API", description = "해당 ID의 게시글 삭제")
-    @DeleteMapping("/{postId}")
-    public ResponseEntity<?> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
-        return ResponseEntity.noContent().build(); // 204 No Content
+
+    @Operation(summary = "브리더의 꿀정보 수정 API", description = "브리더의 꿀정보 수정 API. 작성자만 수정할 수 있습니다.")
+    @PutMapping("/tips/{postId}")
+    public ResponseEntity<String> updateTips(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
+        try {
+            postService.updateTips(postId, requestDTO);
+            return ResponseEntity.ok(SuccessStatus.SUCCESS_UPDATE_TIP.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
+
+    @Operation(summary = "브리더 후기 수정 API", description = "브리더 후기 수정 API. 작성자만 수정할 수 있습니다.")
+    @PutMapping("/reviews/{postId}")
+    public ResponseEntity<?> updateReviews(@PathVariable Long postId, @RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
+        try {
+            postService.updateReviews(postId, requestDTO);
+            return ResponseEntity.ok(SuccessStatus.SUCCESS_UPDATE_REVIEW.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
 
     @Operation(summary = "게시글 상세 조회 API", description = "해당 ID의 게시글 상세 조회")
     @GetMapping("/{postId}")
-    public ResponseEntity<ApiResponse> getPost(@PathVariable Long postId) {
+    public ResponseEntity<?> getPost(@PathVariable Long postId) {
         PostResponseDTO postResponse = postService.getPost(postId);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_POST, postResponse));
     }
@@ -228,11 +245,11 @@ public class PostController {
     }
 
 
-    @Operation(summary = "브리더 후기 목록 조회 API", description = "브위더 후기 전체 조회")
-    @GetMapping("/reviews")
-    public ResponseEntity<ApiResponse> getAllReviewPosts() {
-        List<PostResponseDTO> posts = postService.getPostsByCategory(Category.BREEDER_REVIEWS);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_ALL_REVIEW_POSTS, posts));
+    @Operation(summary = "게시글 삭제 API", description = "해당 ID의 게시글 삭제")
+    @DeleteMapping("/{postId}")
+    public ResponseEntity<?> deletePost(@PathVariable Long postId) {
+        postService.deletePost(postId);
+        return ResponseEntity.noContent().build(); // 204 No Content
     }
 
     @Operation(summary = "브리더의 꿀정보 저장 API", description = "브리더의 꿀정보 저장 API")
@@ -249,7 +266,7 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_UNBOOKMARK_POST));
     }
 
-    @Operation(summary = "저장한 글 조회 API", description = "특정 사용자가 북마크한 모든 브리더 꿀정보를 조회")
+    @Operation(summary = "저장한 글 조회 API", description = "현재 로그인한 사용자가 북마크한 모든 브리더 꿀정보를 조회")
     @GetMapping("/bookmarks")
     public ResponseEntity<ApiResponse> getBookmarkedPosts() {
         Long userId = userAuthorizationUtil.getCurrentUserId();
@@ -257,24 +274,9 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_BOOKMARKED_POSTS, posts));
     }
 
-    @PutMapping("/tips/{postId}")
-    public ResponseEntity<String> updateTips(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
-        try {
-            postService.updateTips(postId, requestDTO);
-            return ResponseEntity.ok(SuccessStatus.SUCCESS_UPDATE_TIP.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
+    // Todo : 브리더 받은 후기 조회
+    // Todo : 목록 DTO 수정
+    // Todo : 대표 이미지(입력받은 블록 중 첫번째 이미지)
+    // Todo : 스크랩 수
 
-    @PutMapping("/reviews/{postId}")
-    public ResponseEntity<String> updateReviews(@PathVariable Long postId, @RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
-        try {
-            postService.updateReviews(postId, requestDTO);
-            return ResponseEntity.ok(SuccessStatus.SUCCESS_UPDATE_REVIEW.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-    // Todo : 브리더 받은 후기
 }
