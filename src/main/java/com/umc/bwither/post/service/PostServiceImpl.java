@@ -3,6 +3,7 @@ package com.umc.bwither.post.service;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umc.bwither._base.common.UserAuthorizationUtil;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.post.dto.BlockDTO;
@@ -16,6 +17,7 @@ import com.umc.bwither.post.repository.BlockRepository;
 import com.umc.bwither.post.repository.BookmarkRepository;
 import com.umc.bwither.post.repository.PostRepository;
 import com.umc.bwither.user.entity.User;
+import com.umc.bwither.user.entity.enums.Role;
 import com.umc.bwither.user.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -35,15 +37,22 @@ public class PostServiceImpl implements PostService {
     private final BreederRepository breederRepository;
     private final BookmarkRepository bookmarkRepository;
     private final ObjectMapper mapper;
+    private final UserAuthorizationUtil userAuthorizationUtil;
 
 
     @Override
     @Transactional
     public void createTips(PostRequestDTO.GetTipDTO tipDTO) {
 
+        Long userId = userAuthorizationUtil.getCurrentUserId();
         // 사용자 조회
-        User user = userRepository.findById(tipDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + tipDTO.getUserId()));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        if (user.getRole() != Role.BREEDER) {
+            // 사용자 역할이 BREEDER가 아닌 경우 예외를 던집니다.
+            throw new RuntimeException("브리더 꿀정보는 브리더만 작성할 수 있습니다.");
+        }
 
         Post post = Post.builder()
                 .user(user)
@@ -62,7 +71,7 @@ public class PostServiceImpl implements PostService {
                         block.setBlock(mapper.writeValueAsString(blockDTO));
                         block.setPost(post);
                     } catch (Exception e) {
-                        throw new RuntimeException("Error serializing blockDTO", e);
+                        throw new RuntimeException("blockDTO 직렬화 오류", e);
                     }
                     return block;
                 })
@@ -77,13 +86,20 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void createReviews(PostRequestDTO.GetReviewDTO reviewDTO) {
+
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+
         // 브리더 조회
         Breeder breeder = breederRepository.findById(reviewDTO.getBreederId())
                 .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + reviewDTO.getBreederId()));
 
         // 사용자 조회
-        User user = userRepository.findById(reviewDTO.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found with id: " + reviewDTO.getUserId()));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+
+        if(user.getRole() != Role.MEMBER){
+            throw new RuntimeException("브리더 후기는 일반 사용자만 작성할 수 있습니다.");
+        }
 
         // 포스트 생성
         Post post = Post.builder()
@@ -106,7 +122,7 @@ public class PostServiceImpl implements PostService {
                         block.setBlock(mapper.writeValueAsString(blockDTO));
                         block.setPost(post);
                     } catch (Exception e) {
-                        throw new RuntimeException("Error serializing blockDTO", e);
+                        throw new RuntimeException("blockDTO 직렬화 오류", e);
                     }
                     return block;
                 })
@@ -177,7 +193,6 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public List<PostResponseDTO> getPostsByCategory(Category category) {
-        // 카테고리에 따라 게시글을 필터링
         List<Post> postList = postRepository.findByCategory(category);
         return postList.stream()
                 .map(post -> PostResponseDTO.getPostDTO(post, null))
@@ -186,10 +201,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePost(Long postId) {
+    public void deletePost(Long postId, Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-        postRepository.delete(post);
+        if(user == post.getUser()){
+            postRepository.delete(post);
+        } else {
+            new RuntimeException("게시글은 작성자만 삭제할 수 있습니다.");
+        }
     }
 
    /* @Override
