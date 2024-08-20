@@ -29,4 +29,6 @@ public interface BreederService {
     BreederResponseDTO.BookmarkBreederPreViewListDTO getBookmarkedBreeders(long memberId, AnimalType type, String species, Integer page);
 
     TrustLevelResponseDTO getTrustLevel(Long breederId);
+
+    Boolean checkBookmarkStatus(Long breederId, Long memberId);
 }

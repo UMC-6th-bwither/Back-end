@@ -14,4 +14,6 @@ public interface BreederMemberRepository extends JpaRepository<BreederMember, Lo
     Optional<BreederMember> findByBreederAndMember(Breeder breeder, Member member);
 
     Page<BreederMember> findByMember(Member member, Pageable pageable);
+
+  Boolean existsByMemberAndBreeder(Member member, Breeder breeder);
 }
