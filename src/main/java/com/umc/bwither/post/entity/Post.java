@@ -46,11 +46,12 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
-    @Column(nullable = true)
-    private Integer bookmarkCount;
-
     @Builder.Default
     @Column(nullable = true)
+    private Integer bookmarkCount = 0;
+
+    @Builder.Default
+    @Column(nullable = false)
     private Integer viewCount = 0;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")

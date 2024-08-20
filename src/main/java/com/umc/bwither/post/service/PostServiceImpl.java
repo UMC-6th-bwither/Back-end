@@ -329,6 +329,8 @@ public class PostServiceImpl implements PostService {
 
         // 북마크 추가
         Bookmark bookmark = new Bookmark(user, post);
+        post.setBookmarkCount(post.getBookmarkCount() + 1);
+        postRepository.save(post);
         bookmarkRepository.save(bookmark);
     }
 
@@ -346,6 +348,8 @@ public class PostServiceImpl implements PostService {
                 .orElseThrow(() -> new RuntimeException("Bookmark not found"));
 
         // 북마크 삭제
+        post.setBookmarkCount(post.getBookmarkCount() - 1);
+        postRepository.save(post);
         bookmarkRepository.delete(bookmark);
     }
 

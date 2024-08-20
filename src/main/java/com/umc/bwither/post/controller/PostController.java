@@ -277,6 +277,5 @@ public class PostController {
     // Todo : 브리더 받은 후기 조회
     // Todo : 목록 DTO 수정
     // Todo : 대표 이미지(입력받은 블록 중 첫번째 이미지)
-    // Todo : 스크랩 수
 
 }
