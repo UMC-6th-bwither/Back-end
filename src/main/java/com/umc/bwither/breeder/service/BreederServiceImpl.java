@@ -414,4 +414,14 @@ public class BreederServiceImpl implements BreederService {
                 .trustLevel(trustLevel)
                 .build();
     }
+
+  @Override
+  public Boolean checkBookmarkStatus(Long breederId, Long memberId) {
+    Breeder breeder = breederRepository.findById(breederId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+    return breederMemberRepository.existsByMemberAndBreeder(member, breeder);
+  }
 }

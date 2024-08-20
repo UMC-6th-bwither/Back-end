@@ -128,4 +128,12 @@ public class BreederController {
             return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_VIEW_BREEDER, e.getMessage()));
         }
     }
+
+    @Operation(summary = "브리더 북마크 상태 확인 API", description = "사용자가 브리더를 북마크했는지 상태를 확인하는 API")
+    @GetMapping("/{breederId}/bookmarkstatus")
+    public ApiResponse<Boolean> checkBookmarkStatus(
+        @PathVariable("breederId") Long breederId) {
+        Long memberId = userAuthorizationUtil.getCurrentMemberId();
+        return ApiResponse.onSuccess(breederService.checkBookmarkStatus(breederId, memberId));
+    }
 }
