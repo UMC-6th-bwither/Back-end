@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,7 +27,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MainPageServiceImpl implements MainPageService{
+public class MainPageServiceImpl implements MainPageService {
 
   private final PostRepository postRepository;
   private final InquiryRepository inquiryRepository;
@@ -35,11 +36,21 @@ public class MainPageServiceImpl implements MainPageService{
 
   @Override
   public List<BreederTipsDTO> getMainTipPosts(Category category) {
-    Pageable pageable = PageRequest.of(0,10, Sort.by(Sort.Direction.DESC, "createdAt"));
-    List<Post> posts = postRepository.findByCategory(category,pageable).getContent();
+    Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+    Page<Post> postPage = postRepository.findByCategory(category, pageable);
+    List<Post> posts = postPage.getContent();
 
     List<BreederTipsDTO> breederTipsDTOS = posts.stream()
         .map(post -> {
+
+          String breederName =
+              (post.getBreeder() != null) ? post.getBreeder().getTradeName() : "Unknown Breeder";
+          String breederImageUrl =
+              (post.getBreeder() != null && post.getBreeder().getUser() != null)
+                  ? post.getBreeder().getUser().getProfileImage()
+                  : "default_image_url";
+
           String postImageUrl = post.getBlocks().stream()
               .map(block -> parseImageUrl(block.getBlock()))
               .filter(Objects::nonNull)
@@ -50,8 +61,8 @@ public class MainPageServiceImpl implements MainPageService{
               .postId(post.getPostId())
               .category(post.getCategory())
               .title(post.getTitle())
-              .breederName(post.getBreeder().getTradeName())
-              .breederImageUrl(post.getBreeder().getUser().getProfileImage())
+              .breederName(breederName)
+              .breederImageUrl(breederImageUrl)
               .postImageUrl(postImageUrl)
               .createdAt(post.getCreatedAt())
               .updatedAt(post.getUpdatedAt())
@@ -70,7 +81,9 @@ public class MainPageServiceImpl implements MainPageService{
 
     breeders.forEach(breeder -> {
       Hibernate.initialize(breeder.getInquiries());
-      System.out.println("Breeder ID: " + breeder.getBreederId() + ", Inquiries Size: " + breeder.getInquiries().size());
+      System.out.println(
+          "Breeder ID: " + breeder.getBreederId() + ", Inquiries Size: " + breeder.getInquiries()
+              .size());
     });
 
     List<Breeder> filteredBreeders = breeders.stream()
@@ -115,12 +128,15 @@ public class MainPageServiceImpl implements MainPageService{
   }
 
   private String parseImageUrl(String blockJson) {
+    ObjectMapper objectMapper = new ObjectMapper();
     try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      JsonNode blockNode = objectMapper.readTree(blockJson);
+      JsonNode rootNode = objectMapper.readTree(blockJson);
+      String type = rootNode.path("type").asText();
 
-      if ("image".equals(blockNode.get("type").asText())) {
-        return blockNode.get("data").get("file").get("url").asText();
+      if ("IMAGE".equalsIgnoreCase(type)) {
+        JsonNode dataNode = rootNode.path("data");
+        JsonNode fileNode = dataNode.path("file");
+        return fileNode.path("url").asText(null);
       }
     } catch (Exception e) {
       e.printStackTrace();
