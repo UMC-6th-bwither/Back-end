@@ -79,7 +79,8 @@ public enum SuccessStatus implements BaseCode {
     // 메인페이지 관련 응답
     SUCCESS_FETCH_PET_TIPS(HttpStatus.OK, "MAINTIPS2000", "브리더가 말해주는 반려동물 꿀정보를 성공적으로 가져왔습니다."),
     SUCCESS_FETCH_POPULAR_BREEDERS(HttpStatus.OK, "MAINBREEDERS2000", "인기 브리더 목록을 성공적으로 가져왔습니다."),
-
+    SUCCESS_FETCH_PET_REVIEWS(HttpStatus.OK, "MAINREVIEWS2000", "반려동물 분양 후기를 성공적으로 가져왔습니다."),
+    SUCCESS_FETCH_PET_COUNTS(HttpStatus.OK, "MAINANIMALCOUNT2000", "분양대기동물 총 수량을 성공적으로 가져왔습니다."),
     // 문의 관련 응답
     SUCCESS_CREATE_INQUIRY(HttpStatus.OK, "INQUIRY2000", "문의 요청에 성공했습니다."),
     SUCCESS_GET_INQUIRYBREEDER(HttpStatus.OK, "INQUIRY2001", "문의 요청 브리더 목록 조회에 성공했습니다"),

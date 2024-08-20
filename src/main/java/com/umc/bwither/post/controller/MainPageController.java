@@ -3,6 +3,7 @@ package com.umc.bwither.post.controller;
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.breeder.entity.enums.AnimalType;
+import com.umc.bwither.post.dto.MainPageResponseDTO.AnimalReviewDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.BreederTipsDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.PopularBreedersDTO;
 import com.umc.bwither.post.entity.enums.Category;
@@ -41,5 +42,19 @@ public class MainPageController {
       @RequestParam(name = "animalType", required = false) AnimalType animalType) {
     List<PopularBreedersDTO> popularBreedersDTOS = mainPageService.getMainBreeders(animalType);
     return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_FETCH_POPULAR_BREEDERS, popularBreedersDTOS));
+  }
+
+  @GetMapping("/reviews")
+  @Operation(summary = "메인페이지 반려동물 분양 후기 조회 API", description = "메인페이지 반려동물 분양 후기 조회 API")
+  public ResponseEntity<ApiResponse> getMainReviewPosts() {
+    List<AnimalReviewDTO> posts = mainPageService.getMainReviewPosts(Category.BREEDER_REVIEWS);
+    return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_FETCH_PET_REVIEWS, posts));
+  }
+
+  @GetMapping("/title")
+  @Operation(summary = "메인페이지 총 분양대기동물 수 조회 API", description = "메인페이지 총 분양대기동물 수 조회 API")
+  public ResponseEntity<ApiResponse> getMainTitle() {
+    Integer animalCount = mainPageService.getMainTitle();
+    return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_FETCH_PET_COUNTS, animalCount));
   }
 }

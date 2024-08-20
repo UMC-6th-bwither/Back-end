@@ -3,10 +3,12 @@ package com.umc.bwither.post.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umc.bwither.animal.repository.AnimalRepository;
 import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.breeder.repository.InquiryRepository;
+import com.umc.bwither.post.dto.MainPageResponseDTO.AnimalReviewDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.BreederProfileDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.BreederTipsDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.PopularBreedersDTO;
@@ -19,6 +21,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -26,20 +29,30 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class MainPageServiceImpl implements MainPageService{
+public class MainPageServiceImpl implements MainPageService {
 
   private final PostRepository postRepository;
-  private final InquiryRepository inquiryRepository;
+  private final AnimalRepository animalRepository;
   private final BreederRepository breederRepository;
 
 
   @Override
   public List<BreederTipsDTO> getMainTipPosts(Category category) {
-    Pageable pageable = PageRequest.of(0,10, Sort.by(Sort.Direction.DESC, "createdAt"));
-    List<Post> posts = postRepository.findByCategory(category,pageable).getContent();
+    Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+    Page<Post> postPage = postRepository.findByCategory(category, pageable);
+    List<Post> posts = postPage.getContent();
 
     List<BreederTipsDTO> breederTipsDTOS = posts.stream()
         .map(post -> {
+
+          String breederName =
+              (post.getBreeder() != null) ? post.getBreeder().getTradeName() : "Unknown Breeder";
+          String breederImageUrl =
+              (post.getBreeder() != null && post.getBreeder().getUser() != null)
+                  ? post.getBreeder().getUser().getProfileImage()
+                  : "default_image_url";
+
           String postImageUrl = post.getBlocks().stream()
               .map(block -> parseImageUrl(block.getBlock()))
               .filter(Objects::nonNull)
@@ -50,8 +63,8 @@ public class MainPageServiceImpl implements MainPageService{
               .postId(post.getPostId())
               .category(post.getCategory())
               .title(post.getTitle())
-              .breederName(post.getBreeder().getTradeName())
-              .breederImageUrl(post.getBreeder().getUser().getProfileImage())
+              .breederName(breederName)
+              .breederImageUrl(breederImageUrl)
               .postImageUrl(postImageUrl)
               .createdAt(post.getCreatedAt())
               .updatedAt(post.getUpdatedAt())
@@ -70,7 +83,9 @@ public class MainPageServiceImpl implements MainPageService{
 
     breeders.forEach(breeder -> {
       Hibernate.initialize(breeder.getInquiries());
-      System.out.println("Breeder ID: " + breeder.getBreederId() + ", Inquiries Size: " + breeder.getInquiries().size());
+      System.out.println(
+          "Breeder ID: " + breeder.getBreederId() + ", Inquiries Size: " + breeder.getInquiries()
+              .size());
     });
 
     List<Breeder> filteredBreeders = breeders.stream()
@@ -114,13 +129,47 @@ public class MainPageServiceImpl implements MainPageService{
     return List.of(popularBreedersDTO);
   }
 
-  private String parseImageUrl(String blockJson) {
-    try {
-      ObjectMapper objectMapper = new ObjectMapper();
-      JsonNode blockNode = objectMapper.readTree(blockJson);
+  @Override
+  public List<AnimalReviewDTO> getMainReviewPosts(Category category) {
+    Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
 
-      if ("image".equals(blockNode.get("type").asText())) {
-        return blockNode.get("data").get("file").get("url").asText();
+    Page<Post> postPage = postRepository.findByCategory(category, pageable);
+    List<Post> posts = postPage.getContent();
+
+    List<AnimalReviewDTO> AnimalReviewDTOS = posts.stream()
+        .map(post -> {
+          String postImageUrl = post.getBlocks().stream()
+              .map(block -> parseImageUrl(block.getBlock()))
+              .filter(Objects::nonNull)
+              .findFirst()
+              .orElse(null);
+
+          return AnimalReviewDTO.builder()
+              .postId(post.getPostId())
+              .title(post.getTitle())
+              .postImageUrl(postImageUrl)
+              .build();
+        })
+        .collect(Collectors.toList());
+
+    return AnimalReviewDTOS;
+  }
+
+  @Override
+  public Integer getMainTitle() {
+    return Math.toIntExact(animalRepository.count());
+  }
+
+  private String parseImageUrl(String blockJson) {
+    ObjectMapper objectMapper = new ObjectMapper();
+    try {
+      JsonNode rootNode = objectMapper.readTree(blockJson);
+      String type = rootNode.path("type").asText();
+
+      if ("IMAGE".equalsIgnoreCase(type)) {
+        JsonNode dataNode = rootNode.path("data");
+        JsonNode fileNode = dataNode.path("file");
+        return fileNode.path("url").asText(null);
       }
     } catch (Exception e) {
       e.printStackTrace();
