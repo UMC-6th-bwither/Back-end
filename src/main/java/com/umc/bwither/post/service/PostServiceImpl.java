@@ -212,6 +212,16 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostResponseDTO> getPostsByBreederId(Long breederId) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
+        Breeder breeder = breederRepository.findById(breederId).orElseThrow(()-> new RuntimeException("Breeder not found"));
+        List<Post> postList = postRepository.findByBreeder(breeder);
+        return postList.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public void deletePost(Long postId) {
         Long userId = userAuthorizationUtil.getCurrentUserId();
