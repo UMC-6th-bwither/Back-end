@@ -11,6 +11,8 @@ import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.user.entity.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
+
 public interface BreederService {
     void saveBreeder(Breeder breeder);
 
@@ -20,7 +22,7 @@ public interface BreederService {
 
     BreederDetailDTO getBreederDetail(Long breederId, String sortField);
 
-    BreederPreViewListDTO getBreederList(String region, AnimalType animalType, String species, String sortField, Integer page);
+    BreederPreViewListDTO getBreederList(List<String> regions, AnimalType animalType, String species, String sortField, Integer page);
 
     void bookmarkBreeder(long memberId, Long breederId);
 

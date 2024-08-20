@@ -241,7 +241,7 @@ public class BreederServiceImpl implements BreederService {
     }
 
     @Override
-    public BreederPreViewListDTO getBreederList(String region, AnimalType animalType, String species, String sortField, Integer page) {
+    public BreederPreViewListDTO getBreederList(List<String> regions, AnimalType animalType, String species, String sortField, Integer page) {
         Pageable pageable;
         if ("breederMemberCount".equals(sortField)) {
             pageable = PageRequest.of(page, 5,
@@ -266,9 +266,10 @@ public class BreederServiceImpl implements BreederService {
                     .collect(Collectors.toList());
         }
 
-        if (region != null && !region.isEmpty()) {
+        if (regions != null && !regions.isEmpty()) {
             breederList = breederList.stream()
-                    .filter(b -> b.getUser().getAddress().contains(region))
+                    .filter(b -> regions.stream()
+                            .anyMatch(region -> b.getUser().getAddress().contains(region)))
                     .collect(Collectors.toList());
         }
 
