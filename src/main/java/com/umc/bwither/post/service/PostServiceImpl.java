@@ -152,25 +152,14 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void increaseViewCount(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-        post.setViewCount(post.getViewCount() + 1);
-        postRepository.save(post);
-    }
-
-    @Override
-    public int getViewCount(Long postId) {
-        Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new RuntimeException("Post not found"));
-        return post.getViewCount();
-    }
-
-    @Override
-    @Transactional
     public PostResponseDTO getPost(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
+
+        // 조회수 증가
+        post.setViewCount(post.getViewCount() + 1);
+
+        postRepository.save(post);
 
         return PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent());
     }

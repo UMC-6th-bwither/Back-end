@@ -25,6 +25,7 @@ public class PostResponseDTO {
     private Category category;
     private String kennelName;
     private String author;
+    private String authorImage;
     private LocalDateTime createdAt;
     private Boolean isSaved;
     private List<GetBlockDTO> blocks;
@@ -54,6 +55,7 @@ public class PostResponseDTO {
                 .category(post.getCategory())
                 .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : "Unknown")
                 .author(post.getUser().getName())
+                .authorImage(post.getUser().getProfileImage())
                 .createdAt(post.getCreatedAt())
                 .isSaved(isSaved)
                 .blocks(blockDTOS)
