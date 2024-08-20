@@ -503,7 +503,7 @@ public class AnimalServiceImpl implements AnimalService {
   }
 
   @Override
-  public AnimalPreViewListDTO getAnimalList(String region, AnimalType animalType, Gender gender,
+  public AnimalPreViewListDTO getAnimalList(List<String> regions, AnimalType animalType, Gender gender,
       String breed, Status status, String sortField, Integer page) {
 
     Pageable pageable;
@@ -542,9 +542,10 @@ public class AnimalServiceImpl implements AnimalService {
           .collect(Collectors.toList());
     }
 
-    if (region != null && !region.isEmpty()) {
+    if (regions != null && !regions.isEmpty()) {
       animalList = animalList.stream()
-          .filter(animal -> animal.getBreeder().getUser().getAddress().contains(region))
+          .filter(animal -> regions.stream()
+              .anyMatch(region -> animal.getBreeder().getUser().getAddress().contains(region)))
           .collect(Collectors.toList());
     }
 
