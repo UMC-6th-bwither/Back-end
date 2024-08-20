@@ -49,8 +49,9 @@ public class Post extends BaseEntity {
     @Column(nullable = true)
     private Integer bookmarkCount;
 
+    @Builder.Default
     @Column(nullable = true)
-    private Integer viewCount;
+    private Integer viewCount = 0;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
     private List<Block> blocks;
