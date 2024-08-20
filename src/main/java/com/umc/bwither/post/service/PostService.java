@@ -15,6 +15,8 @@ public interface PostService {
 
     List<PostResponseDTO> getAllPosts(Long userId);
 
+    List<PostResponseDTO> getPostsByUser(Long userId);
+
     List<PostResponseDTO> getPostsByCategory(Category category);
 
     void deletePost(Long postId);
@@ -28,4 +30,5 @@ public interface PostService {
     void unbookmarkPost(Long memberId, Long postId);
 
     List<PostResponseDTO> getBookmarkedPosts(Long userId);
+
 }

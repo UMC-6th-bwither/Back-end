@@ -167,14 +167,14 @@ public class PostController {
     @PostMapping("/create/tip")
     public ResponseEntity<?> createTip(@RequestBody PostRequestDTO.GetTipDTO requestDTO) {
         postService.createTips(requestDTO);
-        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
+        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_CREATE_TIP));
     }
 
     @Operation(summary = "브리더 후기 작성 API", description = "브리더 후기 작성 API")
     @PostMapping("/create/review")
     public ResponseEntity<?> createReview(@RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
         postService.createReviews(requestDTO);
-        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
+        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_CREATE_REVIEW));
     }
 
     @Operation(summary = "게시글 삭제 API", description = "해당 ID의 게시글 삭제")
@@ -188,37 +188,65 @@ public class PostController {
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponse> getPost(@PathVariable Long postId) {
         PostResponseDTO postResponse = postService.getPost(postId);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, postResponse));
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_POST, postResponse));
     }
 
-    //Todo : 목록 DTO 만들기, Pagenation, sort 설정(최신순, 조회순, 스크랩순), 조회수, 북마크 수
-    @Operation(summary = "브리더의 꿀정보 목록 조회 API", description = "브리더의 꿀정보 전체 조회")
-    @GetMapping("/tips")
-    public ResponseEntity<ApiResponse> getAllTipPosts() {
-        List<PostResponseDTO> posts = postService.getPostsByCategory(Category.TIPS);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
+    @Operation(summary = "게시글 목록 조회 API", description = "category를 입력하면 해당 카테고리의 전체 글이 조회됩니다. userId를 입력하면 특정 사용자가 작성한 모든 글이 조회됩니다.")
+    @GetMapping
+    public ResponseEntity<?> getAllPosts(
+            @RequestParam(required = false) Category category,
+            @RequestParam(required = false) Long userId
+    ) {
+        Long currentUser = userAuthorizationUtil.getCurrentUserId();
+        List<PostResponseDTO> posts;
+
+        try {
+            if (userId != null) {
+                // 특정 사용자의 글 조회
+                posts = postService.getPostsByUser(userId);
+                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_ALL_POSTS, posts));
+            } else if (category != null) {
+                // 카테고리가 주어진 경우, 해당 카테고리의 게시글 조회
+                posts = postService.getPostsByCategory(category);
+
+                if (category.equals(Category.TIPS)) {
+                    return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_ALL_TIP_POSTS, posts));
+                } else if (category.equals(Category.BREEDER_REVIEWS)) {
+                    return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_ALL_REVIEW_POSTS, posts));
+                } else {
+                    return ResponseEntity.badRequest().body("유효하지 않은 카테고리입니다.");
+                }
+            } else {
+                // category와 userId가 둘 다 없는 경우, 전체 게시글 조회
+                posts = postService.getAllPosts(currentUser);
+                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_ALL_POSTS, posts));
+            }
+        } catch (Exception e) {
+            // 예외 발생 시 에러 메시지와 상태 코드 반환
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
-    //Todo : 목록 DTO 만들기, sort 설정(최신순, 별점 높은순, 별점 낮은순), 최근 연락한 브리더 기능 구현, 브리더 받은 후기 구현, 사진 리뷰만
+
     @Operation(summary = "브리더 후기 목록 조회 API", description = "브위더 후기 전체 조회")
     @GetMapping("/reviews")
     public ResponseEntity<ApiResponse> getAllReviewPosts() {
         List<PostResponseDTO> posts = postService.getPostsByCategory(Category.BREEDER_REVIEWS);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_ALL_REVIEW_POSTS, posts));
     }
 
     @Operation(summary = "브리더의 꿀정보 저장 API", description = "브리더의 꿀정보 저장 API")
     @PostMapping("/{postId}/bookmark")
     public ResponseEntity<?> bookmarkPost(@PathVariable(name = "postId") Long postId, @RequestParam Long memberId) {
         postService.bookmarkPost(memberId, postId);
-        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
+        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_BOOKMARK_POST));
     }
 
     @Operation(summary = "브리더의 꿀정보 저장 해제 API", description = "브리더의 꿀정보 저장 해제 API")
     @DeleteMapping("/{postId}/bookmark")
     public ResponseEntity<?> unbookmarkPost(@PathVariable(name = "postId") Long postId, @RequestParam Long memberId) {
         postService.unbookmarkPost(memberId, postId);
-        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
+        return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_UNBOOKMARK_POST));
     }
 
     @Operation(summary = "저장한 글 조회 API", description = "특정 사용자가 북마크한 모든 브리더 꿀정보를 조회")
@@ -226,34 +254,27 @@ public class PostController {
     public ResponseEntity<ApiResponse> getBookmarkedPosts() {
         Long userId = userAuthorizationUtil.getCurrentUserId();
         List<PostResponseDTO> posts = postService.getBookmarkedPosts(userId);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_BOOKMARKED_POSTS, posts));
     }
-    // 꿀팁 게시글 수정
+
     @PutMapping("/tips/{postId}")
     public ResponseEntity<String> updateTips(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
         try {
             postService.updateTips(postId, requestDTO);
-            return ResponseEntity.ok("꿀팁 게시글이 성공적으로 수정되었습니다.");
+            return ResponseEntity.ok(SuccessStatus.SUCCESS_UPDATE_TIP.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
 
-    // 브리더 후기 게시글 수정
     @PutMapping("/reviews/{postId}")
     public ResponseEntity<String> updateReviews(@PathVariable Long postId, @RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
         try {
             postService.updateReviews(postId, requestDTO);
-            return ResponseEntity.ok("브리더 후기 게시글이 성공적으로 수정되었습니다.");
+            return ResponseEntity.ok(SuccessStatus.SUCCESS_UPDATE_REVIEW.getMessage());
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-    // Todo : 특정 사용자가 작성한 글 조회 -> 조회 엔드포인트에서 할 수 없을까? ex /post/{category}?userId={userId}, userId = null이면 전체 글 조회
-   /* @GetMapping
-    public ResponseEntity<?> getUserPost(@RequestParam Long userId){
-        PostResponseDTO result = postService.getPost(userId);
-        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,result));
-    }*/
     // Todo : 브리더 받은 후기
 }

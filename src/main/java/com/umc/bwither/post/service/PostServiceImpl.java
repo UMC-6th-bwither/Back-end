@@ -191,6 +191,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostResponseDTO> getPostsByUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        List<Post> postList = postRepository.findByUser(user);
+        return postList.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public List<PostResponseDTO> getPostsByCategory(Category category) {
         List<Post> postList = postRepository.findByCategory(category);
