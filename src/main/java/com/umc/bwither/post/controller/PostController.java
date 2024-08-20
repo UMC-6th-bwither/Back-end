@@ -183,7 +183,8 @@ public class PostController {
     @Operation(summary = "게시글 삭제 API", description = "해당 ID의 게시글 삭제")
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+        postService.deletePost(postId, userId);
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 
