@@ -24,6 +24,9 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
+    @Column(nullable = true)
+    private String coverImage;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;

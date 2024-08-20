@@ -183,41 +183,38 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostResponseDTO> getAllPosts(Long userId) {
+    public List<PostResponseDTO.PostPreviewDTO> getAllPosts(Long userId) {
         // DB에서 가져와서 DTO로 변환
         List<Post> postList = postRepository.findAll();
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post,bookmarkRepository.findByUserUserIdAndPostPostId(userId, post.getPostId()).isPresent()))
+                .map(post -> PostResponseDTO.PostPreviewDTO.getPostPreviewDTO(post))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<PostResponseDTO> getPostsByUser(Long userId) {
-        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
+    public List<PostResponseDTO.PostPreviewDTO> getPostsByUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         List<Post> postList = postRepository.findByUser(user);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
+                .map(post -> PostResponseDTO.PostPreviewDTO.getPostPreviewDTO(post))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
-    public List<PostResponseDTO> getPostsByCategory(Category category) {
-        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
+    public List<PostResponseDTO.PostPreviewDTO> getPostsByCategory(Category category) {
         List<Post> postList = postRepository.findByCategory(category);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
+                .map(post -> PostResponseDTO.PostPreviewDTO.getPostPreviewDTO(post))
                 .collect(Collectors.toList());
     }
 
     @Override
-    public List<PostResponseDTO> getPostsByBreederId(Long breederId) {
-        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
+    public List<PostResponseDTO.PostPreviewDTO> getPostsByBreederId(Long breederId) {
         Breeder breeder = breederRepository.findById(breederId).orElseThrow(()-> new RuntimeException("Breeder not found"));
         List<Post> postList = postRepository.findByBreeder(breeder);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
+                .map(post -> PostResponseDTO.PostPreviewDTO.getPostPreviewDTO(post))
                 .collect(Collectors.toList());
     }
 
@@ -368,7 +365,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostResponseDTO> getBookmarkedPosts(Long userId) {
+    public List<PostResponseDTO.PostPreviewDTO> getBookmarkedPosts(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
 
@@ -379,7 +376,7 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
 
         return posts.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, true))
+                .map(post -> PostResponseDTO.PostPreviewDTO.getPostPreviewDTO(post))
                 .collect(Collectors.toList());
     }
 }

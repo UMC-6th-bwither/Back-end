@@ -13,11 +13,11 @@ public interface PostService {
 
     PostResponseDTO getPost(Long postId);
 
-    List<PostResponseDTO> getAllPosts(Long userId);
+    List<PostResponseDTO.PostPreviewDTO> getAllPosts(Long userId);
 
-    List<PostResponseDTO> getPostsByUser(Long userId);
+    List<PostResponseDTO.PostPreviewDTO> getPostsByUser(Long userId);
 
-    List<PostResponseDTO> getPostsByCategory(Category category);
+    List<PostResponseDTO.PostPreviewDTO> getPostsByCategory(Category category);
 
     void deletePost(Long postId);
 
@@ -29,7 +29,7 @@ public interface PostService {
 
     void unbookmarkPost(Long memberId, Long postId);
 
-    List<PostResponseDTO> getBookmarkedPosts(Long userId);
+    List<PostResponseDTO.PostPreviewDTO> getBookmarkedPosts(Long userId);
 
-    List<PostResponseDTO> getPostsByBreederId(Long breederId);
+    List<PostResponseDTO.PostPreviewDTO> getPostsByBreederId(Long breederId);
 }
