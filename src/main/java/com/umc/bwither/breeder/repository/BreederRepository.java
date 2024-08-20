@@ -1,5 +1,6 @@
 package com.umc.bwither.breeder.repository;
 
+import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.Breeder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,6 @@ public interface BreederRepository extends JpaRepository<Breeder, Long> {
     Integer findTrustLevelByBreederId(Long breederId);
 
     Optional<Breeder> findByUser_UserId(Long userId);
+
+    List<Breeder> findByAnimal(AnimalType animalType);
 }
