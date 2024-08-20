@@ -17,7 +17,7 @@ public interface PostService {
 
     List<PostResponseDTO> getPostsByCategory(Category category);
 
-    void deletePost(Long postId, Long userId);
+    void deletePost(Long postId);
 
 //    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
 

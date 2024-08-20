@@ -58,7 +58,7 @@ public class PostServiceImpl implements PostService {
                 .user(user)
                 .petType(tipDTO.getPetType())
                 .title(tipDTO.getTitle())
-                .category(tipDTO.getCategory())
+                .category(Category.TIPS)
                 .build();
 
         Post savedPost = postRepository.save(post);
@@ -107,7 +107,7 @@ public class PostServiceImpl implements PostService {
                 .user(user)
                 .petType(reviewDTO.getPetType())
                 .rating(reviewDTO.getRating())
-                .category(reviewDTO.getCategory())
+                .category(Category.BREEDER_REVIEWS)
                 .build();
 
         // 먼저 Post를 저장해야 Block의 외래키 관계가 올바르게 설정됨
@@ -201,15 +201,15 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePost(Long postId, Long userId) {
+    public void deletePost(Long postId) {
+        Long userId = userAuthorizationUtil.getCurrentUserId();
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-        if(user == post.getUser()){
-            postRepository.delete(post);
-        } else {
-            new RuntimeException("게시글은 작성자만 삭제할 수 있습니다.");
+        if(!user.equals(post.getUser())){
+            throw new RuntimeException("게시글은 작성자만 삭제할 수 있습니다.");
         }
+        postRepository.delete(post);
     }
 
    /* @Override
