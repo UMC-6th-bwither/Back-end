@@ -19,9 +19,9 @@ public interface PostService {
 
     void deletePost(Long postId);
 
-//    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
+    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
 
-//    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
+    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
 
     void bookmarkPost(Long memberId, Long postId);
 

@@ -228,10 +228,32 @@ public class PostController {
         List<PostResponseDTO> posts = postService.getBookmarkedPosts(userId);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
-    // Todo : 브리더의 꿀정보 수정
-    // Todo : 브리더 후기 수정
+    // 꿀팁 게시글 수정
+    @PutMapping("/tips/{postId}")
+    public ResponseEntity<String> updateTips(@PathVariable Long postId, @RequestBody PostRequestDTO.GetTipDTO requestDTO) {
+        try {
+            postService.updateTips(postId, requestDTO);
+            return ResponseEntity.ok("꿀팁 게시글이 성공적으로 수정되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
 
-    // Todo : 내가 쓴 글 // 브리더가 작성한 브리더 꿀정보
-    // Todo : 나의 후기 // 일반 회원이 작성한 브리더 후기
+    // 브리더 후기 게시글 수정
+    @PutMapping("/reviews/{postId}")
+    public ResponseEntity<String> updateReviews(@PathVariable Long postId, @RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
+        try {
+            postService.updateReviews(postId, requestDTO);
+            return ResponseEntity.ok("브리더 후기 게시글이 성공적으로 수정되었습니다.");
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+    // Todo : 특정 사용자가 작성한 글 조회 -> 조회 엔드포인트에서 할 수 없을까? ex /post/{category}?userId={userId}, userId = null이면 전체 글 조회
+   /* @GetMapping
+    public ResponseEntity<?> getUserPost(@RequestParam Long userId){
+        PostResponseDTO result = postService.getPost(userId);
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK,result));
+    }*/
     // Todo : 브리더 받은 후기
 }
