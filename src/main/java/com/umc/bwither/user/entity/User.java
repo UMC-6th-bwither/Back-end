@@ -59,9 +59,6 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private Status status; // Enum 정의 필요
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Post> posts;
 

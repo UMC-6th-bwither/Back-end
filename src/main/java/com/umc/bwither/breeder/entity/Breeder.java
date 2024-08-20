@@ -124,9 +124,6 @@ public class Breeder extends BaseEntity {
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inquiry> inquiries;
 
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-
     @Column
     private Double averageRating;
     public Breeder(Long breederId) {
