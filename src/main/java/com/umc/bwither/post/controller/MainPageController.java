@@ -51,7 +51,7 @@ public class MainPageController {
     return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_FETCH_PET_REVIEWS, posts));
   }
 
-  @GetMapping("title")
+  @GetMapping("/title")
   @Operation(summary = "메인페이지 총 분양대기동물 수 조회 API", description = "메인페이지 총 분양대기동물 수 조회 API")
   public ResponseEntity<ApiResponse> getMainTitle() {
     Integer animalCount = mainPageService.getMainTitle();
