@@ -84,7 +84,6 @@ public class BreederServiceImpl implements BreederService {
         }
 
         Integer totalAnimals = animalRepository.countByBreeder(breeder);
-        Integer careerYear = breedingRepository.findTotalCareerYearsByBreederId(breederId);
         int reviewCount = postRepository.countReviewsByBreederId(breeder.getBreederId());
 
         List<BreederFileDTO> files = breeder.getBreederFiles().stream()
@@ -160,7 +159,7 @@ public class BreederServiceImpl implements BreederService {
                 .totalAnimals(totalAnimals)
                 .breederRating(Double.valueOf(formattedRating))
                 .reviewCount(reviewCount)
-                .careerYear(careerYear)
+                .careerYear(breeder.getExperienceYears())
                 .trustLevel(breeder.getTrustLevel())
                 .tradePhone(breeder.getTradePhone())
                 .contactableTime(breeder.getContactableTime())
@@ -222,7 +221,6 @@ public class BreederServiceImpl implements BreederService {
 
         List<BreederPreviewDTO> breederDTOs = breederList.stream()
                 .map(breeder -> {
-                    int careerYear = breedingRepository.findTotalCareerYearsByBreederId(breeder.getBreederId());
                     int certificateCount = breederFileRepository.countCertificatesByBreederId(breeder.getBreederId());
                     int waitAnimalCount = waitListRepository.countAnimalsByBreederId(breeder.getBreederId());
                     int waitListCount = waitListRepository.countMembersByBreederId(breeder.getBreederId());
@@ -237,7 +235,7 @@ public class BreederServiceImpl implements BreederService {
                             .breederName(breeder.getTradeName())
                             .animalType(breeder.getAnimal())
                             .species(breeder.getSpecies())
-                            .careerYear(careerYear)
+                            .careerYear(breeder.getExperienceYears())
                             .certificateCount(certificateCount)
                             .waitAnimal(waitAnimalCount)
                             .waitList(waitListCount)
@@ -320,7 +318,6 @@ public class BreederServiceImpl implements BreederService {
         // DTO로 변환
         List<BreederResponseDTO.BookmarkBreederDTO> breederDTOs = sortedBreeders.stream()
                 .map(b -> {
-                    int careerYear = breedingRepository.findTotalCareerYearsByBreederId(b.getBreederId());
                     int certificateCount = breederFileRepository.countCertificatesByBreederId(b.getBreederId());
                     int waitAnimalCount = waitListRepository.countAnimalsByBreederId(b.getBreederId());
                     int waitListCount = waitListRepository.countMembersByBreederId(b.getBreederId());
@@ -335,7 +332,7 @@ public class BreederServiceImpl implements BreederService {
                             .address(b.getUser().getAddress())
                             .animalType(b.getAnimal())
                             .species(b.getSpecies())
-                            .careerYear(careerYear)
+                            .careerYear(b.getExperienceYears())
                             .certificateCount(certificateCount)
                             .waitAnimal(waitAnimalCount)
                             .waitList(waitListCount)
