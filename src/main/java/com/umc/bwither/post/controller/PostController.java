@@ -254,14 +254,16 @@ public class PostController {
 
     @Operation(summary = "브리더의 꿀정보 저장 API", description = "브리더의 꿀정보 저장 API")
     @PostMapping("/{postId}/bookmark")
-    public ResponseEntity<?> bookmarkPost(@PathVariable(name = "postId") Long postId, @RequestParam Long memberId) {
+    public ResponseEntity<?> bookmarkPost(@PathVariable(name = "postId") Long postId) {
+        Long memberId = userAuthorizationUtil.getCurrentUserId();
         postService.bookmarkPost(memberId, postId);
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_BOOKMARK_POST));
     }
 
     @Operation(summary = "브리더의 꿀정보 저장 해제 API", description = "브리더의 꿀정보 저장 해제 API")
     @DeleteMapping("/{postId}/bookmark")
-    public ResponseEntity<?> unbookmarkPost(@PathVariable(name = "postId") Long postId, @RequestParam Long memberId) {
+    public ResponseEntity<?> unbookmarkPost(@PathVariable(name = "postId") Long postId) {
+        Long memberId = userAuthorizationUtil.getCurrentUserId();
         postService.unbookmarkPost(memberId, postId);
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus.SUCCESS_UNBOOKMARK_POST));
     }

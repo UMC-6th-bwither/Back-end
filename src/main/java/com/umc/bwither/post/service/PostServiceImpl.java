@@ -169,6 +169,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostResponseDTO getPost(Long postId) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -177,7 +178,7 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(post);
 
-        return PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(post.getUser().getUserId(), post.getPostId()).isPresent());
+        return PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent());
     }
 
     @Override
@@ -192,19 +193,21 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostResponseDTO> getPostsByUser(Long userId) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
         User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
         List<Post> postList = postRepository.findByUser(user);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
                 .collect(Collectors.toList());
     }
 
     @Override
     @Transactional
     public List<PostResponseDTO> getPostsByCategory(Category category) {
+        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
         List<Post> postList = postRepository.findByCategory(category);
         return postList.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .map(post -> PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent()))
                 .collect(Collectors.toList());
     }
 
@@ -366,7 +369,7 @@ public class PostServiceImpl implements PostService {
                 .collect(Collectors.toList());
 
         return posts.stream()
-                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .map(post -> PostResponseDTO.getPostDTO(post, true))
                 .collect(Collectors.toList());
     }
 }
