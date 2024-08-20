@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.List;
 
 public interface PostService {
-//    void createPost(PostRequestDTO requestDTO);
     void createTips(PostRequestDTO.GetTipDTO tipDTO);
     void createReviews(PostRequestDTO.GetReviewDTO reviewDTO);
 

@@ -163,7 +163,6 @@ public class PostController {
         }
     }
 
-    // Todo : 브리더만 작성할 수 있도록 수정
     @Operation(summary = "브리더의 꿀정보 작성 API", description = "브리더의 꿀정보 작성 API")
     @PostMapping("/create/tip")
     public ResponseEntity<?> createTip(@RequestBody PostRequestDTO.GetTipDTO requestDTO) {
@@ -171,7 +170,6 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
     }
 
-    // Todo : 일반 멤버만 작성할 수 있도록 수정
     @Operation(summary = "브리더 후기 작성 API", description = "브리더 후기 작성 API")
     @PostMapping("/create/review")
     public ResponseEntity<?> createReview(@RequestBody PostRequestDTO.GetReviewDTO requestDTO) {
@@ -179,7 +177,6 @@ public class PostController {
         return ResponseEntity.ok(ApiResponse.onSuccess(SuccessStatus._OK));
     }
 
-    // Todo : 작성자만 삭제할 수 있도록 수정
     @Operation(summary = "게시글 삭제 API", description = "해당 ID의 게시글 삭제")
     @DeleteMapping("/{postId}")
     public ResponseEntity<?> deletePost(@PathVariable Long postId) {
@@ -228,13 +225,13 @@ public class PostController {
     @Operation(summary = "저장한 글 조회 API", description = "특정 사용자가 북마크한 모든 브리더 꿀정보를 조회")
     @GetMapping("/bookmarks")
     public ResponseEntity<ApiResponse> getBookmarkedPosts() {
-        Long userId = userAuthorizationUtil.getCurrentUserId();;
-        System.out.println("id: "+userId);
+        Long userId = userAuthorizationUtil.getCurrentUserId();
         List<PostResponseDTO> posts = postService.getBookmarkedPosts(userId);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
     }
     // Todo : 브리더의 꿀정보 수정
     // Todo : 브리더 후기 수정
+
     // Todo : 내가 쓴 글 // 브리더가 작성한 브리더 꿀정보
     // Todo : 나의 후기 // 일반 회원이 작성한 브리더 후기
     // Todo : 브리더 받은 후기

@@ -15,7 +15,6 @@ public class PostRequestDTO {
     @AllArgsConstructor
     public static class GetTipDTO {
 
-        private Long userId;
         private PetType petType;
         private String title;
         private Category category = Category.TIPS;
@@ -30,7 +29,6 @@ public class PostRequestDTO {
     public static class GetReviewDTO {
 
         private Long breederId;
-        private Long userId;
         private PetType petType;
         private Integer rating;
         private Category category = Category.BREEDER_REVIEWS;
