@@ -15,17 +15,20 @@ public interface PostService {
 
     List<PostResponseDTO> getAllPosts(Long userId);
 
+    List<PostResponseDTO> getPostsByUser(Long userId);
+
     List<PostResponseDTO> getPostsByCategory(Category category);
 
-    void deletePost(Long postId, Long userId);
+    void deletePost(Long postId);
 
-//    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
+    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
 
-//    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
+    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
 
     void bookmarkPost(Long memberId, Long postId);
 
     void unbookmarkPost(Long memberId, Long postId);
 
     List<PostResponseDTO> getBookmarkedPosts(Long userId);
+
 }

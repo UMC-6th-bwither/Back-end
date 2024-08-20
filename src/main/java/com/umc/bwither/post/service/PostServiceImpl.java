@@ -58,7 +58,7 @@ public class PostServiceImpl implements PostService {
                 .user(user)
                 .petType(tipDTO.getPetType())
                 .title(tipDTO.getTitle())
-                .category(tipDTO.getCategory())
+                .category(Category.TIPS)
                 .build();
 
         Post savedPost = postRepository.save(post);
@@ -107,7 +107,7 @@ public class PostServiceImpl implements PostService {
                 .user(user)
                 .petType(reviewDTO.getPetType())
                 .rating(reviewDTO.getRating())
-                .category(reviewDTO.getCategory())
+                .category(Category.BREEDER_REVIEWS)
                 .build();
 
         // 먼저 Post를 저장해야 Block의 외래키 관계가 올바르게 설정됨
@@ -191,6 +191,15 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
+    public List<PostResponseDTO> getPostsByUser(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        List<Post> postList = postRepository.findByUser(user);
+        return postList.stream()
+                .map(post -> PostResponseDTO.getPostDTO(post, null))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     @Transactional
     public List<PostResponseDTO> getPostsByCategory(Category category) {
         List<Post> postList = postRepository.findByCategory(category);
@@ -201,87 +210,108 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public void deletePost(Long postId, Long userId) {
+    public void deletePost(Long postId) {
+        Long userId = userAuthorizationUtil.getCurrentUserId();
         User user = userRepository.findById(userId).orElseThrow(()->new RuntimeException("User not found"));
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
-        if(user == post.getUser()){
-            postRepository.delete(post);
-        } else {
-            new RuntimeException("게시글은 작성자만 삭제할 수 있습니다.");
+        if(!user.equals(post.getUser())){
+            throw new RuntimeException("게시글은 작성자만 삭제할 수 있습니다.");
         }
+        postRepository.delete(post);
     }
 
-   /* @Override
+    @Override
+    @Transactional
     public void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO) {
+
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
+        if(!userId.equals(post.getUser().getUserId())){
+            throw new RuntimeException("게시글은 작성자만 삭제할 수 있습니다.");
+        }
+
+        // 제목과 펫 타입 업데이트
         post.setPetType(requestDTO.getPetType());
         post.setTitle(requestDTO.getTitle());
 
         // 기존 블록 삭제
-        post.getBlocks().clear();
+        blockRepository.deleteAll(post.getBlocks());
 
         // 새로운 블록 추가
         List<Block> blocks = requestDTO.getBlocks().stream()
                 .map(blockDTO -> {
                     Block block = new Block();
-                    block.setDataType(blockDTO.getType());
-
-                    if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
-                        block.setImageUrl(blockDTO.getData().getFile().getUrl());
-                    } else if (blockDTO.getType() == DataType.TEXT) {
-                        block.setText(blockDTO.getData().getText());
+                    try {
+                        // json 직렬화
+                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        block.setPost(post);
+                    } catch (Exception e) {
+                        throw new RuntimeException("blockDTO 직렬화 오류", e);
                     }
-
                     return block;
                 })
                 .collect(Collectors.toList());
 
-        blocks.forEach(block -> block.setPost(post));
-        post.getBlocks().addAll(blocks);
+        // 블록을 Post에 설정하고 저장
+        blockRepository.saveAll(blocks);
+        post.setBlocks(blocks);
 
         postRepository.save(post);
     }
 
     @Override
+    @Transactional
     public void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO) {
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+
         // 브리더 조회
         Breeder breeder = breederRepository.findById(requestDTO.getBreederId())
-                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + requestDTO.getUserId()));
+                .orElseThrow(() -> new RuntimeException("Breeder not found with id: " + requestDTO.getBreederId()));
 
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
+        if(!userId.equals(post.getUser().getUserId())){
+            throw new RuntimeException("게시글은 작성자만 삭제할 수 있습니다.");
+        }
+
+
+        // 브리더, 펫 타입, 별점 업데이트
         post.setBreeder(breeder);
         post.setPetType(requestDTO.getPetType());
         post.setRating(requestDTO.getRating());
 
         // 기존 블록 삭제
-        post.getBlocks().clear();
+        blockRepository.deleteAll(post.getBlocks());
 
         // 새로운 블록 추가
         List<Block> blocks = requestDTO.getBlocks().stream()
                 .map(blockDTO -> {
                     Block block = new Block();
-                    block.setDataType(blockDTO.getType());
-
-                    if (blockDTO.getType() == DataType.IMAGE && blockDTO.getData().getFile() != null) {
-                        block.setImageUrl(blockDTO.getData().getFile().getUrl());
-                    } else if (blockDTO.getType() == DataType.TEXT) {
-                        block.setText(blockDTO.getData().getText());
+                    try {
+                        // json 직렬화
+                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        block.setPost(post);
+                    } catch (Exception e) {
+                        throw new RuntimeException("blockDTO 직렬화 오류", e);
                     }
-
                     return block;
                 })
                 .collect(Collectors.toList());
 
-        blocks.forEach(block -> block.setPost(post));
-        post.getBlocks().addAll(blocks);
+        // 블록을 Post에 설정하고 저장
+        blockRepository.saveAll(blocks);
+        post.setBlocks(blocks);
 
         postRepository.save(post);
-    }*/
+
+        // 평균 별점 업데이트
+        updateAverageRating(post);
+    }
 
     @Override
     @Transactional

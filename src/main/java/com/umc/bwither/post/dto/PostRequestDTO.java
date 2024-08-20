@@ -17,7 +17,7 @@ public class PostRequestDTO {
 
         private PetType petType;
         private String title;
-        private Category category = Category.TIPS;
+        private Category category;
         private List<BlockDTO> blocks;
 
     }
@@ -31,7 +31,7 @@ public class PostRequestDTO {
         private Long breederId;
         private PetType petType;
         private Integer rating;
-        private Category category = Category.BREEDER_REVIEWS;
+        private Category category;
         private List<BlockDTO> blocks;
 
 
