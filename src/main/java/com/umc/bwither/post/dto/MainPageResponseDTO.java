@@ -48,4 +48,14 @@ public class MainPageResponseDTO {
     AnimalType animalType;
   }
 
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class AnimalReviewDTO {
+    Long postId;
+    String title;
+    String postImageUrl;
+  }
+
 }

@@ -7,6 +7,7 @@ import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.breeder.repository.InquiryRepository;
+import com.umc.bwither.post.dto.MainPageResponseDTO.AnimalReviewDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.BreederProfileDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.BreederTipsDTO;
 import com.umc.bwither.post.dto.MainPageResponseDTO.PopularBreedersDTO;
@@ -125,6 +126,32 @@ public class MainPageServiceImpl implements MainPageService {
         .build();
 
     return List.of(popularBreedersDTO);
+  }
+
+  @Override
+  public List<AnimalReviewDTO> getMainReviewPosts(Category category) {
+    Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "createdAt"));
+
+    Page<Post> postPage = postRepository.findByCategory(category, pageable);
+    List<Post> posts = postPage.getContent();
+
+    List<AnimalReviewDTO> AnimalReviewDTOS = posts.stream()
+        .map(post -> {
+          String postImageUrl = post.getBlocks().stream()
+              .map(block -> parseImageUrl(block.getBlock()))
+              .filter(Objects::nonNull)
+              .findFirst()
+              .orElse(null);
+
+          return AnimalReviewDTO.builder()
+              .postId(post.getPostId())
+              .title(post.getTitle())
+              .postImageUrl(postImageUrl)
+              .build();
+        })
+        .collect(Collectors.toList());
+
+    return AnimalReviewDTOS;
   }
 
   private String parseImageUrl(String blockJson) {
