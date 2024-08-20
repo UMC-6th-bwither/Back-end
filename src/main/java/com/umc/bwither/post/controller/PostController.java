@@ -103,18 +103,25 @@ package com.umc.bwither.post.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
+import com.umc.bwither.post.dto.S3RequestDTO;
+import com.umc.bwither.post.dto.S3ResponseDTO;
 import com.umc.bwither._base.common.UserAuthorizationUtil;
+import com.umc.bwither.animal.service.S3Uploader;
 import com.umc.bwither.post.dto.PostRequestDTO;
 import com.umc.bwither.post.dto.PostResponseDTO;
 import com.umc.bwither.post.entity.enums.Category;
 import com.umc.bwither.post.service.PostService;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-
+import java.util.stream.Collectors;
+@Slf4j
 @RestController
 @RequestMapping("/post")
 @RequiredArgsConstructor
@@ -122,6 +129,39 @@ public class PostController {
 
     private final PostService postService;
     private final UserAuthorizationUtil userAuthorizationUtil;
+    private final S3Uploader s3Uploader;
+
+    @PostMapping(value = "/uploads", consumes = "multipart/form-data")
+    @Operation(summary = "파일 업로드 API", description = "파일 업로드 API")
+    public ResponseEntity<?> uploadFile(@RequestPart(value = "uploadFile", required = false) MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return ResponseEntity.badRequest()
+                    .body(S3ResponseDTO.builder()
+                            .success(0)
+                            .file(S3ResponseDTO.FileDTO.builder().url("업로드할 파일이 없습니다.").build())
+                            .build());
+        }
+
+        try {
+            String uploadedFileUrl = s3Uploader.uploadFile("post", file);
+
+            return ResponseEntity.ok(
+                    S3ResponseDTO.builder()
+                            .success(1)
+                            .file(S3ResponseDTO.FileDTO.builder().url(uploadedFileUrl).build())
+                            .build()
+            );
+
+        } catch (Exception e) {
+            log.error("파일 업로드 오류: {}", file.getOriginalFilename(), e);
+            S3ResponseDTO result = S3ResponseDTO.builder()
+                    .success(0)
+                    .file(S3ResponseDTO.FileDTO.builder().url("파일 업로드 실패").build())
+                    .build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(result);
+        }
+    }
 
     // Todo : 브리더만 작성할 수 있도록 수정
     @Operation(summary = "브리더의 꿀정보 작성 API", description = "브리더의 꿀정보 작성 API")
@@ -147,7 +187,6 @@ public class PostController {
         return ResponseEntity.noContent().build(); // 204 No Content
     }
 
-    // Todo : 조회수 count
     @Operation(summary = "게시글 상세 조회 API", description = "해당 ID의 게시글 상세 조회")
     @GetMapping("/{postId}")
     public ResponseEntity<ApiResponse> getPost(@PathVariable Long postId) {
