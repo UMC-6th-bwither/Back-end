@@ -11,6 +11,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public class BreederResponseDTO {
 
@@ -74,6 +75,7 @@ public class BreederResponseDTO {
         String species;
         Integer rating;
         List<BlockDTO> content;
+        LocalDateTime created_at;
     }
 
     @Builder
@@ -82,9 +84,10 @@ public class BreederResponseDTO {
     @AllArgsConstructor
     public static class BreederTipsDTO {
         Long postId;
-//        String fileUrl;
-        List<Block> blocks;
+        String userName;
         String title;
+        String userProfile;
+        String thumbnail;
     }
 
     @Builder
