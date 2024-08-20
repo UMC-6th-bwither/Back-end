@@ -227,6 +227,14 @@ public class AnimalController {
     return ApiResponse.onSuccess(SuccessStatus.SUCCESS_REMOVE_WAIT_ANIMAL);
   }
 
+  @Operation(summary = "동물 북마크 상태 확인 API", description = "사용자가 분양대기동물을 북마크했는지 상태를 확인하는 API입니다. 동물 아이디(animalId) PathVariable")
+  @GetMapping("/{animalId}/bookmarkstatus")
+  public ApiResponse<Boolean> checkBookmarkStatus(
+      @PathVariable("animalId") Long animalId,
+      @RequestParam String memberId) {
+    return ApiResponse.onSuccess(animalService.checkBookmarkStatus(animalId, Long.parseLong(memberId)));
+  }
+
 }
 
 //  @PostMapping(value = "", consumes = "multipart/form-data" )

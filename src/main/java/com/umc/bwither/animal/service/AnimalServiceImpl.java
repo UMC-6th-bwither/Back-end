@@ -608,6 +608,16 @@ public class AnimalServiceImpl implements AnimalService {
     waitListRepository.delete(waitList);
   }
 
+  @Override
+  public Boolean checkBookmarkStatus(Long animalId, long memberId) {
+    Animal animal = animalRepository.findById(animalId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.ANIMAL_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+    return animalMemberRepository.existsByMemberAndAnimal(member, animal);
+  }
+
 }
 
 

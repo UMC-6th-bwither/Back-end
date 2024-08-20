@@ -40,4 +40,6 @@ public interface AnimalService {
   void waitAnimal(long memberId, Long animalId);
 
   void unwaitAnimal(long memberId, Long animalId);
+
+  Boolean checkBookmarkStatus(Long animalId, long memberId);
 }
