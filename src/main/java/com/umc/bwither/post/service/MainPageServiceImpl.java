@@ -3,6 +3,7 @@ package com.umc.bwither.post.service;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.umc.bwither.animal.repository.AnimalRepository;
 import com.umc.bwither.breeder.entity.enums.AnimalType;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.repository.BreederRepository;
@@ -31,7 +32,7 @@ import org.springframework.stereotype.Service;
 public class MainPageServiceImpl implements MainPageService {
 
   private final PostRepository postRepository;
-  private final InquiryRepository inquiryRepository;
+  private final AnimalRepository animalRepository;
   private final BreederRepository breederRepository;
 
 
@@ -152,6 +153,11 @@ public class MainPageServiceImpl implements MainPageService {
         .collect(Collectors.toList());
 
     return AnimalReviewDTOS;
+  }
+
+  @Override
+  public Integer getMainTitle() {
+    return Math.toIntExact(animalRepository.count());
   }
 
   private String parseImageUrl(String blockJson) {

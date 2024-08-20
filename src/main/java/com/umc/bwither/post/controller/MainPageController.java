@@ -50,4 +50,11 @@ public class MainPageController {
     List<AnimalReviewDTO> posts = mainPageService.getMainReviewPosts(Category.BREEDER_REVIEWS);
     return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_FETCH_PET_REVIEWS, posts));
   }
+
+  @GetMapping("title")
+  @Operation(summary = "메인페이지 총 분양대기동물 수 조회 API", description = "메인페이지 총 분양대기동물 수 조회 API")
+  public ResponseEntity<ApiResponse> getMainTitle() {
+    Integer animalCount = mainPageService.getMainTitle();
+    return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_FETCH_PET_COUNTS, animalCount));
+  }
 }
