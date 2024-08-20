@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.List;
 
 public interface PostService {
-//    void createPost(PostRequestDTO requestDTO);
     void createTips(PostRequestDTO.GetTipDTO tipDTO);
     void createReviews(PostRequestDTO.GetReviewDTO reviewDTO);
 
@@ -18,7 +17,7 @@ public interface PostService {
 
     List<PostResponseDTO> getPostsByCategory(Category category);
 
-    void deletePost(Long postId);
+    void deletePost(Long postId, Long userId);
 
 //    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
 
