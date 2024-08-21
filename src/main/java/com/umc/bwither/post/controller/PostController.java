@@ -115,7 +115,7 @@ public class PostController {
             @RequestParam(required = false) Long breederId
     ) {
         Long currentUser = userAuthorizationUtil.getCurrentUserId();
-        List<PostResponseDTO> posts;
+        List<PostResponseDTO.PostPreviewDTO> posts;
 
         try {
             if (userId != null) {
@@ -174,11 +174,9 @@ public class PostController {
     @GetMapping("/bookmarks")
     public ResponseEntity<ApiResponse> getBookmarkedPosts() {
         Long userId = userAuthorizationUtil.getCurrentUserId();
-        List<PostResponseDTO> posts = postService.getBookmarkedPosts(userId);
+        List<PostResponseDTO.PostPreviewDTO> posts = postService.getBookmarkedPosts(userId);
         return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_BOOKMARKED_POSTS, posts));
     }
-
-    // Todo : 목록 DTO 수정
     // Todo : 대표 이미지(입력받은 블록 중 첫번째 이미지)
 
 }

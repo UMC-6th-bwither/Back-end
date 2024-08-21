@@ -11,6 +11,7 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Data @Builder
@@ -78,6 +79,56 @@ public class PostResponseDTO {
                     .id((String) map.get("id"))
                     .type((String) map.get("type"))
                     .data((Map<String, Object>) map.get("data"))
+                    .build();
+        }
+    }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class PostPreviewDTO {
+        private Long id;
+        private String coverImage;
+        private Boolean hasImage; // 사진이 있는지 여부
+        private String title;
+        private PetType petType;
+        private Integer rating;
+        private Category category;
+        private String kennelName;
+        private Optional<GetBlockDTO> block;
+        private LocalDateTime createdAt;
+        private Integer viewCount;
+        private Integer bookmarkCount;
+
+        public static PostPreviewDTO getPostPreviewDTO(Post post) {
+            boolean imageExists = post.getCoverImage() != null && !post.getCoverImage().trim().isEmpty();
+            ObjectMapper mapper = new ObjectMapper();
+            Optional<GetBlockDTO> firstBlock = post.getBlocks().stream()
+                    .findFirst() // 첫 번째 요소를 Optional로 가져옵니다.
+                    .map(block -> {
+                        try {
+                            // JSON 문자열을 Map으로 변환 후 GetBlockDTO로 변환
+                            Map<String, Object> blockMap = mapper.readValue(block.getBlock(), Map.class);
+                            return GetBlockDTO.fromMap(blockMap);
+                        } catch (JsonProcessingException e) {
+                            throw new RuntimeException("Error deserializing block data from JSON", e);
+                        }
+                    });
+
+            return PostPreviewDTO.builder()
+                    .id(post.getPostId())
+                    .coverImage(post.getCoverImage())
+                    .hasImage(imageExists)
+                    .title(post.getTitle())
+                    .petType(post.getPetType())
+                    .rating(post.getRating())
+                    .category(post.getCategory())
+                    .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : null)
+                    .block(firstBlock)
+                    .createdAt(post.getCreatedAt())
+                    .viewCount(post.getViewCount())
+                    .bookmarkCount(post.getBookmarkCount())
                     .build();
         }
     }
