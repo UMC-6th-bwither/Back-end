@@ -24,6 +24,7 @@ public class MemberJoinDTO {
     //Member
     private PetAllowed petAllowed;
     private String cohabitant;
+    private Long cohabitantCount;
     private FamilyAgreement familyAgreement;
     private EmploymentStatus employmentStatus;
     private String commuteTime;

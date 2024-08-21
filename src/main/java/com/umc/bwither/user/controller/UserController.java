@@ -178,6 +178,7 @@ public class UserController {
                     .user(savedUser)
                     .petAllowed(memberJoinDTO.getPetAllowed())
                     .cohabitant(memberJoinDTO.getCohabitant())
+                    .cohabitantCount(memberJoinDTO.getCohabitantCount())
                     .familyAgreement(memberJoinDTO.getFamilyAgreement())
                     .employmentStatus(memberJoinDTO.getEmploymentStatus())
                     .commuteTime(memberJoinDTO.getCommuteTime())
