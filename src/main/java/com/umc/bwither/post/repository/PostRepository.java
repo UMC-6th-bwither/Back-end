@@ -23,6 +23,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findByUserAndCategory(User user, Category category);
 
+    List<Post> findByUser(User user);
+    List<Post> findByBreeder(Breeder breeder);
+
     List<Post> findByBreederAndCategory(Breeder breeder, Category category);
 
     List<Post> findByBreederAndCategory(Breeder breeder, Category category, Sort sort);

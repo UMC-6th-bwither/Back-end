@@ -93,7 +93,7 @@ public class UserController {
                     .licenseNumber(breederJoinDTO.getLicenseNumber())
                     .snsAddress(breederJoinDTO.getSnsAddress())
                     .animalHospital(breederJoinDTO.getAnimalHospital())
-                    .certificateName(breederJoinDTO.getCertificateName())
+                    .certificateNames(breederJoinDTO.getCertificateNames())
                     .trustLevel(5)
                     .build();
 

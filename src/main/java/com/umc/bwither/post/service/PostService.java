@@ -13,19 +13,23 @@ public interface PostService {
 
     PostResponseDTO getPost(Long postId);
 
-    List<PostResponseDTO> getAllPosts(Long userId);
+    List<PostResponseDTO.PostPreviewDTO> getAllPosts();
 
-    List<PostResponseDTO> getPostsByCategory(Category category);
+    List<PostResponseDTO.PostPreviewDTO> getPostsByUser(Long userId);
 
-    void deletePost(Long postId, Long userId);
+    List<PostResponseDTO.PostPreviewDTO> getPostsByCategory(Category category);
 
-//    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
+    void deletePost(Long postId);
 
-//    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
+    void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO);
+
+    void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO);
 
     void bookmarkPost(Long memberId, Long postId);
 
     void unbookmarkPost(Long memberId, Long postId);
 
-    List<PostResponseDTO> getBookmarkedPosts(Long userId);
+    List<PostResponseDTO.PostPreviewDTO> getBookmarkedPosts(Long userId);
+
+    List<PostResponseDTO.PostPreviewDTO> getPostsByBreederId(Long breederId);
 }
