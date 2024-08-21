@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +52,20 @@ public class NotificationServiceImpl implements NotificationService{
             .createdAt(notification.getCreatedAt())
             .build())
         .collect(Collectors.toList());
+  }
+
+  @Override
+  @Transactional
+  public void markNotificationAsRead(Long userId, Long notificationId) {
+    Notification notification = notificationRepository.findById(notificationId)
+        .orElseThrow(() -> new RuntimeException("알림을 찾을 수 없습니다."));
+
+    if (!notification.getUser().getUserId().equals(userId)) {
+      throw new RuntimeException("권한이 없습니다.");
+    }
+
+    notification.setIsChecked(true);
+    notificationRepository.save(notification);
   }
 
 }

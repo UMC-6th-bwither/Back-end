@@ -100,8 +100,8 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_UPDATE_REVIEW(HttpStatus.OK, "POST20011", "브리더 후기 게시글이 성공적으로 수정되었습니다."),
 
     // 알림 관련 응답
-    SUCCESS_GET_NOTIFICATIONS(HttpStatus.OK, "NOTIFICATION200", "새로운 알림(읽지 않은 알림) 목록을 성공적으로 가져왔습니다.");
-
+    SUCCESS_GET_NOTIFICATIONS(HttpStatus.OK, "NOTIFICATION2001", "새로운 알림(읽지 않은 알림) 목록을 성공적으로 가져왔습니다."),
+    SUCCESS_UPDATE_NOTIFICATION(HttpStatus.OK, "NOTIFICATION2002", "알림의 상태가 읽음으로 수정되었습니다.");
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

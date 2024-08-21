@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +28,15 @@ public class NotificationController {
     Long userId = userAuthorizationUtil.getCurrentUserId();
     List<MemberNotificationDTO> notifications = notificationService.getUnreadNotifications(userId);
     return ApiResponse.of(SuccessStatus.SUCCESS_GET_NOTIFICATIONS, notifications);
+  }
+
+  @PatchMapping("/{notificationId}/read")
+  @Operation(summary = "알림 읽음 상태로 변경 API", description = "특정 알림을 읽음 상태로 변경하는 API")
+  public ApiResponse markNotificationAsRead(
+      @PathVariable Long notificationId) {
+    Long userId = userAuthorizationUtil.getCurrentUserId();
+    notificationService.markNotificationAsRead(userId, notificationId);
+    return ApiResponse.onSuccess(SuccessStatus.SUCCESS_UPDATE_NOTIFICATION);
   }
 
 }
