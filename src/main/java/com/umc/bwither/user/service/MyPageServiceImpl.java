@@ -555,9 +555,9 @@ public class MyPageServiceImpl implements MyPageService{
                 .orElseThrow(() -> new IllegalArgumentException("해당 일반 유저가 존재하지 않습니다."));
 
         // User 정보 업데이트
-        if (memberUpdateDTO.getProfileImage() != null) {
-            user.setProfileImage(memberUpdateDTO.getProfileImage());
-        }
+//        if (memberUpdateDTO.getProfileImage() != null) {
+//            user.setProfileImage(memberUpdateDTO.getProfileImage());
+//        }
         if (memberUpdateDTO.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(memberUpdateDTO.getPassword()));
         }
@@ -639,6 +639,18 @@ public class MyPageServiceImpl implements MyPageService{
                 .build();
 
         return userInfoDTO;
+    }
+
+    @Override
+    public void updateMemberProfileImage(Long userId, String profileImage) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+
+        if (profileImage != null) {
+            user.setProfileImage(profileImage);
+        }
+
+        userRepository.save(user);
     }
 
     @Override
