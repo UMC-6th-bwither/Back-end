@@ -1,5 +1,6 @@
 package com.umc.bwither.user.dto;
 
+import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.entity.enums.EmploymentStatus;
 import com.umc.bwither.member.entity.enums.FamilyAgreement;
 import com.umc.bwither.member.entity.enums.FuturePlan;
@@ -24,7 +25,7 @@ public class MemberJoinDTO {
     //Member
     private PetAllowed petAllowed;
     private String cohabitant;
-    private String cohabitantCount;
+    private Long cohabitantCount;
     private FamilyAgreement familyAgreement;
     private EmploymentStatus employmentStatus;
     private String commuteTime;
