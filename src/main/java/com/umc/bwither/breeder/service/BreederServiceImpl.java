@@ -87,7 +87,6 @@ public class BreederServiceImpl implements BreederService {
                 break;  // 기본값: 최신순
         }
 
-        Integer totalAnimals = animalRepository.countByBreeder(breeder);
         int reviewCount = postRepository.countReviewsByBreederId(breeder.getBreederId());
 
         List<BreederFileDTO> files = breeder.getBreederFiles().stream()
@@ -209,7 +208,7 @@ public class BreederServiceImpl implements BreederService {
                 .species(breeder.getSpecies())
                 .address(breeder.getUser().getAddress())
                 .description(breeder.getDescription())
-                .totalAnimals(totalAnimals)
+                .totalAnimals(breeder.getTotalAnimals())
                 .breederRating(Double.valueOf(formattedRating))
                 .reviewCount(reviewCount)
                 .careerYear(breeder.getExperienceYears())
@@ -243,7 +242,11 @@ public class BreederServiceImpl implements BreederService {
     @Override
     public BreederPreViewListDTO getBreederList(List<String> regions, AnimalType animalType, String species, String sortField, Integer page) {
         Pageable pageable;
-        if ("breederMemberCount".equals(sortField)) {
+
+        if ("totalAnimals".equals(sortField)) {
+            pageable = PageRequest.of(page, 5,
+                    Sort.by(Sort.Order.desc("totalAnimals"), Sort.Order.desc("createdAt")));
+        } else if ("breederMemberCount".equals(sortField)) {
             pageable = PageRequest.of(page, 5,
                     Sort.by(Sort.Order.desc("breederMemberCount"), Sort.Order.desc("createdAt")));
         } else {
@@ -282,6 +285,7 @@ public class BreederServiceImpl implements BreederService {
                     String formattedRating = breeder.getAverageRating() != null
                             ? String.format("%.1f", breeder.getAverageRating())
                             : "0.0";
+
                     return BreederPreviewDTO.builder()
                             .breederId(breeder.getBreederId())
                             .profileUrl(breeder.getUser().getProfileImage())
@@ -325,6 +329,10 @@ public class BreederServiceImpl implements BreederService {
                 .member(member)
                 .build();
         breederMemberRepository.save(breederMember);
+
+        Integer count = breederMemberRepository.countByBreeder(breeder);
+        breeder.setBreederMemberCount(count);
+        breederRepository.save(breeder);
     }
 
     @Override
@@ -337,6 +345,10 @@ public class BreederServiceImpl implements BreederService {
                 .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_BOOKMARK));
 
         breederMemberRepository.delete(breederMember);
+
+        Integer count = breederMemberRepository.countByBreeder(breeder);
+        breeder.setBreederMemberCount(count);
+        breederRepository.save(breeder);
     }
 
     @Override

@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class MyPageServiceImpl implements MyPageService{
+public class MyPageServiceImpl implements MyPageService {
     private final UserRepository userRepository;
     private final BreederRepository breederRepository;
     private final MemberRepository memberRepository;
@@ -103,10 +103,11 @@ public class MyPageServiceImpl implements MyPageService{
                     .questionPedigree(breeder.getQuestionPedigree())
                     .questionBaby(breeder.getQuestionBaby())
                     .questionPeriod(breeder.getQuestionPeriod())
-                    .questionSupport(breeder.getQuestionSupport()).breeding(breeder.getBreedingCareer() != null ? breeder.getBreedingCareer().stream()
+                    .questionSupport(breeder.getQuestionSupport())
+                    .breeding(breeder.getBreedingCareer() != null ? breeder.getBreedingCareer().stream()
                             .map(breeding -> BreedingDTO.builder()
-//                                    .breedingId(breeding.getBreedingId())
-//                                    .tradeName(breeding.getTradeName())
+                                    // .breedingId(breeding.getBreedingId())
+                                    // .tradeName(breeding.getTradeName())
                                     .joinDate(breeding.getJoinDate())
                                     .leaveDate(breeding.getLeaveDate())
                                     .currentlyEmployed(breeding.getCurrentlyEmployed())
@@ -181,173 +182,176 @@ public class MyPageServiceImpl implements MyPageService{
                 .build();
     }
 
-//    @Transactional
-//    public UserInfoDTO updateBreederInfo(Long userId, BreederInfoUpdateDTO breederInfoUpdateDTO) {
-//        // 사용자 및 브리더 정보 조회
-//        User user = userRepository.findById(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
-//
-//        Breeder breeder = breederRepository.findByUser_UserId(userId)
-//                .orElseThrow(() -> new IllegalArgumentException("해당 브리더가 존재하지 않습니다."));
-//
-//        // Breeder 정보 업데이트
-//        if (breederInfoUpdateDTO.getSpecies() != null) {
-//            breeder.setSpecies(breederInfoUpdateDTO.getSpecies());
-//        }
-//        if (breederInfoUpdateDTO.getTradeName() != null) {
-//            breeder.setTradeName(breederInfoUpdateDTO.getTradeName());
-//        }
-//        if (breederInfoUpdateDTO.getTradePhone() != null) {
-//            breeder.setTradePhone(breederInfoUpdateDTO.getTradePhone());
-//        }
-//        if (breederInfoUpdateDTO.getContactableTime() != null) {
-//            breeder.setContactableTime(breederInfoUpdateDTO.getContactableTime());
-//        }
-//        if (breederInfoUpdateDTO.getSnsAddress() != null) {
-//            breeder.setSnsAddress(breederInfoUpdateDTO.getSnsAddress());
-//        }
-//        if (breederInfoUpdateDTO.getDescription() != null) {
-//            breeder.setDescription(breederInfoUpdateDTO.getDescription());
-//        }
-//        if (breederInfoUpdateDTO.getDescriptionDetail() != null) {
-//            breeder.setDescriptionDetail(breederInfoUpdateDTO.getDescriptionDetail());
-//        }
-//        if (breederInfoUpdateDTO.getSchoolName() != null) {
-//            breeder.setSchoolName(breederInfoUpdateDTO.getSchoolName());
-//        }
-//        if (breederInfoUpdateDTO.getDepartmentName() != null) {
-//            breeder.setDepartmentName(breederInfoUpdateDTO.getDepartmentName());
-//        }
-//        if (breederInfoUpdateDTO.getEnrollmentDate() != null) {
-//            breeder.setEnrollmentDate(breederInfoUpdateDTO.getEnrollmentDate());
-//        }
-//        if (breederInfoUpdateDTO.getGraduationDate() != null) {
-//            breeder.setGraduationDate(breederInfoUpdateDTO.getGraduationDate());
-//        }
-//        if (breederInfoUpdateDTO.getBusinessTime() != null) {
-//            breeder.setBusinessTime(breederInfoUpdateDTO.getBusinessTime());
-//        }
-//        if (breederInfoUpdateDTO.getQuestionGuarantee() != null) {
-//            breeder.setQuestionGuarantee(breederInfoUpdateDTO.getQuestionGuarantee());
-//        }
-//        if (breederInfoUpdateDTO.getQuestionPedigree() != null) {
-//            breeder.setQuestionPedigree(breederInfoUpdateDTO.getQuestionPedigree());
-//        }
-//        if (breederInfoUpdateDTO.getQuestionBaby() != null) {
-//            breeder.setQuestionBaby(breederInfoUpdateDTO.getQuestionBaby());
-//        }
-//        if (breederInfoUpdateDTO.getQuestionPeriod() != null) {
-//            breeder.setQuestionPeriod(breederInfoUpdateDTO.getQuestionPeriod());
-//        }
-//        if (breederInfoUpdateDTO.getQuestionSupport() != null) {
-//            breeder.setQuestionSupport(breederInfoUpdateDTO.getQuestionSupport());
-//        }
-//        breederRepository.save(breeder);
-//
-//
-//        // Breeding 엔티티 업데이트
-////        if (breederInfoUpdateDTO.getBreeding() != null) {
-////            for (BreedingDTO breedingDTO : breederInfoUpdateDTO.getBreeding()) {
-////                Breeding breeding = breedingRepository.findById(breedingDTO.getBreedingId())
-////                        .orElseThrow(() -> new IllegalArgumentException("Breeding not found"));
-////
-////                breeding.setJoinDate(breedingDTO.getJoinDate());
-////                breeding.setLeaveDate(breedingDTO.getLeaveDate());
-////                breeding.setCurrentlyEmployed(breedingDTO.getCurrentlyEmployed());
-////                breeding.setDescription(breedingDTO.getBreedingDescription());
-////
-////                breedingRepository.save(breeding);
-////            }
-////        }
-//
-//        // Breeding 엔티티 업데이트
-//        System.out.println("Received DTO: " + breederInfoUpdateDTO.toString());
-//        System.out.println("브리딩: "+breederInfoUpdateDTO.getBreeding());
-//        if (breederInfoUpdateDTO.getBreeding() != null) {
-//            // 기존 Breeding 데이터 삭제
-//            breedingRepository.deleteByBreeder(breeder);
-//
-//            // 새 Breeding 데이터 추가
-//            List<Breeding> newBreedingList = breederInfoUpdateDTO.getBreeding().stream()
-//                    .map(breedingDTO -> Breeding.builder()
-//                            .breeder(breeder)
-//                            .joinDate(breedingDTO.getJoinDate())
-//                            .leaveDate(breedingDTO.getLeaveDate())
-//                            .currentlyEmployed(breedingDTO.getCurrentlyEmployed())
-//                            .description(breedingDTO.getDescription())
-//                            .build())
-//                    .collect(Collectors.toList());
-//
-//            breedingRepository.saveAll(newBreedingList);
-//        }
-//
-//        breederRepository.save(breeder);
-//
-//        // UserDTO와 BreederDTO 생성
-//        UserDTO userDTO = UserDTO.builder()
-//                .name(user.getName())
-//                .phone(user.getPhone())
-//                .email(user.getEmail())
-//                .username(user.getUsername())
-//                .address(user.getAddress())
-//                .addressDetail(user.getAddressDetail())
-//                .profileImage(user.getProfileImage())
-//                .role(user.getRole())
-//                .status(user.getStatus())
-//                .build();
-//
-//        BreederDTO breederDTO = BreederDTO.builder()
-//                .animal(breeder.getAnimal())
-//                .species(breeder.getSpecies())
-//                .backgroundImage(breeder.getBackgroundImage())
-//                .tradeName(breeder.getTradeName())
-//                .tradePhone(breeder.getTradePhone())
-//                .contactableTime(breeder.getContactableTime())
-//                .tradeEmail(breeder.getTradeEmail())
-//                .representative(breeder.getRepresentative())
-//                .registrationNumber(breeder.getRegistrationNumber())
-//                .licenseNumber(breeder.getLicenseNumber())
-//                .snsAddress(breeder.getSnsAddress())
-//                .animalHospital(breeder.getAnimalHospital())
-//                .trustLevel(breeder.getTrustLevel())
-//                .description(breeder.getDescription())
-//                .descriptionDetail(breeder.getDescriptionDetail())
-//                .schoolName(breeder.getSchoolName())
-//                .departmentName(breeder.getDepartmentName())
-//                .enrollmentDate(breeder.getEnrollmentDate())
-//                .graduationDate(breeder.getGraduationDate())
-//                .businessTime(breeder.getBusinessTime())
-//                .questionGuarantee(breeder.getQuestionGuarantee())
-//                .questionPedigree(breeder.getQuestionPedigree())
-//                .questionBaby(breeder.getQuestionBaby())
-//                .questionPeriod(breeder.getQuestionPeriod())
-//                .questionSupport(breeder.getQuestionSupport())
-//                .breeding(breeder.getBreedingCareer().stream()
-//                        .map(b -> BreedingDTO.builder()
-//                                .joinDate(b.getJoinDate())
-//                                .leaveDate(b.getLeaveDate())
-//                                .currentlyEmployed(b.getCurrentlyEmployed())
-//                                .description(b.getDescription())
-//                                .build())
-//                        .collect(Collectors.toList()))
-//                .breederFiles(breeder.getBreederFiles().stream()
-//                        .map(f -> BreederFileDTO.builder()
-//                                .breederFileId(f.getBreederFileId())
-//                                .type(f.getType())
-//                                .breederFilePath(f.getBreederFilePath())
-//                                .build())
-//                        .collect(Collectors.toList()))
-//                .build();
-//
-//        return UserInfoDTO.builder()
-//                .userDTO(userDTO)
-//                .breederDTO(breederDTO)
-//                .build();
-//    }
+    // @Transactional
+    // public UserInfoDTO updateBreederInfo(Long userId, BreederInfoUpdateDTO
+    // breederInfoUpdateDTO) {
+    // // 사용자 및 브리더 정보 조회
+    // User user = userRepository.findById(userId)
+    // .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
+    //
+    // Breeder breeder = breederRepository.findByUser_UserId(userId)
+    // .orElseThrow(() -> new IllegalArgumentException("해당 브리더가 존재하지 않습니다."));
+    //
+    // // Breeder 정보 업데이트
+    // if (breederInfoUpdateDTO.getSpecies() != null) {
+    // breeder.setSpecies(breederInfoUpdateDTO.getSpecies());
+    // }
+    // if (breederInfoUpdateDTO.getTradeName() != null) {
+    // breeder.setTradeName(breederInfoUpdateDTO.getTradeName());
+    // }
+    // if (breederInfoUpdateDTO.getTradePhone() != null) {
+    // breeder.setTradePhone(breederInfoUpdateDTO.getTradePhone());
+    // }
+    // if (breederInfoUpdateDTO.getContactableTime() != null) {
+    // breeder.setContactableTime(breederInfoUpdateDTO.getContactableTime());
+    // }
+    // if (breederInfoUpdateDTO.getSnsAddress() != null) {
+    // breeder.setSnsAddress(breederInfoUpdateDTO.getSnsAddress());
+    // }
+    // if (breederInfoUpdateDTO.getDescription() != null) {
+    // breeder.setDescription(breederInfoUpdateDTO.getDescription());
+    // }
+    // if (breederInfoUpdateDTO.getDescriptionDetail() != null) {
+    // breeder.setDescriptionDetail(breederInfoUpdateDTO.getDescriptionDetail());
+    // }
+    // if (breederInfoUpdateDTO.getSchoolName() != null) {
+    // breeder.setSchoolName(breederInfoUpdateDTO.getSchoolName());
+    // }
+    // if (breederInfoUpdateDTO.getDepartmentName() != null) {
+    // breeder.setDepartmentName(breederInfoUpdateDTO.getDepartmentName());
+    // }
+    // if (breederInfoUpdateDTO.getEnrollmentDate() != null) {
+    // breeder.setEnrollmentDate(breederInfoUpdateDTO.getEnrollmentDate());
+    // }
+    // if (breederInfoUpdateDTO.getGraduationDate() != null) {
+    // breeder.setGraduationDate(breederInfoUpdateDTO.getGraduationDate());
+    // }
+    // if (breederInfoUpdateDTO.getBusinessTime() != null) {
+    // breeder.setBusinessTime(breederInfoUpdateDTO.getBusinessTime());
+    // }
+    // if (breederInfoUpdateDTO.getQuestionGuarantee() != null) {
+    // breeder.setQuestionGuarantee(breederInfoUpdateDTO.getQuestionGuarantee());
+    // }
+    // if (breederInfoUpdateDTO.getQuestionPedigree() != null) {
+    // breeder.setQuestionPedigree(breederInfoUpdateDTO.getQuestionPedigree());
+    // }
+    // if (breederInfoUpdateDTO.getQuestionBaby() != null) {
+    // breeder.setQuestionBaby(breederInfoUpdateDTO.getQuestionBaby());
+    // }
+    // if (breederInfoUpdateDTO.getQuestionPeriod() != null) {
+    // breeder.setQuestionPeriod(breederInfoUpdateDTO.getQuestionPeriod());
+    // }
+    // if (breederInfoUpdateDTO.getQuestionSupport() != null) {
+    // breeder.setQuestionSupport(breederInfoUpdateDTO.getQuestionSupport());
+    // }
+    // breederRepository.save(breeder);
+    //
+    //
+    // // Breeding 엔티티 업데이트
+    //// if (breederInfoUpdateDTO.getBreeding() != null) {
+    //// for (BreedingDTO breedingDTO : breederInfoUpdateDTO.getBreeding()) {
+    //// Breeding breeding =
+    // breedingRepository.findById(breedingDTO.getBreedingId())
+    //// .orElseThrow(() -> new IllegalArgumentException("Breeding not found"));
+    ////
+    //// breeding.setJoinDate(breedingDTO.getJoinDate());
+    //// breeding.setLeaveDate(breedingDTO.getLeaveDate());
+    //// breeding.setCurrentlyEmployed(breedingDTO.getCurrentlyEmployed());
+    //// breeding.setDescription(breedingDTO.getBreedingDescription());
+    ////
+    //// breedingRepository.save(breeding);
+    //// }
+    //// }
+    //
+    // // Breeding 엔티티 업데이트
+    // System.out.println("Received DTO: " + breederInfoUpdateDTO.toString());
+    // System.out.println("브리딩: "+breederInfoUpdateDTO.getBreeding());
+    // if (breederInfoUpdateDTO.getBreeding() != null) {
+    // // 기존 Breeding 데이터 삭제
+    // breedingRepository.deleteByBreeder(breeder);
+    //
+    // // 새 Breeding 데이터 추가
+    // List<Breeding> newBreedingList = breederInfoUpdateDTO.getBreeding().stream()
+    // .map(breedingDTO -> Breeding.builder()
+    // .breeder(breeder)
+    // .joinDate(breedingDTO.getJoinDate())
+    // .leaveDate(breedingDTO.getLeaveDate())
+    // .currentlyEmployed(breedingDTO.getCurrentlyEmployed())
+    // .description(breedingDTO.getDescription())
+    // .build())
+    // .collect(Collectors.toList());
+    //
+    // breedingRepository.saveAll(newBreedingList);
+    // }
+    //
+    // breederRepository.save(breeder);
+    //
+    // // UserDTO와 BreederDTO 생성
+    // UserDTO userDTO = UserDTO.builder()
+    // .name(user.getName())
+    // .phone(user.getPhone())
+    // .email(user.getEmail())
+    // .username(user.getUsername())
+    // .address(user.getAddress())
+    // .addressDetail(user.getAddressDetail())
+    // .profileImage(user.getProfileImage())
+    // .role(user.getRole())
+    // .status(user.getStatus())
+    // .build();
+    //
+    // BreederDTO breederDTO = BreederDTO.builder()
+    // .animal(breeder.getAnimal())
+    // .species(breeder.getSpecies())
+    // .backgroundImage(breeder.getBackgroundImage())
+    // .tradeName(breeder.getTradeName())
+    // .tradePhone(breeder.getTradePhone())
+    // .contactableTime(breeder.getContactableTime())
+    // .tradeEmail(breeder.getTradeEmail())
+    // .representative(breeder.getRepresentative())
+    // .registrationNumber(breeder.getRegistrationNumber())
+    // .licenseNumber(breeder.getLicenseNumber())
+    // .snsAddress(breeder.getSnsAddress())
+    // .animalHospital(breeder.getAnimalHospital())
+    // .trustLevel(breeder.getTrustLevel())
+    // .description(breeder.getDescription())
+    // .descriptionDetail(breeder.getDescriptionDetail())
+    // .schoolName(breeder.getSchoolName())
+    // .departmentName(breeder.getDepartmentName())
+    // .enrollmentDate(breeder.getEnrollmentDate())
+    // .graduationDate(breeder.getGraduationDate())
+    // .businessTime(breeder.getBusinessTime())
+    // .questionGuarantee(breeder.getQuestionGuarantee())
+    // .questionPedigree(breeder.getQuestionPedigree())
+    // .questionBaby(breeder.getQuestionBaby())
+    // .questionPeriod(breeder.getQuestionPeriod())
+    // .questionSupport(breeder.getQuestionSupport())
+    // .breeding(breeder.getBreedingCareer().stream()
+    // .map(b -> BreedingDTO.builder()
+    // .joinDate(b.getJoinDate())
+    // .leaveDate(b.getLeaveDate())
+    // .currentlyEmployed(b.getCurrentlyEmployed())
+    // .description(b.getDescription())
+    // .build())
+    // .collect(Collectors.toList()))
+    // .breederFiles(breeder.getBreederFiles().stream()
+    // .map(f -> BreederFileDTO.builder()
+    // .breederFileId(f.getBreederFileId())
+    // .type(f.getType())
+    // .breederFilePath(f.getBreederFilePath())
+    // .build())
+    // .collect(Collectors.toList()))
+    // .build();
+    //
+    // return UserInfoDTO.builder()
+    // .userDTO(userDTO)
+    // .breederDTO(breederDTO)
+    // .build();
+    // }
 
     @Override
     @Transactional
-    public void updateBreederInfo(Long userId, BreederInfoUpdateDTO breederInfoUpdateDTO, Map<FileType, List<MultipartFile>> breederFiles, BreedingRequestDTO breedings ) {
+    public void updateBreederInfo(Long userId, BreederInfoUpdateDTO breederInfoUpdateDTO,
+            Map<FileType, List<MultipartFile>> breederFiles, BreedingRequestDTO breedings) {
         // 브리더 엔티티 조회
         Breeder breeder = breederRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 브리더가 존재하지 않습니다."));
@@ -513,16 +517,17 @@ public class MyPageServiceImpl implements MyPageService{
         Breeder breeder = breederRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 브리더가 존재하지 않습니다."));
 
-//        for (FileType fileType : FileType.values()) {
-//            breederFileRepository.deleteByBreederAndType(breeder, fileType);
-//        }
-//
-//        // 새로운 파일 추가
-//        List<BreederFile> breederFiles = breederFileDTOs.stream()
-//                .map(fileDTO -> new BreederFile(breeder, fileDTO.getType(), fileDTO.getBreederFilePath()))
-//                .collect(Collectors.toList());
-//
-//        breederFileRepository.saveAll(breederFiles);
+        // for (FileType fileType : FileType.values()) {
+        // breederFileRepository.deleteByBreederAndType(breeder, fileType);
+        // }
+        //
+        // // 새로운 파일 추가
+        // List<BreederFile> breederFiles = breederFileDTOs.stream()
+        // .map(fileDTO -> new BreederFile(breeder, fileDTO.getType(),
+        // fileDTO.getBreederFilePath()))
+        // .collect(Collectors.toList());
+        //
+        // breederFileRepository.saveAll(breederFiles);
     }
 
     @Override
@@ -536,9 +541,9 @@ public class MyPageServiceImpl implements MyPageService{
                 .orElseThrow(() -> new IllegalArgumentException("해당 일반 유저가 존재하지 않습니다."));
 
         // User 정보 업데이트
-//        if (memberUpdateDTO.getProfileImage() != null) {
-//            user.setProfileImage(memberUpdateDTO.getProfileImage());
-//        }
+        // if (memberUpdateDTO.getProfileImage() != null) {
+        // user.setProfileImage(memberUpdateDTO.getProfileImage());
+        // }
         if (memberUpdateDTO.getPassword() != null) {
             user.setPassword(passwordEncoder.encode(memberUpdateDTO.getPassword()));
         }
@@ -673,6 +678,7 @@ public class MyPageServiceImpl implements MyPageService{
         recentViewsCookie.setMaxAge(7 * 24 * 60 * 60); // 7일간 유지
         response.addCookie(recentViewsCookie);
     }
+
     private String addAnimalIdToRecentViews(String recentViews, Long animalId) {
         String[] viewsArray = recentViews.isEmpty() ? new String[0] : recentViews.split(",");
         List<String> viewsList = new ArrayList<>(Arrays.asList(viewsArray));
