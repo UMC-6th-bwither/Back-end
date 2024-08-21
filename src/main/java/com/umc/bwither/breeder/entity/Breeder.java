@@ -146,4 +146,10 @@ public class Breeder extends BaseEntity {
 
         return (int) (totalMonths / 12);
     }
+
+    @Column
+    private Integer breederMemberCount = 0;
+
+    @Column
+    private Integer totalAnimals = 0;
 }

@@ -199,6 +199,11 @@ public class AnimalServiceImpl implements AnimalService {
             animalCreateDTO.getFatherBirthDate(), animalCreateDTO.getFatherHereditary(), animalCreateDTO.getFatherCharacter(),
             animalCreateDTO.getFatherHealthCheck(), parentImages.get(ParentType.FATHER));
     saveParentFiles(father, ParentType.FATHER, parentHealthCheckImages);
+
+    int totalAnimals = animalRepository.countByBreeder(breeder);
+    breeder.setTotalAnimals(totalAnimals);
+    breederRepository.save(breeder);
+
     return animal.getAnimalId();
   }
 

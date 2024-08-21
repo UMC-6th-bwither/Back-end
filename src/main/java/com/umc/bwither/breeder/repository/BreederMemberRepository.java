@@ -1,5 +1,6 @@
 package com.umc.bwither.breeder.repository;
 
+import com.umc.bwither.animal.entity.Animal;
 import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.entity.BreederMember;
 import com.umc.bwither.member.entity.Member;
@@ -15,5 +16,7 @@ public interface BreederMemberRepository extends JpaRepository<BreederMember, Lo
 
     Page<BreederMember> findByMember(Member member, Pageable pageable);
 
-  Boolean existsByMemberAndBreeder(Member member, Breeder breeder);
+    Boolean existsByMemberAndBreeder(Member member, Breeder breeder);
+
+    Integer countByBreeder(Breeder breeder);
 }
