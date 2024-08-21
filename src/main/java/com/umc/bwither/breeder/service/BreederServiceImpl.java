@@ -27,6 +27,7 @@ import com.umc.bwither.member.repository.MemberRepository;
 import com.umc.bwither.post.dto.BlockDTO;
 import com.umc.bwither.post.entity.enums.Category;
 import com.umc.bwither.post.repository.PostRepository;
+import com.umc.bwither.user.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -37,8 +38,11 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -84,7 +88,6 @@ public class BreederServiceImpl implements BreederService {
         }
 
         Integer totalAnimals = animalRepository.countByBreeder(breeder);
-        Integer careerYear = breedingRepository.findTotalCareerYearsByBreederId(breederId);
         int reviewCount = postRepository.countReviewsByBreederId(breeder.getBreederId());
 
         List<BreederFileDTO> files = breeder.getBreederFiles().stream()
@@ -130,24 +133,73 @@ public class BreederServiceImpl implements BreederService {
 
         List<BreederResponseDTO.ReviewDTO> reviews = postRepository.findByBreederAndCategory(breeder, Category.BREEDER_REVIEWS, sort)
                 .stream()
-                .map(review -> new BreederResponseDTO.ReviewDTO(
-                        review.getPostId(),
-                        review.getUser().getName(),
-                        review.getPetType().name(),
-                        review.getRating(),
-                        review.getBlocks().stream()
-                                .map(block -> new BlockDTO(
-                                ))
-                                .collect(Collectors.toList())
-                )).collect(Collectors.toList());
+                .map(review -> {
+                    // BlockDTO 리스트 생성
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    List<BlockDTO> content = review.getBlocks().stream()
+                            .map(block -> {
+                                try {
+                                    // JSON 문자열을 Map으로 변환
+                                    Map<String, Object> blockData = objectMapper.readValue(block.getBlock(), Map.class);
+                                    return new BlockDTO(
+                                            String.valueOf(block.getId()),
+                                            (String) blockData.get("type"),
+                                            (Map<String, Object>) blockData.get("data")
+                                    );
+                                } catch (Exception e) {
+                                    return new BlockDTO(null, null, null);
+                                }
+                            })
+                            .collect(Collectors.toList());
 
-        List<BreederResponseDTO.BreederTipsDTO> breederTips = postRepository.findByBreederAndCategory(breeder, Category.TIPS)
+                    // ReviewDTO 생성
+                    return new BreederResponseDTO.ReviewDTO(
+                            review.getPostId(),
+                            review.getUser().getName(),
+                            review.getPetType().name(),
+                            review.getRating(),
+                            content,
+                            review.getCreatedAt()
+                    );
+                })
+                .collect(Collectors.toList());
+
+        ObjectMapper objectMapper = new ObjectMapper();
+        User user = breeder.getUser();
+
+        List<BreederResponseDTO.BreederTipsDTO> breederTips = postRepository.findByUserAndCategory(user, Category.TIPS)
                 .stream()
-                .map(tip -> new BreederResponseDTO.BreederTipsDTO(
-                        tip.getPostId(),
-                        tip.getBlocks(), //Todo : 추후 수정
-                        tip.getTitle()
-                )).collect(Collectors.toList());
+                .map(tip -> {
+                    // 첫 번째 이미지 URL 추출
+                    Optional<String> thumbnailUrl = tip.getBlocks().stream()
+                            .map(block -> {
+                                try {
+                                    // block 필드(JSON 형식의 문자열)를 Map으로 변환
+                                    Map<String, Object> blockData = objectMapper.readValue(block.getBlock(), Map.class);
+                                    return blockData;
+                                } catch (Exception e) {
+                                    // 파싱 실패 시 null 반환
+                                    return null;
+                                }
+                            })
+                            .filter(blockData -> blockData != null && "image".equals(blockData.get("type")))  // type이 "image"인 블록 필터링
+                            .map(blockData -> {
+                                Map<String, Object> data = (Map<String, Object>) blockData.get("data");
+                                Map<String, Object> fileData = (Map<String, Object>) data.get("file");
+                                return (String) fileData.get("url");  // 이미지 URL 추출
+                            })
+                            .findFirst();  // 첫 번째 이미지 URL만 추출
+
+                    // BreederTipsDTO 생성
+                    return new BreederResponseDTO.BreederTipsDTO(
+                            tip.getPostId(),
+                            tip.getUser().getName(),
+                            tip.getTitle(),
+                            tip.getUser().getProfileImage(),
+                            thumbnailUrl.orElse(null)
+                    );
+                })
+                .collect(Collectors.toList());
 
         BreederDetailDTO breederDetailDTO = BreederDetailDTO.builder()
                 .breederId(breeder.getBreederId())
@@ -160,7 +212,7 @@ public class BreederServiceImpl implements BreederService {
                 .totalAnimals(totalAnimals)
                 .breederRating(Double.valueOf(formattedRating))
                 .reviewCount(reviewCount)
-                .careerYear(careerYear)
+                .careerYear(breeder.getExperienceYears())
                 .trustLevel(breeder.getTrustLevel())
                 .tradePhone(breeder.getTradePhone())
                 .contactableTime(breeder.getContactableTime())
@@ -189,7 +241,7 @@ public class BreederServiceImpl implements BreederService {
     }
 
     @Override
-    public BreederPreViewListDTO getBreederList(String region, AnimalType animalType, String species, String sortField, Integer page) {
+    public BreederPreViewListDTO getBreederList(List<String> regions, AnimalType animalType, String species, String sortField, Integer page) {
         Pageable pageable;
         if ("breederMemberCount".equals(sortField)) {
             pageable = PageRequest.of(page, 5,
@@ -214,15 +266,15 @@ public class BreederServiceImpl implements BreederService {
                     .collect(Collectors.toList());
         }
 
-        if (region != null && !region.isEmpty()) {
+        if (regions != null && !regions.isEmpty()) {
             breederList = breederList.stream()
-                    .filter(b -> b.getUser().getAddress().contains(region))
+                    .filter(b -> regions.stream()
+                            .anyMatch(region -> b.getUser().getAddress().contains(region)))
                     .collect(Collectors.toList());
         }
 
         List<BreederPreviewDTO> breederDTOs = breederList.stream()
                 .map(breeder -> {
-                    int careerYear = breedingRepository.findTotalCareerYearsByBreederId(breeder.getBreederId());
                     int certificateCount = breederFileRepository.countCertificatesByBreederId(breeder.getBreederId());
                     int waitAnimalCount = waitListRepository.countAnimalsByBreederId(breeder.getBreederId());
                     int waitListCount = waitListRepository.countMembersByBreederId(breeder.getBreederId());
@@ -237,7 +289,7 @@ public class BreederServiceImpl implements BreederService {
                             .breederName(breeder.getTradeName())
                             .animalType(breeder.getAnimal())
                             .species(breeder.getSpecies())
-                            .careerYear(careerYear)
+                            .careerYear(breeder.getExperienceYears())
                             .certificateCount(certificateCount)
                             .waitAnimal(waitAnimalCount)
                             .waitList(waitListCount)
@@ -266,7 +318,7 @@ public class BreederServiceImpl implements BreederService {
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
         breederMemberRepository.findByBreederAndMember(breeder, member)
-                .ifPresent(mb -> { throw new TestHandler(ErrorStatus.ANIMAL_ALREADY_BOOKMARK); });
+                .ifPresent(mb -> { throw new TestHandler(ErrorStatus.BREEDER_ALREADY_BOOKMARK); });
 
         BreederMember breederMember = BreederMember.builder()
                 .breeder(breeder)
@@ -320,7 +372,6 @@ public class BreederServiceImpl implements BreederService {
         // DTO로 변환
         List<BreederResponseDTO.BookmarkBreederDTO> breederDTOs = sortedBreeders.stream()
                 .map(b -> {
-                    int careerYear = breedingRepository.findTotalCareerYearsByBreederId(b.getBreederId());
                     int certificateCount = breederFileRepository.countCertificatesByBreederId(b.getBreederId());
                     int waitAnimalCount = waitListRepository.countAnimalsByBreederId(b.getBreederId());
                     int waitListCount = waitListRepository.countMembersByBreederId(b.getBreederId());
@@ -335,7 +386,7 @@ public class BreederServiceImpl implements BreederService {
                             .address(b.getUser().getAddress())
                             .animalType(b.getAnimal())
                             .species(b.getSpecies())
-                            .careerYear(careerYear)
+                            .careerYear(b.getExperienceYears())
                             .certificateCount(certificateCount)
                             .waitAnimal(waitAnimalCount)
                             .waitList(waitListCount)
@@ -364,4 +415,14 @@ public class BreederServiceImpl implements BreederService {
                 .trustLevel(trustLevel)
                 .build();
     }
+
+  @Override
+  public Boolean checkBookmarkStatus(Long breederId, Long memberId) {
+    Breeder breeder = breederRepository.findById(breederId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
+    Member member = memberRepository.findById(memberId)
+        .orElseThrow(() -> new TestHandler(ErrorStatus.MEMBER_NOT_FOUND));
+
+    return breederMemberRepository.existsByMemberAndBreeder(member, breeder);
+  }
 }

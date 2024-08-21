@@ -24,6 +24,9 @@ public class Post extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long postId;
 
+    @Column(nullable = true)
+    private String coverImage;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
@@ -46,11 +49,13 @@ public class Post extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = true)
     private User user;
 
+    @Builder.Default
     @Column(nullable = true)
-    private Integer bookmarkCount;
+    private Integer bookmarkCount = 0;
 
-    @Column(nullable = true)
-    private Integer viewCount;
+    @Builder.Default
+    @Column(nullable = false)
+    private Integer viewCount = 0;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "post")
     private List<Block> blocks;

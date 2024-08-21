@@ -1,13 +1,12 @@
 package com.umc.bwither.post.dto;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
 import java.util.Map;
 
 @Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

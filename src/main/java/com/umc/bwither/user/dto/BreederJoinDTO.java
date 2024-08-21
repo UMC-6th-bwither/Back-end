@@ -25,7 +25,7 @@ public class BreederJoinDTO {
 
     // Breeder 관련 필드
     private AnimalType animal;         // 브리딩하는 동물 종류
-    List<String> species;        // 종
+    private List<String> species;        // 종
     private String tradeName;      // 상호명
     private String tradePhone;     // 전화번호
     private String tradeEmail;     // 이메일
@@ -34,7 +34,7 @@ public class BreederJoinDTO {
     private String licenseNumber;  // 동물생산업 허가 번호
     private String snsAddress;     // 홈페이지/SNS 주소 (선택 사항)
     private String animalHospital; // 이용 중인 동물병원 (선택 사항)
-    private String certificateName; // 자격증 명
-    private List<BreedingCareerDTO> breedingCareer;
+    private List<String> certificateNames; // 자격증 명
+    private List<BreedingJoinDTO> breedingCareers;
 
 }
