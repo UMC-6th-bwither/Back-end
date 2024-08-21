@@ -13,7 +13,6 @@ import lombok.*;
 @AllArgsConstructor
 public class MemberUpdateDTO {
     // User
-    private String profileImage;
     private String password;
     private String phone;
     private String zipcode;
