@@ -65,8 +65,10 @@ public class Breeder extends BaseEntity {
     @Column(length = 100)
     private String snsAddress;
 
-    @Column(length = 100)
-    private String certificateName;
+    @ElementCollection
+    @CollectionTable(name = "breeder_certificate_name", joinColumns = @JoinColumn(name = "breeder_id"))
+    @Column(name = "certificateNames", nullable = false)
+    private List<String> certificateNames;
 
     @Column(length = 100)
     private String animalHospital;
