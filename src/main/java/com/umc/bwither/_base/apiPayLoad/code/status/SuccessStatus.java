@@ -72,6 +72,7 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_UPDATE_MEMBER(HttpStatus.OK, "UPDATEMEMBER2000", "일반 유저 프로필 설정에 성공했습니다"),
     SUCCESS_UPDATE_BREEDERPROFILE(HttpStatus.OK, "UPDATEBREEDER2000", "브리더 프로필 수정에 성공했습니다"),
     SUCCESS_UPDATE_BREEDERINFO(HttpStatus.OK, "UPDATEBREEDER2001", "브리더 정보 수정에 성공했습니다"),
+    SUCCESS_UPDATE_BREEDERBREEDING(HttpStatus.OK, "UPDATEBREEDER2002", "브리더 경력 수정에 성공했습니다"),
     SUCCESS_GET_USERRESERVATION(HttpStatus.OK, "GETUSERRESERVATION2000", "예약 조회에 성공했습니다"),
     SUCCESS_SAVE_RECENTANIMAL(HttpStatus.OK, "SAVERECENTANIMAL2000", "최근 본 동물 저장에 성공했습니다"),
     SUCCESS_GET_RECENTANIMAL(HttpStatus.OK, "GETRECENTANIMAL2000", "최근 본 동물 조회에 성공했습니다"),

@@ -82,12 +82,9 @@ public class MyPageController {
                                             @RequestPart(value = "backgroundImage", required = false) MultipartFile backgroundImage,
                                             @RequestPart(value = "registrationFiles", required = false) List<MultipartFile> registrationFiles,
                                             @RequestPart(value = "certificateFiles", required = false) List<MultipartFile> certificateFiles,
-                                            @RequestPart(value = "kennelFiles", required = false) List<MultipartFile> kennelFiles,
-                                            @RequestPart(value = "breedings", required = false) BreedingRequestDTO breedings
+                                            @RequestPart(value = "kennelFiles", required = false) List<MultipartFile> kennelFiles
     ) {
-        System.out.println("컨트롤러: " + breederInfoUpdateDTO.getDescription());
         Long userId = userAuthorizationUtil.getCurrentUserId();
-//        System.out.println("브리딩: " + breedings.getBreedingDTOs());
         String backgroundImageUrl = null;
         if (backgroundImage != null && !backgroundImage.isEmpty()) {
             backgroundImageUrl = s3Uploader.uploadFile("breeder-background-images", backgroundImage);
@@ -101,13 +98,18 @@ public class MyPageController {
         breederFiles.put(FileType.CERTIFICATE, certificateFiles);
         breederFiles.put(FileType.KENNEL, kennelFiles);
 
-        myPageService.updateBreederInfo(userId, breederInfoUpdateDTO, breederFiles, breedings);
+        myPageService.updateBreederInfo(userId, breederInfoUpdateDTO, breederFiles);
 
         return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_BREEDERINFO, userId);
     }
 
-    // JSON 배열을 BreedingDTO 리스트로 파싱
-//        List<BreedingDTO> breedingDTOs = new ObjectMapper().readValue(breedingDTOsJson, new TypeReference<List<BreedingDTO>>() {});
+    @PatchMapping("/breeder/breeding")
+    public ApiResponse<?> updateBreederBreeding(@RequestBody List<BreedingDTO> breeding){
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+        myPageService.updateBreederBreeding(userId, breeding);
+        return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_BREEDERBREEDING, null);
+    }
+
     @PatchMapping(value = "/user/member", consumes = "multipart/form-data")
     public ApiResponse<?> updateMemberInfo(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                            @ModelAttribute MemberUpdateDTO memberUpdateDTO) {

@@ -12,14 +12,12 @@ import java.util.Map;
 public interface MyPageService {
     UserInfoDTO getUserInfo(Long userId);
     UserInfoDTO updateBreederProfile(Long id, BreederProfileUpdateDTO breederInfoUpdateDTO);
-    void updateBreederInfo(Long id, BreederInfoUpdateDTO breederInfoUpdateDTO, Map<FileType, List<MultipartFile>> breederFiles, BreedingRequestDTO breedings);
+    void updateBreederInfo(Long id, BreederInfoUpdateDTO breederInfoUpdateDTO, Map<FileType, List<MultipartFile>> breederFiles);
     UserInfoDTO updateMember(Long id, MemberUpdateDTO userMemberDTO);
     void updateMemberProfileImage(Long userId, String profileImage);
     Object getUserReservation(Long userId);
     void saveAnimalView(Long userId, Long animalId, HttpServletRequest request, HttpServletResponse response);
     List<Long> getRecentViews(Long userId, HttpServletRequest request);
-
     void updateBreederBackgroundImage(Long userId, String backgroundImageUrl);
-
-    void updateBreederFiles(Long userId, List<BreederFileDTO> breederFileDTOs);
+    void updateBreederBreeding(Long userId, List<BreedingDTO> breeding);
 }
