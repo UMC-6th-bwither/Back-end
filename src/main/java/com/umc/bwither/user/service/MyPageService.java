@@ -11,6 +11,7 @@ public interface MyPageService {
     UserInfoDTO updateBreederProfile(Long id, BreederProfileUpdateDTO breederInfoUpdateDTO);
     UserInfoDTO updateBreederInfo(Long id, BreederInfoUpdateDTO breederInfoUpdateDTO);
     UserInfoDTO updateMember(Long id, MemberUpdateDTO userMemberDTO);
+    void updateMemberProfileImage(Long userId, String profileImage);
     Object getUserReservation(Long userId);
     void saveAnimalView(Long userId, Long animalId, HttpServletRequest request, HttpServletResponse response);
     List<Long> getRecentViews(Long userId, HttpServletRequest request);

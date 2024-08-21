@@ -76,9 +76,17 @@ public class MyPageController {
         return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_BREEDERINFO, updatedUserInfo);
     }
 
-    @PatchMapping("/user/member")
-    public ApiResponse<?> updateMemberInfo(@RequestBody MemberUpdateDTO memberUpdateDTO) {
+    @PatchMapping(value = "/user/member", consumes = "multipart/form-data")
+    public ApiResponse<?> updateMemberInfo(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
+                                           @ModelAttribute MemberUpdateDTO memberUpdateDTO) {
         Long userId = userAuthorizationUtil.getCurrentUserId();
+
+        // 프로필 이미지 파일을 S3에 업로드
+        String profileImageUrl = null;
+        if (profileImage != null && !profileImage.isEmpty()) {
+            profileImageUrl = s3Uploader.uploadFile("member-profile-images", profileImage);
+            myPageService.updateMemberProfileImage(userId, profileImageUrl);
+        }
         UserInfoDTO updatedUserInfo = myPageService.updateMember(userId, memberUpdateDTO);
 
         return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_MEMBER, updatedUserInfo);
