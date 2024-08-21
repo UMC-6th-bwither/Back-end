@@ -105,7 +105,7 @@ public class MyPageServiceImpl implements MyPageService{
                                     .joinDate(breeding.getJoinDate())
                                     .leaveDate(breeding.getLeaveDate())
                                     .currentlyEmployed(breeding.getCurrentlyEmployed())
-                                    .breedingDescription(breeding.getDescription())
+                                    .description(breeding.getDescription())
                                     .build())
                             .collect(Collectors.toList()) : null)
                     .breederFiles(breeder.getBreederFiles() != null ? breeder.getBreederFiles().stream()
@@ -284,7 +284,7 @@ public class MyPageServiceImpl implements MyPageService{
                 breeding.setJoinDate(breedingDTO.getJoinDate());
                 breeding.setLeaveDate(breedingDTO.getLeaveDate());
                 breeding.setCurrentlyEmployed(breedingDTO.getCurrentlyEmployed());
-                breeding.setDescription(breedingDTO.getBreedingDescription());
+                breeding.setDescription(breedingDTO.getDescription());
 
                 breedingRepository.save(breeding);
             }
@@ -336,7 +336,7 @@ public class MyPageServiceImpl implements MyPageService{
                                 .joinDate(b.getJoinDate())
                                 .leaveDate(b.getLeaveDate())
                                 .currentlyEmployed(b.getCurrentlyEmployed())
-                                .breedingDescription(b.getDescription())
+                                .description(b.getDescription())
                                 .build())
                         .collect(Collectors.toList()))
                 .breederFiles(breeder.getBreederFiles().stream()
