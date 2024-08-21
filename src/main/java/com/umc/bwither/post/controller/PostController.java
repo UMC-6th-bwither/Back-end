@@ -114,7 +114,6 @@ public class PostController {
             @RequestParam(required = false) Long userId,
             @RequestParam(required = false) Long breederId
     ) {
-        Long currentUser = userAuthorizationUtil.getCurrentUserId();
         List<PostResponseDTO.PostPreviewDTO> posts;
 
         try {
@@ -138,7 +137,7 @@ public class PostController {
                 return ResponseEntity.ok(ApiResponse.of(SuccessStatus._OK, posts));
             }else {
                 // category와 userId가 둘 다 없는 경우, 전체 게시글 조회
-                posts = postService.getAllPosts(currentUser);
+                posts = postService.getAllPosts();
                 return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_GET_ALL_POSTS, posts));
             }
         } catch (Exception e) {

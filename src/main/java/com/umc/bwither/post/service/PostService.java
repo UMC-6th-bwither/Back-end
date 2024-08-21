@@ -13,7 +13,7 @@ public interface PostService {
 
     PostResponseDTO getPost(Long postId);
 
-    List<PostResponseDTO.PostPreviewDTO> getAllPosts(Long userId);
+    List<PostResponseDTO.PostPreviewDTO> getAllPosts();
 
     List<PostResponseDTO.PostPreviewDTO> getPostsByUser(Long userId);
 

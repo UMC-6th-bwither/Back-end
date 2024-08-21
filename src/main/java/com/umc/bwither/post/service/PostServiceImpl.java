@@ -183,7 +183,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     @Transactional
-    public List<PostResponseDTO.PostPreviewDTO> getAllPosts(Long userId) {
+    public List<PostResponseDTO.PostPreviewDTO> getAllPosts() {
         // DB에서 가져와서 DTO로 변환
         List<Post> postList = postRepository.findAll();
         return postList.stream()
