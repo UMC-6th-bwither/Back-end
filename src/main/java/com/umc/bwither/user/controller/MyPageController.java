@@ -1,23 +1,29 @@
 package com.umc.bwither.user.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
+import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
+import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither._base.common.UserAuthorizationUtil;
 import com.umc.bwither.animal.service.S3Uploader;
-import com.umc.bwither.user.dto.BreederInfoUpdateDTO;
-import com.umc.bwither.user.dto.BreederProfileUpdateDTO;
-import com.umc.bwither.user.dto.MemberUpdateDTO;
-import com.umc.bwither.user.dto.UserInfoDTO;
+import com.umc.bwither.breeder.entity.enums.FileType;
+import com.umc.bwither.user.dto.*;
 import com.umc.bwither.user.service.MyPageService;
 import com.umc.bwither.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -68,14 +74,40 @@ public class MyPageController {
         return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_BREEDERPROFILE, updatedUserInfo);
     }
 
-    @PatchMapping("/breeder/info")
-    public ApiResponse<?> updateBreederInfo(@RequestBody BreederInfoUpdateDTO breederInfoUpdateDTO) {
+    @PatchMapping(value = "/breeder/info",
+            consumes = {MediaType.APPLICATION_JSON_VALUE, MediaType.MULTIPART_FORM_DATA_VALUE}
+//            consumes = "multipart/form-data"
+    )
+    public ApiResponse<?> updateBreederInfo(@ModelAttribute BreederInfoUpdateDTO breederInfoUpdateDTO,
+                                            @RequestPart(value = "backgroundImage", required = false) MultipartFile backgroundImage,
+                                            @RequestPart(value = "registrationFiles", required = false) List<MultipartFile> registrationFiles,
+                                            @RequestPart(value = "certificateFiles", required = false) List<MultipartFile> certificateFiles,
+                                            @RequestPart(value = "kennelFiles", required = false) List<MultipartFile> kennelFiles,
+                                            @RequestPart(value = "breedings", required = false) BreedingRequestDTO breedings
+    ) {
+        System.out.println("컨트롤러: " + breederInfoUpdateDTO.getDescription());
         Long userId = userAuthorizationUtil.getCurrentUserId();
-        UserInfoDTO updatedUserInfo = myPageService.updateBreederInfo(userId, breederInfoUpdateDTO);
+//        System.out.println("브리딩: " + breedings.getBreedingDTOs());
+        String backgroundImageUrl = null;
+        if (backgroundImage != null && !backgroundImage.isEmpty()) {
+            backgroundImageUrl = s3Uploader.uploadFile("breeder-background-images", backgroundImage);
+            System.out.println("배경: " + backgroundImageUrl);
+            myPageService.updateBreederBackgroundImage(userId, backgroundImageUrl);
+        }
 
-        return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_BREEDERINFO, updatedUserInfo);
+        // 브리더 파일
+        Map<FileType, List<MultipartFile>> breederFiles = new HashMap<>();
+        breederFiles.put(FileType.REGISTRATION, registrationFiles);
+        breederFiles.put(FileType.CERTIFICATE, certificateFiles);
+        breederFiles.put(FileType.KENNEL, kennelFiles);
+
+        myPageService.updateBreederInfo(userId, breederInfoUpdateDTO, breederFiles, breedings);
+
+        return ApiResponse.of(SuccessStatus.SUCCESS_UPDATE_BREEDERINFO, userId);
     }
 
+    // JSON 배열을 BreedingDTO 리스트로 파싱
+//        List<BreedingDTO> breedingDTOs = new ObjectMapper().readValue(breedingDTOsJson, new TypeReference<List<BreedingDTO>>() {});
     @PatchMapping(value = "/user/member", consumes = "multipart/form-data")
     public ApiResponse<?> updateMemberInfo(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
                                            @ModelAttribute MemberUpdateDTO memberUpdateDTO) {
