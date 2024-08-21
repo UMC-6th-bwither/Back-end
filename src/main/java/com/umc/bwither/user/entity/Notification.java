@@ -1,7 +1,7 @@
 package com.umc.bwither.user.entity;
 
 import com.umc.bwither._base.common.BaseEntity;
-import com.umc.bwither.user.entity.enums.Category;
+import com.umc.bwither.user.entity.enums.NotificationType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -32,7 +32,7 @@ public class Notification extends BaseEntity {
 
   @Enumerated(EnumType.STRING)
   @Column(nullable = false)
-  private Category category;
+  private NotificationType notificationType;
 
   @Column(nullable = false)
   private Boolean isChecked;
@@ -42,6 +42,9 @@ public class Notification extends BaseEntity {
 
   @Column(nullable = true, length = 500)
   private String body;
+
+  @Column(nullable = true, length = 500)
+  private String description;
 
   @ManyToOne
   @JoinColumn(name = "user_id", nullable = false)

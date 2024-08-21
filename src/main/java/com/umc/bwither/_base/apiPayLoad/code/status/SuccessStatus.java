@@ -97,8 +97,10 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_UNBOOKMARK_POST(HttpStatus.OK, "POST2008", "게시글의 북마크가 성공적으로 해제되었습니다."),
     SUCCESS_GET_BOOKMARKED_POSTS(HttpStatus.OK, "POST2009", "북마크한 게시글 목록을 성공적으로 가져왔습니다."),
     SUCCESS_UPDATE_TIP(HttpStatus.OK, "POST20010", "꿀팁 게시글이 성공적으로 수정되었습니다."),
-    SUCCESS_UPDATE_REVIEW(HttpStatus.OK, "POST20011", "브리더 후기 게시글이 성공적으로 수정되었습니다.");
+    SUCCESS_UPDATE_REVIEW(HttpStatus.OK, "POST20011", "브리더 후기 게시글이 성공적으로 수정되었습니다."),
 
+    // 알림 관련 응답
+    SUCCESS_GET_NOTIFICATIONS(HttpStatus.OK, "NOTIFICATION200", "새로운 알림(읽지 않은 알림) 목록을 성공적으로 가져왔습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

@@ -1,5 +1,5 @@
 package com.umc.bwither.user.entity.enums;
 
-public enum Category {
+public enum NotificationType {
   COMMUNITY, ANIMAL
 }
