@@ -124,7 +124,7 @@ public class PostResponseDTO {
                     .petType(post.getPetType())
                     .rating(post.getRating())
                     .category(post.getCategory())
-                    .kennelName(post.getBreeder().getTradeName())
+                    .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : null)
                     .block(firstBlock)
                     .createdAt(post.getCreatedAt())
                     .viewCount(post.getViewCount())
