@@ -54,7 +54,7 @@ public class PostResponseDTO {
                 .rating(post.getRating())
                 .averageRating(post.getBreeder() != null ? post.getBreeder().getAverageRating() : null)
                 .category(post.getCategory())
-                .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : "Unknown")
+                .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : null)
                 .author(post.getUser().getName())
                 .authorImage(post.getUser().getProfileImage())
                 .createdAt(post.getCreatedAt())
@@ -96,7 +96,7 @@ public class PostResponseDTO {
         private Integer rating;
         private Category category;
         private String kennelName;
-        private Optional<GetBlockDTO> block;
+        private List<GetBlockDTO> blocks;
         private LocalDateTime createdAt;
         private Integer viewCount;
         private Integer bookmarkCount;
@@ -104,8 +104,8 @@ public class PostResponseDTO {
         public static PostPreviewDTO getPostPreviewDTO(Post post) {
             boolean imageExists = post.getCoverImage() != null && !post.getCoverImage().trim().isEmpty();
             ObjectMapper mapper = new ObjectMapper();
-            Optional<GetBlockDTO> firstBlock = post.getBlocks().stream()
-                    .findFirst() // 첫 번째 요소를 Optional로 가져옵니다.
+            List<GetBlockDTO> blocks = post.getBlocks().stream()
+                    .limit(3) // 첫 번째 요소를 Optional로 가져옵니다.
                     .map(block -> {
                         try {
                             // JSON 문자열을 Map으로 변환 후 GetBlockDTO로 변환
@@ -114,7 +114,7 @@ public class PostResponseDTO {
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException("Error deserializing block data from JSON", e);
                         }
-                    });
+                    }).collect(Collectors.toList());
 
             return PostPreviewDTO.builder()
                     .id(post.getPostId())
@@ -125,7 +125,7 @@ public class PostResponseDTO {
                     .rating(post.getRating())
                     .category(post.getCategory())
                     .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : null)
-                    .block(firstBlock)
+                    .blocks(blocks)
                     .createdAt(post.getCreatedAt())
                     .viewCount(post.getViewCount())
                     .bookmarkCount(post.getBookmarkCount())
