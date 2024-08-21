@@ -8,6 +8,7 @@ import lombok.Getter;
 @Builder
 public class LoginResponseDTO {
     private Long userId;
+    private Long breederId;
     private String username;
     private String token;
     private Role role;

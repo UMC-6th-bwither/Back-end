@@ -8,6 +8,7 @@ import com.umc.bwither.breeder.entity.Breeder;
 import com.umc.bwither.breeder.entity.BreederFile;
 import com.umc.bwither.breeder.entity.Breeding;
 import com.umc.bwither.breeder.entity.enums.FileType;
+import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.breeder.service.BreederService;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.entity.enums.EmploymentStatus;
@@ -36,6 +37,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -44,6 +46,7 @@ public class UserController {
     private final UserService userService;
     private final BreederService breederService;
     private final MemberService memberService;
+    private final BreederRepository breederRepository;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final TokenProvider tokenProvider;
     private final S3Uploader s3Uploader;
@@ -203,10 +206,17 @@ public class UserController {
                     passwordEncoder);
 
             if (user != null) {
+                Long breederId = null;
+                if (user.getRole().equals(Role.BREEDER)) {
+                    breederId = breederRepository.findByUser_UserId(user.getUserId())
+                            .orElseThrow(() -> new RuntimeException("Breeder not found"))
+                            .getBreederId();
+                }
                 // 토큰 생성
                 final String token = tokenProvider.create(user);
                 final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
                         .userId(user.getUserId())
+                        .breederId(breederId)
                         .username(user.getUsername())
                         .token(token)
                         .role(user.getRole())
