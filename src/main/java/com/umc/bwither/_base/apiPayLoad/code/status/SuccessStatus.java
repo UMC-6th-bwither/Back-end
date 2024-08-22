@@ -59,7 +59,6 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_VIEW_BREEDERS(HttpStatus.OK, "VIEWBREEDERS2001", "최근 본 브리더 목록 조회에 성공하셨습니다."),
     ERROR_VIEW_BREEDERS(HttpStatus.OK, "VIEWBREEDERS4002", "최근 본 브리더 목록 조회에 실패하셨습니다."),
 
-
     // 로그인 관련 응답
     SUCCESS_LOGIN_USER(HttpStatus.OK, "USERLOGIN2000", "로그인에 성공했습니다."),
     ERROR_LOGIN_USER(HttpStatus.OK, "USERLOGIN4000", "로그인에 실패했습니다."),
@@ -67,6 +66,10 @@ public enum SuccessStatus implements BaseCode {
     //멤버 로그인 관련 응답
     SUCCESS_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN2000", "로그인에 성공했습니다."),
     ERROR_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN4000", "로그인에 실패했습니다."),
+
+    // 탈퇴 관련 응답
+    SUCCESS_WITHDRAW_USER(HttpStatus.OK, "USERWITHDRAW2000", "회원 탈퇴가 완료되었습니다."),
+    ERROR_WITHDRAW_USER(HttpStatus.OK, "USERWITHDRAW4000", "회원 탈퇴에 실패하였습니다."),
 
     // 업로드 안된 항목 관련 응답
     SUCCESS_MISSING_PHOTO(HttpStatus.OK, "MISSINGPHOTO2000", "업로드 안된 항목 조회에 성공했습니다."),

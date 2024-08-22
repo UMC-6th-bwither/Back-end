@@ -244,4 +244,24 @@ public class UserController {
             return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, e.getMessage()));
         }
     }
+
+    @PostMapping("/user/withdraw")
+    public ResponseEntity<?> withdrawUser(@RequestBody WithdrawDTO.MemberWithdrawDTO withdrawDTO) {
+        try {
+            userService.withdrawUser(withdrawDTO);
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_WITHDRAW_USER, null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_WITHDRAW_USER, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/breeder/withdraw")
+    public ResponseEntity<?> withdrawBreeder(@RequestBody WithdrawDTO.BreederWithdrawDTO withdrawDTO) {
+        try {
+            userService.withdrawBreeder(withdrawDTO);
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_WITHDRAW_USER, null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_WITHDRAW_USER, e.getMessage()));
+        }
+    }
 }
