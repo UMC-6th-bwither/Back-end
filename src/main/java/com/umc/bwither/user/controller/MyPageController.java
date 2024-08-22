@@ -54,7 +54,7 @@ public class MyPageController {
 
     @PatchMapping(value = "/breeder/profile", consumes = "multipart/form-data")
     public ApiResponse<?> updateProfile(@RequestPart(value = "profileImage", required = false) MultipartFile profileImage,
-                                        @RequestPart(value = "password") String password) {
+                                        @RequestPart(value = "password", required = false) String password) {
         Long userId = userAuthorizationUtil.getCurrentUserId();
 
         // 프로필 이미지 파일을 S3에 업로드
