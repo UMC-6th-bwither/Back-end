@@ -117,6 +117,7 @@ public class BreederServiceImpl implements BreederService {
                     return new BreedingAnimalDTO(
                             animal.getAnimalId(),
                             animalImage.orElse(null),
+                            animal.getName(),
                             animal.getAge(),
                             animal.getGender().name()
                     );
