@@ -2,7 +2,7 @@ package com.umc.bwither.user.dto;
 
 import java.time.LocalDate;
 
-import com.umc.bwither.breeder.entity.enums.EmploymentStatus;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 @Getter
@@ -11,10 +11,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class BreedingDTO {
-    private Long breedingId;
-    private String tradeName;
-    private LocalDate joinDate;
-    private LocalDate leaveDate;
+    private String tradeName; // 기관명
+    private LocalDate joinDate; // 입사연월
+    private LocalDate leaveDate; // 퇴사연월
+
     private Boolean currentlyEmployed;
-    private String description;
+    private String description; // 경력 설명
 }
