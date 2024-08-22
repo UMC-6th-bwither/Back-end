@@ -3,6 +3,7 @@ package com.umc.bwither.breeder.service;
 import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.entity.Animal;
+import com.umc.bwither.animal.entity.enums.FileType;
 import com.umc.bwither.animal.repository.AnimalRepository;
 import com.umc.bwither.animal.repository.WaitListRepository;
 import com.umc.bwither.breeder.dto.BreederFileDTO;
@@ -106,11 +107,20 @@ public class BreederServiceImpl implements BreederService {
         List<Animal> animals = animalRepository.findByBreeder_BreederId(breederId);
 
         List<BreedingAnimalDTO> breedingAnimals = animals.stream()
-                .map(animal -> new BreedingAnimalDTO(
-                        animal.getAnimalId(),
-                        animal.getAge(),
-                        animal.getGender().name()
-                ))
+                .map(animal -> {
+                    // 첫 번째 ANIMAL_IMAGE 타입의 파일 경로 추출
+                    Optional<String> animalImage = animal.getAnimalFiles().stream()
+                            .filter(file -> file.getType() == FileType.ANIMAL_IMAGE)
+                            .map(file -> file.getAnimalFilePath())
+                            .findFirst();
+
+                    return new BreedingAnimalDTO(
+                            animal.getAnimalId(),
+                            animalImage.orElse(null),
+                            animal.getAge(),
+                            animal.getGender().name()
+                    );
+                })
                 .collect(Collectors.toList());
 
         // 종별로 개체 수를 그룹화
