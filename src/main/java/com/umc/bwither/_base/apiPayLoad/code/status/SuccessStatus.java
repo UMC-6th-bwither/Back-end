@@ -42,6 +42,9 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_JOIN_BREEDER(HttpStatus.OK, "BREEDERJOIN2001", "회원가입에 성공했습니다."),
     ERROR_JOIN_BREEDER(HttpStatus.OK, "BREEDERJOIN4001", "회원가입에 실패했습니다."),
 
+    // 로그인 관련 응답
+    SUCCESS_LOGIN_AVAILABLE(HttpStatus.OK, "USERLOGIN2000", "사용 가능한 아이디입니다."),
+
     // 브리더 로그인 관련 응답
     SUCCESS_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN2000", "로그인에 성공했습니다."),
     ERROR_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN4000", "로그인에 실패했습니다."),
@@ -55,6 +58,7 @@ public enum SuccessStatus implements BaseCode {
     ERROR_VIEW_BREEDER(HttpStatus.OK, "VIEWBREEDER4001", "브리더 세부사항 목록저장에 실패하셨습니다."),
     SUCCESS_VIEW_BREEDERS(HttpStatus.OK, "VIEWBREEDERS2001", "최근 본 브리더 목록 조회에 성공하셨습니다."),
     ERROR_VIEW_BREEDERS(HttpStatus.OK, "VIEWBREEDERS4002", "최근 본 브리더 목록 조회에 실패하셨습니다."),
+
 
     // 로그인 관련 응답
     SUCCESS_LOGIN_USER(HttpStatus.OK, "USERLOGIN2000", "로그인에 성공했습니다."),

@@ -1,6 +1,7 @@
 package com.umc.bwither.user.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
+import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.animal.service.S3Uploader;
@@ -147,6 +148,17 @@ public class UserController {
         } catch (Exception e) {
             // 오류 발생 시 응답 생성
             return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_JOIN_BREEDER, e.getMessage()));
+        }
+    }
+
+    @GetMapping("/check-username")
+    @Operation(summary = "아이디 중복 확인 API", description = "아이디의 중복 여부를 확인하는 API")
+    public ResponseEntity<?> checkUsernameExists(@RequestParam String username) {
+        boolean exists = userService.checkUsernameExists(username);
+        if (exists) {
+            return ResponseEntity.badRequest().body(ErrorStatus.USER_ALREADY_EXIST);
+        } else {
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_AVAILABLE, null));
         }
     }
 

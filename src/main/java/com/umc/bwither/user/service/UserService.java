@@ -13,5 +13,5 @@ import java.util.Map;
 public interface UserService {
     User create(User user);
     User getByCredentials(String username, String password, PasswordEncoder encoder);
-
+    boolean checkUsernameExists(String username);
 }

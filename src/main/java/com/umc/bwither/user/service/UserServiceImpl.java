@@ -39,5 +39,10 @@ public class UserServiceImpl implements UserService {
         }
 
         return null;
+
+    }
+
+    public boolean checkUsernameExists(String username) {
+        return userRepository.existsByUsername(username);
     }
 }
