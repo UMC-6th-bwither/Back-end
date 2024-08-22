@@ -50,7 +50,7 @@ public class Post extends BaseEntity {
     private User user;
 
     @Builder.Default
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Integer bookmarkCount = 0;
 
     @Builder.Default
