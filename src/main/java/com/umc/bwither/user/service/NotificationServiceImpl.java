@@ -1,6 +1,5 @@
 package com.umc.bwither.user.service;
 
-import com.umc.bwither.member.repository.MemberRepository;
 import com.umc.bwither.user.dto.NotificationResponseDTO.MemberNotificationDTO;
 import com.umc.bwither.user.entity.Notification;
 import com.umc.bwither.user.entity.User;
@@ -19,7 +18,6 @@ public class NotificationServiceImpl implements NotificationService{
 
   private final NotificationRepository notificationRepository;
   private final UserRepository userRepository;
-  private final MemberRepository memberRepository;
 
   @Override
   public Notification createNotification(Long userId, NotificationType notificationType, String title, String body) {
@@ -70,6 +68,11 @@ public class NotificationServiceImpl implements NotificationService{
 
     notification.setIsChecked(true);
     notificationRepository.save(notification);
+  }
+
+  @Override
+  public Long getNotificationCount(Long userId) {
+    return notificationRepository.countByUserUserIdAndIsCheckedFalse(userId);
   }
 
 }

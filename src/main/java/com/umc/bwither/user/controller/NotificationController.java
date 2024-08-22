@@ -39,4 +39,12 @@ public class NotificationController {
     return ApiResponse.onSuccess(SuccessStatus.SUCCESS_UPDATE_NOTIFICATION);
   }
 
+  @GetMapping("/count")
+  @Operation(summary = "새로운 알림(읽지 않은 알림) 개수 조회 API", description = "새로운 알림(읽지 않은 알림) 개수를 조회하는 API")
+  public ApiResponse<Long> getNotificationCount() {
+    Long userId = userAuthorizationUtil.getCurrentUserId();
+    Long count = notificationService.getNotificationCount(userId);
+    return ApiResponse.of(SuccessStatus.SUCCESS_GET_NOTIFICATION_COUNT, count);
+  }
+
 }

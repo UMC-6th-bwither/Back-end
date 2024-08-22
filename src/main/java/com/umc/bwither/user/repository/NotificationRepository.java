@@ -8,4 +8,5 @@ public interface NotificationRepository extends JpaRepository<Notification, Long
 
   List<Notification> findByUserUserIdAndIsCheckedFalse(Long userId);
 
+  Long countByUserUserIdAndIsCheckedFalse(Long userId);
 }
