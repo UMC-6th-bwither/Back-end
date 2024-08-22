@@ -79,6 +79,7 @@ public class MyPageServiceImpl implements MyPageService {
                     .animal(breeder.getAnimal())
                     .species(breeder.getSpecies()) // 이미 리스트이므로 toString() 호출 불필요
                     .backgroundImage(breeder.getBackgroundImage())
+                    .reviewEvent(breeder.getReviewEvent())
                     .tradeName(breeder.getTradeName())
                     .tradePhone(breeder.getTradePhone())
                     .contactableTime(breeder.getContactableTime())
@@ -94,7 +95,9 @@ public class MyPageServiceImpl implements MyPageService {
                     .schoolName(breeder.getSchoolName())
                     .departmentName(breeder.getDepartmentName())
                     .enrollmentDate(breeder.getEnrollmentDate())
+                    .kennelAddress(breeder.getKennelAddress())
                     .businessTime(breeder.getBusinessTime())
+                    .animalCount(breeder.getAnimalCount())
                     .graduationDate(breeder.getGraduationDate())
                     .questionGuarantee(breeder.getQuestionGuarantee())
                     .questionPedigree(breeder.getQuestionPedigree())
