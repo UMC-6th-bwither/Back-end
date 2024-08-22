@@ -36,6 +36,8 @@ import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.member.entity.Member;
 import com.umc.bwither.member.repository.MemberRepository;
 import com.umc.bwither.post.repository.PostRepository;
+import com.umc.bwither.user.entity.enums.NotificationType;
+import com.umc.bwither.user.service.NotificationService;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,7 @@ public class AnimalServiceImpl implements AnimalService {
   private final MemberRepository memberRepository;
   private final AnimalMemberRepository animalMemberRepository;
   private final PostRepository postRepository;
+  private final NotificationService notificationService;
   private final S3Uploader s3Uploader;
 
   @Override
@@ -599,6 +602,10 @@ public class AnimalServiceImpl implements AnimalService {
         .member(member)
         .build();
     waitListRepository.save(waitList);
+
+    // 알림
+    Long userId = animal.getBreeder().getUser().getUserId();
+    notificationService.createNotification(userId, NotificationType.ANIMAL, null,member.getUser().getName()+"님이 " + animal.getName() + "이 대기 예약을 요청했어요!");
   }
 
   @Override
