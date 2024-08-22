@@ -3,6 +3,7 @@ package com.umc.bwither.user.controller;
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
 import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
+import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.animal.service.S3Uploader;
 import com.umc.bwither.breeder.entity.Breeder;
@@ -211,38 +212,29 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<?> LoginUser(@RequestBody LoginRequestDTO loginRequestDTO) {
-        try {
-            User user = userService.getByCredentials(
-                    loginRequestDTO.getUsername(),
-                    loginRequestDTO.getPassword(),
-                    passwordEncoder);
+        User user = userService.getByCredentials(
+                loginRequestDTO.getUsername(),
+                loginRequestDTO.getPassword(),
+                passwordEncoder);
 
-            if (user != null) {
-                Long breederId = null;
-                if (user.getRole().equals(Role.BREEDER)) {
-                    breederId = breederRepository.findByUser_UserId(user.getUserId())
-                            .orElseThrow(() -> new RuntimeException("Breeder not found"))
-                            .getBreederId();
-                }
-                // 토큰 생성
-                final String token = tokenProvider.create(user);
-                final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
-                        .userId(user.getUserId())
-                        .breederId(breederId)
-                        .username(user.getUsername())
-                        .token(token)
-                        .role(user.getRole())
-                        .build();
-
-                return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_USER, responseDTO));
-            } else {
-                return ResponseEntity
-                        .badRequest()
-                        .body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, "잘못된 사용자 정보입니다"));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, e.getMessage()));
+        Long breederId = null;
+        if (user != null && user.getRole().equals(Role.BREEDER)) {
+            breederId = breederRepository.findByUser_UserId(user.getUserId())
+                    .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND))
+                    .getBreederId();
         }
+
+        // 토큰 생성
+        final String token = tokenProvider.create(user);
+        final LoginResponseDTO responseDTO = LoginResponseDTO.builder()
+                .userId(user.getUserId())
+                .breederId(breederId)
+                .username(user.getUsername())
+                .token(token)
+                .role(user.getRole())
+                .build();
+
+        return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_USER, responseDTO));
     }
 
     @PostMapping("/user/withdraw")
