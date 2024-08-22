@@ -42,6 +42,9 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_JOIN_BREEDER(HttpStatus.OK, "BREEDERJOIN2001", "회원가입에 성공했습니다."),
     ERROR_JOIN_BREEDER(HttpStatus.OK, "BREEDERJOIN4001", "회원가입에 실패했습니다."),
 
+    // 로그인 관련 응답
+    SUCCESS_LOGIN_AVAILABLE(HttpStatus.OK, "USERLOGIN2000", "사용 가능한 아이디입니다."),
+
     // 브리더 로그인 관련 응답
     SUCCESS_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN2000", "로그인에 성공했습니다."),
     ERROR_LOGIN_BREEDER(HttpStatus.OK, "BREEDERLOGIN4000", "로그인에 실패했습니다."),
@@ -64,6 +67,10 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN2000", "로그인에 성공했습니다."),
     ERROR_LOGIN_MEMBER(HttpStatus.OK, "MEMBERLOGIN4000", "로그인에 실패했습니다."),
 
+    // 탈퇴 관련 응답
+    SUCCESS_WITHDRAW_USER(HttpStatus.OK, "USERWITHDRAW2000", "회원 탈퇴가 완료되었습니다."),
+    ERROR_WITHDRAW_USER(HttpStatus.OK, "USERWITHDRAW4000", "회원 탈퇴에 실패하였습니다."),
+
     // 업로드 안된 항목 관련 응답
     SUCCESS_MISSING_PHOTO(HttpStatus.OK, "MISSINGPHOTO2000", "업로드 안된 항목 조회에 성공했습니다."),
 
@@ -72,6 +79,7 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_UPDATE_MEMBER(HttpStatus.OK, "UPDATEMEMBER2000", "일반 유저 프로필 설정에 성공했습니다"),
     SUCCESS_UPDATE_BREEDERPROFILE(HttpStatus.OK, "UPDATEBREEDER2000", "브리더 프로필 수정에 성공했습니다"),
     SUCCESS_UPDATE_BREEDERINFO(HttpStatus.OK, "UPDATEBREEDER2001", "브리더 정보 수정에 성공했습니다"),
+    SUCCESS_UPDATE_BREEDERBREEDING(HttpStatus.OK, "UPDATEBREEDER2002", "브리더 경력 수정에 성공했습니다"),
     SUCCESS_GET_USERRESERVATION(HttpStatus.OK, "GETUSERRESERVATION2000", "예약 조회에 성공했습니다"),
     SUCCESS_SAVE_RECENTANIMAL(HttpStatus.OK, "SAVERECENTANIMAL2000", "최근 본 동물 저장에 성공했습니다"),
     SUCCESS_GET_RECENTANIMAL(HttpStatus.OK, "GETRECENTANIMAL2000", "최근 본 동물 조회에 성공했습니다"),
@@ -97,8 +105,12 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_UNBOOKMARK_POST(HttpStatus.OK, "POST2008", "게시글의 북마크가 성공적으로 해제되었습니다."),
     SUCCESS_GET_BOOKMARKED_POSTS(HttpStatus.OK, "POST2009", "북마크한 게시글 목록을 성공적으로 가져왔습니다."),
     SUCCESS_UPDATE_TIP(HttpStatus.OK, "POST20010", "꿀팁 게시글이 성공적으로 수정되었습니다."),
-    SUCCESS_UPDATE_REVIEW(HttpStatus.OK, "POST20011", "브리더 후기 게시글이 성공적으로 수정되었습니다.");
+    SUCCESS_UPDATE_REVIEW(HttpStatus.OK, "POST20011", "브리더 후기 게시글이 성공적으로 수정되었습니다."),
 
+    // 알림 관련 응답
+    SUCCESS_GET_NOTIFICATIONS(HttpStatus.OK, "NOTIFICATION2001", "새로운 알림(읽지 않은 알림) 목록을 성공적으로 가져왔습니다."),
+    SUCCESS_UPDATE_NOTIFICATION(HttpStatus.OK, "NOTIFICATION2002", "알림의 상태가 읽음으로 수정되었습니다."),
+    SUCCESS_GET_NOTIFICATION_COUNT(HttpStatus.OK, "NOTIFICATION2003", "새로운 알림(읽지 않은 알림) 개수를 성공적으로 가져왔습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

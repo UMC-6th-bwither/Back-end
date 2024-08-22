@@ -48,12 +48,15 @@ public class User extends BaseEntity {
     @Column(nullable = false, length = 100)
     private String addressDetail;
 
-    @Column(length = 255)
+    @Column
     private String profileImage;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role; // Enum 정의 필요
+
+    @Column
+    private LocalDateTime withdrawalDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -62,4 +65,9 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     List<Post> posts;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<BreederWithdrawReason> breederWithdrawReasons;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberWithdrawReason> userWithdrawReasons;
 }

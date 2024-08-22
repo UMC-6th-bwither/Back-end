@@ -1,6 +1,7 @@
 package com.umc.bwither.user.controller;
 
 import com.umc.bwither._base.apiPayLoad.ApiResponse;
+import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
 import com.umc.bwither._base.apiPayLoad.code.status.SuccessStatus;
 import com.umc.bwither.animal.entity.AnimalFile;
 import com.umc.bwither.animal.service.S3Uploader;
@@ -150,6 +151,17 @@ public class UserController {
         }
     }
 
+    @GetMapping("/check-username")
+    @Operation(summary = "아이디 중복 확인 API", description = "아이디의 중복 여부를 확인하는 API")
+    public ResponseEntity<?> checkUsernameExists(@RequestParam String username) {
+        boolean exists = userService.checkUsernameExists(username);
+        if (exists) {
+            return ResponseEntity.badRequest().body(ErrorStatus.USER_ALREADY_EXIST);
+        } else {
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_LOGIN_AVAILABLE, null));
+        }
+    }
+
 
     @PostMapping("/user/join")
     public ResponseEntity<?> JoinMember(@RequestBody MemberJoinDTO memberJoinDTO) {
@@ -230,6 +242,26 @@ public class UserController {
             }
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_LOGIN_USER, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/user/withdraw")
+    public ResponseEntity<?> withdrawUser(@RequestBody WithdrawDTO.MemberWithdrawDTO withdrawDTO) {
+        try {
+            userService.withdrawUser(withdrawDTO);
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_WITHDRAW_USER, null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_WITHDRAW_USER, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/breeder/withdraw")
+    public ResponseEntity<?> withdrawBreeder(@RequestBody WithdrawDTO.BreederWithdrawDTO withdrawDTO) {
+        try {
+            userService.withdrawBreeder(withdrawDTO);
+            return ResponseEntity.ok(ApiResponse.of(SuccessStatus.SUCCESS_WITHDRAW_USER, null));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.of(SuccessStatus.ERROR_WITHDRAW_USER, e.getMessage()));
         }
     }
 }
