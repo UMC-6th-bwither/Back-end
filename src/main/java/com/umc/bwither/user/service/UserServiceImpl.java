@@ -1,5 +1,7 @@
 package com.umc.bwither.user.service;
 
+import com.umc.bwither._base.apiPayLoad.code.status.ErrorStatus;
+import com.umc.bwither._base.apiPayLoad.exception.handler.TestHandler;
 import com.umc.bwither.user.dto.WithdrawDTO;
 import com.umc.bwither.user.entity.BreederWithdrawReason;
 import com.umc.bwither.user.entity.MemberWithdrawReason;
@@ -46,17 +48,18 @@ public class UserServiceImpl implements UserService {
         final User originalUser = userRepository.findByUsername(username);
 
         if (originalUser == null) {
-            log.error("No user found with username: {}", username);
-            return null;
+            throw new TestHandler(ErrorStatus.USER_NOT_FOUND);
         }
 
-        if(encoder.matches(password, originalUser.getPassword())) {
-            return originalUser;
-        } else {
-            log.error("Password mismatch for user: {}", username);
+        if (originalUser.getStatus() == Status.INACTIVE) {
+            throw new TestHandler(ErrorStatus.USER_INACTIVE);
         }
 
-        return null;
+        if (!encoder.matches(password, originalUser.getPassword())) {
+            throw new TestHandler(ErrorStatus.USER_INVALID_PASSWORD);
+        }
+
+        return originalUser;
     }
 
     public void withdrawUser(WithdrawDTO.MemberWithdrawDTO withdrawDTO) {
