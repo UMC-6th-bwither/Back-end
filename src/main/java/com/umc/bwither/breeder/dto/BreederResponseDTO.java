@@ -61,6 +61,7 @@ public class BreederResponseDTO {
     @AllArgsConstructor
     public static class BreedingAnimalDTO {
         Long animalId;
+        String animalImage;
         Integer age;
         String gender;
     }
