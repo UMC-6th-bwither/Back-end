@@ -64,6 +64,10 @@ public class NotificationServiceImpl implements NotificationService{
       throw new RuntimeException("권한이 없습니다.");
     }
 
+    if (notification.getIsChecked()) {
+      throw new RuntimeException("이미 읽은 알림입니다.");
+    }
+
     notification.setIsChecked(true);
     notificationRepository.save(notification);
   }
