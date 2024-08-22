@@ -26,4 +26,11 @@ public class BreederFile extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "TEXT")
     private String breederFilePath;
+
+    // 추가적인 생성자
+    public BreederFile(Breeder breeder, FileType type, String breederFilePath) {
+        this.breeder = breeder;
+        this.type = type;
+        this.breederFilePath = breederFilePath;
+    }
 }

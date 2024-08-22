@@ -16,5 +16,5 @@ public class BreedingDTO {
     private LocalDate joinDate;
     private LocalDate leaveDate;
     private Boolean currentlyEmployed;
-    private String breedingDescription;
+    private String description;
 }

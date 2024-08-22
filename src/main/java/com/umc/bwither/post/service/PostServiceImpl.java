@@ -169,7 +169,13 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public PostResponseDTO getPost(Long postId) {
-        Long currentUserId = userAuthorizationUtil.getCurrentUserId();
+        Long currentUserId = null;
+        try {
+            currentUserId = userAuthorizationUtil.getCurrentUserId();
+        } catch (Exception e) {
+            // currentUserId를 가져오는 데 실패한 경우 예외를 무시하고 null로 설정
+        }
+
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
 
@@ -178,8 +184,12 @@ public class PostServiceImpl implements PostService {
 
         postRepository.save(post);
 
-        return PostResponseDTO.getPostDTO(post, bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent());
+        boolean isSaved = currentUserId != null &&
+                bookmarkRepository.findByUserUserIdAndPostPostId(currentUserId, post.getPostId()).isPresent();
+
+        return PostResponseDTO.getPostDTO(post, isSaved);
     }
+
 
     @Override
     @Transactional

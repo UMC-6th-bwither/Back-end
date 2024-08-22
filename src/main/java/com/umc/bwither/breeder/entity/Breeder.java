@@ -126,6 +126,15 @@ public class Breeder extends BaseEntity {
     @OneToMany(mappedBy = "breeder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Inquiry> inquiries;
 
+    @Column(columnDefinition = "TEXT")
+    private String reviewEvent;
+
+    @Column(columnDefinition = "TEXT")
+    private String kennelAddress;
+
+    @Column(columnDefinition = "TEXT")
+    private String animalCount;
+
     @Column
     private Double averageRating;
     public Breeder(Long breederId) {
