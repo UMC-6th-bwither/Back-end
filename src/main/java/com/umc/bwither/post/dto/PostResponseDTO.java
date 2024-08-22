@@ -127,7 +127,7 @@ public class PostResponseDTO {
                     .rating(post.getRating())
                     .category(post.getCategory())
                     .author(post.getUser().getName())
-                    .author(post.getUser().getProfileImage())
+                    .authorImage(post.getUser().getProfileImage())
                     .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : null)
                     .blocks(blocks)
                     .createdAt(post.getCreatedAt())
