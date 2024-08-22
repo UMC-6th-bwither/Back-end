@@ -32,6 +32,7 @@ public class BreederDTO {
 
     private String description; // 간략한 소개
     private String descriptionDetail; // 브리더 상세 설명
+    private String reviewEvent; // 리뷰 이벤트
 
     // 학력
     private String schoolName; // 학교명
@@ -39,7 +40,9 @@ public class BreederDTO {
     private LocalDate enrollmentDate; // 입학연월
     private LocalDate graduationDate; // 졸업연월
 
+    private String kennelAddress; // 켄넬주소
     private String businessTime; // 영업시간
+    private String animalCount; // 개체수
 
     // 자주 물어보는 질문
     private String questionGuarantee;

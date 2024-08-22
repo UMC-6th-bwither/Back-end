@@ -77,8 +77,9 @@ public class MyPageServiceImpl implements MyPageService {
             // BreederDTO 설정
             BreederDTO breederDTO = BreederDTO.builder()
                     .animal(breeder.getAnimal())
-                    .species(breeder.getSpecies()) // 이미 리스트이므로 toString() 호출 불필요
+                    .species(breeder.getSpecies())
                     .backgroundImage(breeder.getBackgroundImage())
+                    .reviewEvent(breeder.getReviewEvent())
                     .tradeName(breeder.getTradeName())
                     .tradePhone(breeder.getTradePhone())
                     .contactableTime(breeder.getContactableTime())
@@ -94,7 +95,9 @@ public class MyPageServiceImpl implements MyPageService {
                     .schoolName(breeder.getSchoolName())
                     .departmentName(breeder.getDepartmentName())
                     .enrollmentDate(breeder.getEnrollmentDate())
+                    .kennelAddress(breeder.getKennelAddress())
                     .businessTime(breeder.getBusinessTime())
+                    .animalCount(breeder.getAnimalCount())
                     .graduationDate(breeder.getGraduationDate())
                     .questionGuarantee(breeder.getQuestionGuarantee())
                     .questionPedigree(breeder.getQuestionPedigree())
@@ -103,7 +106,6 @@ public class MyPageServiceImpl implements MyPageService {
                     .questionSupport(breeder.getQuestionSupport())
                     .breeding(breeder.getBreedingCareer() != null ? breeder.getBreedingCareer().stream()
                             .map(breeding -> BreedingDTO.builder()
-                                    // .breedingId(breeding.getBreedingId())
                                     .tradeName(breeding.getTradeName())
                                     .joinDate(breeding.getJoinDate())
                                     .leaveDate(breeding.getLeaveDate())
@@ -125,7 +127,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         } else if (user.getRole() == Role.MEMBER) {
             // Member 정보 조회
-            Member member = memberRepository.findById(userId)
+            Member member = memberRepository.findByUser_UserId(userId)
                     .orElseThrow(() -> new RuntimeException("해당 일반 유저가 존재하지 않습니다."));
 
             // MemberDTO 설정
@@ -276,18 +278,6 @@ public class MyPageServiceImpl implements MyPageService {
         }
     }
 
-    private Breeding convertToEntity(BreedingDTO dto, Breeder breeder) {
-        return Breeding.builder()
-                .breedingId(breeder.getBreederId())
-                .tradeName(dto.getTradeName())
-                .joinDate(dto.getJoinDate())
-                .leaveDate(dto.getLeaveDate())
-                .currentlyEmployed(dto.getCurrentlyEmployed())
-                .description(dto.getDescription())
-                .breeder(breeder)
-                .build();
-    }
-
     @Override
     @Transactional
     public void updateBreederBackgroundImage(Long userId, String backgroundImageUrl) {
@@ -304,7 +294,7 @@ public class MyPageServiceImpl implements MyPageService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 사용자가 존재하지 않습니다."));
 
         // 멤버 정보 조회
-        Member member = memberRepository.findById(userId)
+        Member member = memberRepository.findByUser_UserId(userId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 일반 유저가 존재하지 않습니다."));
 
         if (memberUpdateDTO.getPassword() != null) {
