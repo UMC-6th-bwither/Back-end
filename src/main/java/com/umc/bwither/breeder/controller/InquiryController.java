@@ -19,10 +19,10 @@ public class InquiryController {
     private final UserAuthorizationUtil userAuthorizationUtil;
 
     @PostMapping
-    public ApiResponse<?> createInquiry(@RequestParam Long userId) {
-        Long breederUserId = userAuthorizationUtil.getCurrentUserId();
-        inquiryService.createInquiry(userId, breederUserId);
-        return ApiResponse.of(SuccessStatus.SUCCESS_CREATE_INQUIRY, userId);
+    public ApiResponse<?> createInquiry(@RequestParam Long breederId) {
+        Long userId = userAuthorizationUtil.getCurrentUserId();
+        inquiryService.createInquiry(userId, breederId);
+        return ApiResponse.of(SuccessStatus.SUCCESS_CREATE_INQUIRY, breederId);
 
     }
 
