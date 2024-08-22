@@ -47,7 +47,12 @@ public class WebSecurityConfig {
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
                     .allowedMethods("*")
-                    .allowedOrigins("http://localhost:3000", "http://localhost:5173", "http://ec2-15-165-235-78.ap-northeast-2.compute.amazonaws.com", "http://bwither.com/" )
+                    .allowedOrigins("http://localhost:3000",
+                            "http://localhost:5173",
+                            "http://ec2-15-165-235-78.ap-northeast-2.compute.amazonaws.com",
+                            "http://bwither.com/",
+                            "https://s3-bwither.s3.ap-northeast-2.amazonaws.com/breeder-files/"
+                    )
                     .allowCredentials(true);
             }
         };
