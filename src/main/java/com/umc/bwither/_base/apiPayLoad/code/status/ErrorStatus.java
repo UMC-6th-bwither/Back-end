@@ -25,14 +25,16 @@ public enum ErrorStatus implements BaseErrorCode {
     ANIMAL_ALREADY_WAIT(HttpStatus.BAD_REQUEST, "ANIMAL4006", "이미 예약되었습니다."),
     ANIMAL_NOT_WAIT(HttpStatus.BAD_REQUEST, "ANIMAL4007", "사용자가 예약하지 않은 동물입니다."),
 
+    // USER 관련 에러
+    USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4001", "이미 존재하는 아이디입니다."),
 
-    //BREEDER 관련 에러
+    // BREEDER 관련 에러
     BREEDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "BREEDER4001", "존재하지 않는 브리더입니다."),
     BREEDER_NOT_AUTHORIZED(HttpStatus.BAD_REQUEST, "BREEDER4002", "작성자가 일치하지 않습니다."),
     BREEDER_ALREADY_BOOKMARK(HttpStatus.BAD_REQUEST, "BREEDER4003", "이미 사용자가 저장(북마크)한 브리더입니다."),
     BREEDER_NOT_BOOKMARK(HttpStatus.BAD_REQUEST, "BREEDER4004", "사용자가 저장하지 않은 브리더입니다."),
 
-    //MEMBER 관련 에러
+    // MEMBER 관련 에러
     MEMBER_NOT_FOUND(HttpStatus.BAD_REQUEST, "MEMBER4001", "존재하지 않는 멤버입니다.");
     private final HttpStatus httpStatus;
     private final String code;
