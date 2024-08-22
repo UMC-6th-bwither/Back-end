@@ -12,4 +12,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     boolean existsByMemberId(Long memberId);
 
     Optional<Member> findByUser(User user);
+
+    Optional<Member> findByUser_UserId(Long userId);
 }

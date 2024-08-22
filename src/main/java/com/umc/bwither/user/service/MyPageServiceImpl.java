@@ -125,7 +125,7 @@ public class MyPageServiceImpl implements MyPageService {
 
         } else if (user.getRole() == Role.MEMBER) {
             // Member 정보 조회
-            Member member = memberRepository.findById(userId)
+            Member member = memberRepository.findByUser_UserId(userId)
                     .orElseThrow(() -> new RuntimeException("해당 일반 유저가 존재하지 않습니다."));
 
             // MemberDTO 설정
