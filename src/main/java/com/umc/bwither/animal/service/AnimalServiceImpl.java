@@ -100,8 +100,14 @@ public class AnimalServiceImpl implements AnimalService {
             .collect(Collectors.toList());
 
     String vaccinationStatus = null;
-    if (animal.getVaccination() != null && animal.getVaccination().contains("완료")) {
-      vaccinationStatus = "예방접종완료";
+    if (animal.getVaccination() != null) {
+      if (animal.getVaccination().contains("3차")) {
+        vaccinationStatus = "1~3차 접종";
+      } else if (animal.getVaccination().contains("2차")) {
+        vaccinationStatus = "1~2차 접종";
+      } else if (animal.getVaccination().contains("1차")) {
+        vaccinationStatus = "1차 접종";
+      }
     }
 
     String virusStatus = null;
