@@ -27,6 +27,10 @@ public enum ErrorStatus implements BaseErrorCode {
 
     // USER 관련 에러
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "USER4001", "이미 존재하는 아이디입니다."),
+    USER_NOT_FOUND(HttpStatus.BAD_REQUEST, "USER4002", "사용자를 찾을 수 없습니다."),
+    USER_INACTIVE(HttpStatus.BAD_REQUEST, "USER4003", "탈퇴한 회원입니다."),
+    USER_INVALID_PASSWORD(HttpStatus.BAD_REQUEST, "USER4004", "비밀번호가 일치하지 않습니다."),
+
 
     // BREEDER 관련 에러
     BREEDER_NOT_FOUND(HttpStatus.BAD_REQUEST, "BREEDER4001", "존재하지 않는 브리더입니다."),

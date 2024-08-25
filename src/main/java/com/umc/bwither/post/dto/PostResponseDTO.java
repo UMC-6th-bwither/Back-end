@@ -96,6 +96,7 @@ public class PostResponseDTO {
         private Integer rating;
         private Category category;
         private String author;
+        private String authorImage;
         private String kennelName;
         private List<GetBlockDTO> blocks;
         private LocalDateTime createdAt;
@@ -126,6 +127,7 @@ public class PostResponseDTO {
                     .rating(post.getRating())
                     .category(post.getCategory())
                     .author(post.getUser().getName())
+                    .authorImage(post.getUser().getProfileImage())
                     .kennelName(post.getBreeder() != null ? post.getBreeder().getTradeName() : null)
                     .blocks(blocks)
                     .createdAt(post.getCreatedAt())

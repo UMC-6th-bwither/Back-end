@@ -2,6 +2,7 @@ package com.umc.bwither.post.service;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.umc.bwither._base.common.UserAuthorizationUtil;
 import com.umc.bwither.breeder.entity.Breeder;
@@ -39,6 +40,9 @@ public class PostServiceImpl implements PostService {
     private final ObjectMapper mapper;
     private final UserAuthorizationUtil userAuthorizationUtil;
 
+    // 블록을 처리하면서 coverImage URL을 추출합니다.
+    String coverImageUrl = null;
+
 
     @Override
     @Transactional
@@ -61,26 +65,41 @@ public class PostServiceImpl implements PostService {
                 .category(Category.TIPS)
                 .build();
 
-        Post savedPost = postRepository.save(post);
-
         List<Block> blocks = tipDTO.getBlocks().stream()
                 .map(blockDTO -> {
                     Block block = new Block();
                     try {
-                        // json 직렬화
-                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        // JSON 직렬화
+                        String blockContent = mapper.writeValueAsString(blockDTO);
+                        block.setBlock(blockContent);
                         block.setPost(post);
+
+                        // JSON 파싱을 통해 이미지 블록의 URL을 추출
+                        JsonNode blockNode = mapper.readTree(blockContent);
+                        String type = blockNode.get("type").asText();
+                        if ("image".equals(type) && coverImageUrl == null) {
+                            // 첫 번째 이미지 URL을 coverImage로 설정
+                            coverImageUrl = blockNode.get("data")
+                                    .get("file")
+                                    .get("url").asText();
+                        }
                     } catch (Exception e) {
-                        throw new RuntimeException("blockDTO 직렬화 오류", e);
+                        throw new RuntimeException("blockDTO 직렬화 및 파싱 오류", e);
                     }
                     return block;
                 })
                 .collect(Collectors.toList());
 
+        // 추출한 coverImage URL을 post 객체에 설정
+        post.setCoverImage(coverImageUrl);
+
+        // Post와 블록들을 저장합니다.
+        Post savedPost = postRepository.save(post);
         blockRepository.saveAll(blocks);
 
         savedPost.setBlocks(blocks);
     }
+
 
 
     @Override
@@ -110,23 +129,35 @@ public class PostServiceImpl implements PostService {
                 .category(Category.BREEDER_REVIEWS)
                 .build();
 
-        // 먼저 Post를 저장해야 Block의 외래키 관계가 올바르게 설정됨
         Post savedPost = postRepository.save(post);
 
-        // 블록 리스트 생성 및 각 블록에 포스트 설정
         List<Block> blocks = reviewDTO.getBlocks().stream()
                 .map(blockDTO -> {
                     Block block = new Block();
                     try {
-                        // json 직렬화
-                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        // JSON 직렬화
+                        String blockContent = mapper.writeValueAsString(blockDTO);
+                        block.setBlock(blockContent);
                         block.setPost(post);
+
+                        // JSON 파싱을 통해 이미지 블록의 URL을 추출
+                        JsonNode blockNode = mapper.readTree(blockContent);
+                        String type = blockNode.get("type").asText();
+                        if ("image".equals(type) && coverImageUrl == null) {
+                            // 첫 번째 이미지 URL을 coverImage로 설정
+                            coverImageUrl = blockNode.get("data")
+                                    .get("file")
+                                    .get("url").asText();
+                        }
                     } catch (Exception e) {
-                        throw new RuntimeException("blockDTO 직렬화 오류", e);
+                        throw new RuntimeException("blockDTO 직렬화 및 파싱 오류", e);
                     }
                     return block;
                 })
                 .collect(Collectors.toList());
+
+        // 추출한 coverImage URL을 post 객체에 설정
+        post.setCoverImage(coverImageUrl);
 
         // 블록 리스트 저장
         blockRepository.saveAll(blocks);
@@ -260,25 +291,37 @@ public class PostServiceImpl implements PostService {
 
         // 기존 블록 삭제
         blockRepository.deleteAll(post.getBlocks());
+        // 포스트의 블록 리스트를 비웁니다
+        post.getBlocks().clear();
 
-        // 새로운 블록 추가
+
         List<Block> blocks = requestDTO.getBlocks().stream()
                 .map(blockDTO -> {
                     Block block = new Block();
                     try {
-                        // json 직렬화
-                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        // JSON 직렬화
+                        String blockContent = mapper.writeValueAsString(blockDTO);
+                        block.setBlock(blockContent);
                         block.setPost(post);
+
+                        // JSON 파싱을 통해 이미지 블록의 URL을 추출
+                        JsonNode blockNode = mapper.readTree(blockContent);
+                        String type = blockNode.get("type").asText();
+                        if ("image".equals(type) && coverImageUrl == null) {
+                            // 첫 번째 이미지 URL을 coverImage로 설정
+                            coverImageUrl = blockNode.get("data")
+                                    .get("file")
+                                    .get("url").asText();
+                        }
                     } catch (Exception e) {
-                        throw new RuntimeException("blockDTO 직렬화 오류", e);
+                        throw new RuntimeException("blockDTO 직렬화 및 파싱 오류", e);
                     }
                     return block;
                 })
                 .collect(Collectors.toList());
 
-        // 블록을 Post에 설정하고 저장
-        blockRepository.saveAll(blocks);
-        post.setBlocks(blocks);
+        // 추출한 coverImage URL을 post 객체에 설정
+        post.setCoverImage(coverImageUrl);
 
         postRepository.save(post);
     }
@@ -308,20 +351,35 @@ public class PostServiceImpl implements PostService {
         // 기존 블록 삭제
         blockRepository.deleteAll(post.getBlocks());
 
-        // 새로운 블록 추가
+        // 포스트의 블록 리스트 비우기
+        post.getBlocks().clear();
+
         List<Block> blocks = requestDTO.getBlocks().stream()
                 .map(blockDTO -> {
                     Block block = new Block();
                     try {
-                        // json 직렬화
-                        block.setBlock(mapper.writeValueAsString(blockDTO));
+                        // JSON 직렬화
+                        String blockContent = mapper.writeValueAsString(blockDTO);
+                        block.setBlock(blockContent);
                         block.setPost(post);
+
+                        // JSON 파싱을 통해 이미지 블록의 URL을 추출
+                        JsonNode blockNode = mapper.readTree(blockContent);
+                        String type = blockNode.get("type").asText();
+                        if ("image".equals(type) && coverImageUrl == null) {
+                            // 첫 번째 이미지 URL을 coverImage로 설정
+                            coverImageUrl = blockNode.get("data")
+                                    .get("file")
+                                    .get("url").asText();
+                        }
                     } catch (Exception e) {
-                        throw new RuntimeException("blockDTO 직렬화 오류", e);
+                        throw new RuntimeException("blockDTO 직렬화 및 파싱 오류", e);
                     }
                     return block;
                 })
                 .collect(Collectors.toList());
+
+        post.setCoverImage(coverImageUrl);
 
         // 블록을 Post에 설정하고 저장
         blockRepository.saveAll(blocks);

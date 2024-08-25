@@ -23,8 +23,8 @@ public class InquiryServiceImpl implements InquiryService {
     private final UserRepository userRepository;
     private final BreederRepository breederRepository;
     @Override
-    public void createInquiry(Long userId, Long breederUserId) {
-        Breeder breeder = breederRepository.findByUser_UserId(breederUserId)
+    public void createInquiry(Long userId, Long breederId) {
+        Breeder breeder = breederRepository.findById(breederId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 브리더가 존재하지 않습니다."));
 
         User user = userRepository.findById(userId)
