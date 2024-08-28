@@ -163,4 +163,13 @@ public class BreederResponseDTO {
     public static class TrustLevelResponseDTO {
         private Integer trustLevel;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class MissingBreederFilesDTO {
+        private Long breederId;
+        private String fileType;
+    }
 }

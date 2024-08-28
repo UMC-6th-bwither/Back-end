@@ -40,6 +40,7 @@ import com.umc.bwither.user.entity.enums.NotificationType;
 import com.umc.bwither.user.service.NotificationService;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -488,22 +489,34 @@ public class AnimalServiceImpl implements AnimalService {
     }
   }
 
-  public List<AnimalResponseDTO.MissingFilesDTO> getAnimalsWithMissingFiles(Long breederId) {
+  public List<AnimalResponseDTO.MissingAnimalFilesDTO> getAnimalsWithMissingFiles(Long breederId) {
     // Breeder가 관리하는 모든 동물 조회
     List<Animal> animals = animalRepository.findByBreeder_BreederId(breederId);
-    List<AnimalResponseDTO.MissingFilesDTO> missingFilesList = new ArrayList<>();
+    List<AnimalResponseDTO.MissingAnimalFilesDTO> missingFilesList = new ArrayList<>();
 
     for (Animal animal : animals) {
       // 업로드된 파일들을 조회
       List<AnimalFile> uploadedFiles = animalFileRepository.findByAnimal(animal);
 
-      // 모든 파일 타입을 확인하여 업로드되지 않은 파일을 찾음
-      for (FileType fileType : FileType.values()) {
+      // 동물 관련 파일 타입만 조회 (PEDIGREE, VACCINATION, HEALTH_CHECK)
+      for (FileType fileType : Arrays.asList(FileType.PEDIGREE, FileType.VACCINATION, FileType.HEALTH_CHECK)) {
         boolean isFileUploaded = uploadedFiles.stream()
                 .anyMatch(file -> file.getType().equals(fileType));
 
         if (!isFileUploaded) {
-          missingFilesList.add(new AnimalResponseDTO.MissingFilesDTO(animal.getAnimalId(), fileType.name()));
+          missingFilesList.add(new AnimalResponseDTO.MissingAnimalFilesDTO(animal.getAnimalId(), fileType.name()));
+        }
+      }
+
+      // 부모 동물의 HEALTH_CHECK 파일 타입만 조회
+      List<AnimalParents> parents = animal.getAnimalParents();
+      for (AnimalParents parent : parents) {
+        ParentType parentType = parent.getType(); // ParentType을 가져옴
+
+        List<HealthCheckImage> healthCheckImages = parent.getHealthCheckImages();
+        if (healthCheckImages.isEmpty()) {
+          String missingFileType = parentType.name() + "_HEALTH_CHECK_IMAGE";
+          missingFilesList.add(new AnimalResponseDTO.MissingAnimalFilesDTO(animal.getAnimalId(), missingFileType));
         }
       }
     }

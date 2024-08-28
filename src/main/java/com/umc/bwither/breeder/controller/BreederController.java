@@ -110,11 +110,13 @@ public class BreederController {
     @GetMapping("/{breederId}/missing-files")
     @Operation(summary = "업로드 누락된 동물 파일 조회 API", description = "업로드 누락된 동물 파일 조회 API")
     public ApiResponse<Map<String, Object>> getMissingFiles(@PathVariable Long breederId) {
-        List<AnimalResponseDTO.MissingFilesDTO> missingFilesList = animalService.getAnimalsWithMissingFiles(breederId);
+        List<AnimalResponseDTO.MissingAnimalFilesDTO> missingAnimalFilesList = animalService.getAnimalsWithMissingFiles(breederId);
+        List<BreederResponseDTO.MissingBreederFilesDTO> missingBreederFilesList = breederService.getBreederMissingFiles(breederId);
 
         Map<String, Object> result = new HashMap<>();
         result.put("breederId", breederId);
-        result.put("notUpload", missingFilesList);
+        result.put("missingAnimalFiles", missingAnimalFilesList);
+        result.put("missingBreederFiles", missingBreederFilesList);
 
         return ApiResponse.of(SuccessStatus.SUCCESS_MISSING_PHOTO, result);
     }

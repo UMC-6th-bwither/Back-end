@@ -182,7 +182,7 @@ public class AnimalResponseDTO {
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class MissingFilesDTO {
+  public static class MissingAnimalFilesDTO {
     private Long animalId;
     private String fileType;
   }

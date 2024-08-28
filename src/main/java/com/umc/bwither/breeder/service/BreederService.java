@@ -33,4 +33,6 @@ public interface BreederService {
     TrustLevelResponseDTO getTrustLevel(Long breederId);
 
     Boolean checkBookmarkStatus(Long breederId, Long memberId);
+
+    List<BreederResponseDTO.MissingBreederFilesDTO> getBreederMissingFiles(Long breederId);
 }

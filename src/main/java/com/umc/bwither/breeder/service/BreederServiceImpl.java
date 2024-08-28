@@ -36,10 +36,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -448,4 +446,23 @@ public class BreederServiceImpl implements BreederService {
 
     return breederMemberRepository.existsByMemberAndBreeder(member, breeder);
   }
+
+  @Override
+  public List<BreederResponseDTO.MissingBreederFilesDTO> getBreederMissingFiles(Long breederId) {
+        Breeder breeder = breederRepository.findById(breederId)
+                .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
+        List<BreederResponseDTO.MissingBreederFilesDTO> missingFilesList = new ArrayList<>();
+
+        // 브리더 관련 파일 타입만 조회 (REGISTRATION, KENNEL)
+        for (com.umc.bwither.breeder.entity.enums.FileType fileType : Arrays.asList(com.umc.bwither.breeder.entity.enums.FileType.REGISTRATION, com.umc.bwither.breeder.entity.enums.FileType.KENNEL)) {
+            List<BreederFile> breederFiles = breederFileRepository.findByBreederAndType(breeder, fileType);
+
+            // 업로드되지 않은 경우
+            if (breederFiles.isEmpty()) {
+                missingFilesList.add(new BreederResponseDTO.MissingBreederFilesDTO(breederId, fileType.name()));
+            }
+        }
+        return missingFilesList;
+  }
+
 }
