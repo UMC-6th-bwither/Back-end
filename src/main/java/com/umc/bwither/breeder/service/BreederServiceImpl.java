@@ -465,4 +465,16 @@ public class BreederServiceImpl implements BreederService {
         return missingFilesList;
   }
 
+  public List<BreederResponseDTO.BreederFileStatusDTO> getBreederFileStatus(Long breederId) {
+        Breeder breeder = breederRepository.findById(breederId)
+                .orElseThrow(() -> new TestHandler(ErrorStatus.BREEDER_NOT_FOUND));
+        List<BreederResponseDTO.BreederFileStatusDTO> fileStatusList = new ArrayList<>();
+
+        for (com.umc.bwither.breeder.entity.enums.FileType fileType : Arrays.asList(com.umc.bwither.breeder.entity.enums.FileType.REGISTRATION, com.umc.bwither.breeder.entity.enums.FileType.KENNEL)) {
+            List<BreederFile> breederFiles = breederFileRepository.findByBreederAndType(breeder, fileType);
+            boolean isFileUploaded = !breederFiles.isEmpty();
+            fileStatusList.add(new BreederResponseDTO.BreederFileStatusDTO(breederId, fileType.name(), isFileUploaded));
+        }
+
+        return fileStatusList;}
 }

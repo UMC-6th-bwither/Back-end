@@ -172,4 +172,19 @@ public class BreederResponseDTO {
         private Long breederId;
         private String fileType;
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    public static class BreederFileStatusDTO {
+        private Long breederId;
+        private String fileType;
+        private boolean isUploaded;
+
+        public BreederFileStatusDTO(Long breederId, String fileType, boolean isUploaded) {
+            this.breederId = breederId;
+            this.fileType = fileType;
+            this.isUploaded = isUploaded;
+        }
+    }
 }

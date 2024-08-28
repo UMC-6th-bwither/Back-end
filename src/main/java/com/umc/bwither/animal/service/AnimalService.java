@@ -35,6 +35,8 @@ public interface AnimalService {
 
   List<AnimalResponseDTO.MissingAnimalFilesDTO> getAnimalsWithMissingFiles(Long breederId);
 
+  public List<AnimalResponseDTO.AnimalFileStatusDTO> getAnimalFileStatus(Long breederId);
+
   AnimalPreViewListDTO getAnimalList(List<String> regions, AnimalType animalType, Gender gender, String breed, Status status, String sortField, Integer page);
 
   void waitAnimal(long memberId, Long animalId);

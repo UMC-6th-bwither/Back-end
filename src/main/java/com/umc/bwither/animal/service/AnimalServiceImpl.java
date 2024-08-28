@@ -530,6 +530,36 @@ public class AnimalServiceImpl implements AnimalService {
   }
 
   @Override
+  public List<AnimalResponseDTO.AnimalFileStatusDTO> getAnimalFileStatus(Long breederId) {
+    List<Animal> animals = animalRepository.findByBreeder_BreederId(breederId);
+    List<AnimalResponseDTO.AnimalFileStatusDTO> fileStatusList = new ArrayList<>();
+
+    for (Animal animal : animals) {
+      List<AnimalFile> uploadedFiles = animalFileRepository.findByAnimal(animal);
+
+      for (FileType fileType : Arrays.asList(FileType.PEDIGREE, FileType.VACCINATION, FileType.HEALTH_CHECK)) {
+        boolean isFileUploaded = uploadedFiles.stream()
+                .anyMatch(file -> file.getType().equals(fileType));
+        fileStatusList.add(new AnimalResponseDTO.AnimalFileStatusDTO(animal.getAnimalId(), animal.getName(), fileType.name(), isFileUploaded));
+      }
+
+      // 부모 동물의 HEALTH_CHECK 파일 확인
+      List<AnimalParents> parents = animal.getAnimalParents();
+      for (AnimalParents parent : parents) {
+        ParentType parentType = parent.getType();
+
+        List<HealthCheckImage> healthCheckImages = parent.getHealthCheckImages();
+        boolean isParentFileUploaded = !healthCheckImages.isEmpty();
+        String fileType = parentType.name() + "_HEALTH_CHECK_IMAGE";
+        fileStatusList.add(new AnimalResponseDTO.AnimalFileStatusDTO(animal.getAnimalId(), animal.getName(), fileType, isParentFileUploaded));
+      }
+    }
+
+    return fileStatusList;
+  }
+
+
+  @Override
   public AnimalPreViewListDTO getAnimalList(List<String> regions, AnimalType animalType, Gender gender,
       String breed, Status status, String sortField, Integer page) {
 
