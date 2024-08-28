@@ -182,9 +182,26 @@ public class AnimalResponseDTO {
   @Getter
   @NoArgsConstructor
   @AllArgsConstructor
-  public static class MissingFilesDTO {
+  public static class MissingAnimalFilesDTO {
     private Long animalId;
     private String fileType;
+  }
+
+  @Builder
+  @Getter
+  @NoArgsConstructor
+  public static class AnimalFileStatusDTO {
+    private Long animalId;
+    private String animalName;
+    private String fileType;
+    private boolean isUploaded;
+
+    public AnimalFileStatusDTO(Long animalId, String animalName, String fileType, boolean isUploaded) {
+      this.animalId = animalId;
+      this.animalName = animalName;
+      this.fileType = fileType;
+      this.isUploaded = isUploaded;
+    }
   }
 
 

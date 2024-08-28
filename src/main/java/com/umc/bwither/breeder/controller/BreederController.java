@@ -108,16 +108,36 @@ public class BreederController {
     }
 
     @GetMapping("/{breederId}/missing-files")
-    @Operation(summary = "업로드 누락된 동물 파일 조회 API", description = "업로드 누락된 동물 파일 조회 API")
+    @Operation(summary = "업로드 누락된 파일 조회 API", description = "업로드 누락된 파일 조회 API")
     public ApiResponse<Map<String, Object>> getMissingFiles(@PathVariable Long breederId) {
-        List<AnimalResponseDTO.MissingFilesDTO> missingFilesList = animalService.getAnimalsWithMissingFiles(breederId);
+        List<AnimalResponseDTO.MissingAnimalFilesDTO> missingAnimalFilesList = animalService.getAnimalsWithMissingFiles(breederId);
+        List<BreederResponseDTO.MissingBreederFilesDTO> missingBreederFilesList = breederService.getBreederMissingFiles(breederId);
 
         Map<String, Object> result = new HashMap<>();
         result.put("breederId", breederId);
-        result.put("notUpload", missingFilesList);
+        result.put("missingAnimalFiles", missingAnimalFilesList);
+        result.put("missingBreederFiles", missingBreederFilesList);
 
-        return ApiResponse.of(SuccessStatus.SUCCESS_MISSING_PHOTO, result);
+        return ApiResponse.of(SuccessStatus.SUCCESS_MISSING_FILES, result);
     }
+
+    @GetMapping("/{breederId}/upload-status")
+    @Operation(summary = "파일 업로드 상태 확인 API", description = "브리더와 관련된 모든 파일의 업로드 상태를 확인합니다.")
+    public ApiResponse<Map<String, Object>> getUploadStatus(@PathVariable Long breederId) {
+        // 동물 파일 업로드 상태 조회
+        List<AnimalResponseDTO.AnimalFileStatusDTO> animalFileStatusList = animalService.getAnimalFileStatus(breederId);
+
+        // 브리더 파일 업로드 상태 조회
+        List<BreederResponseDTO.BreederFileStatusDTO> breederFileStatusList = breederService.getBreederFileStatus(breederId);
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("breederId", breederId);
+        result.put("animalFileStatus", animalFileStatusList);
+        result.put("breederFileStatus", breederFileStatusList);
+
+        return ApiResponse.of(SuccessStatus.SUCCESS_FILES_STATUS, result);
+    }
+
   
     @PostMapping("/{breederId}/member/{memberId}")
     public ResponseEntity<?> addView(@PathVariable Long breederId, @PathVariable Long memberId) {

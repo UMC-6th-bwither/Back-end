@@ -71,8 +71,9 @@ public enum SuccessStatus implements BaseCode {
     SUCCESS_WITHDRAW_USER(HttpStatus.OK, "USERWITHDRAW2000", "회원 탈퇴가 완료되었습니다."),
     ERROR_WITHDRAW_USER(HttpStatus.OK, "USERWITHDRAW4000", "회원 탈퇴에 실패하였습니다."),
 
-    // 업로드 안된 항목 관련 응답
-    SUCCESS_MISSING_PHOTO(HttpStatus.OK, "MISSINGPHOTO2000", "업로드 안된 항목 조회에 성공했습니다."),
+    // 파일 업로드 관련 응답
+    SUCCESS_MISSING_FILES(HttpStatus.OK, "MISSINGFILES2000", "업로드 안된 항목 조회에 성공했습니다."),
+    SUCCESS_FILES_STATUS(HttpStatus.OK, "FILESSTATUS2000", "업로드 상태 조회에 성공했습니다."),
 
     // 마이페이지 관련 응답
     SUCCESS_GET_USERINFO(HttpStatus.OK, "GETUSERINFO2000", "마이페이지 조회에 성공했습니다"),
