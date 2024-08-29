@@ -6,7 +6,9 @@ import com.umc.bwither.breeder.entity.Inquiry;
 import com.umc.bwither.breeder.repository.BreederRepository;
 import com.umc.bwither.breeder.repository.InquiryRepository;
 import com.umc.bwither.user.entity.User;
+import com.umc.bwither.user.entity.enums.NotificationType;
 import com.umc.bwither.user.repository.UserRepository;
+import com.umc.bwither.user.service.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class InquiryServiceImpl implements InquiryService {
     private final InquiryRepository inquiryRepository;
     private final UserRepository userRepository;
     private final BreederRepository breederRepository;
+    private final NotificationService notificationService;
+
     @Override
     public void createInquiry(Long userId, Long breederId) {
         Breeder breeder = breederRepository.findById(breederId)
@@ -44,6 +48,9 @@ public class InquiryServiceImpl implements InquiryService {
                 .build();
 
         inquiryRepository.save(inquiry);
+
+        // 알림
+        notificationService.createNotification(breeder.getUser().getUserId(), NotificationType.INQUIRY, "새로운 문의 요청",user.getName()+"님이 회원님께 문의를 요청했어요!");
     }
 
     @Override
