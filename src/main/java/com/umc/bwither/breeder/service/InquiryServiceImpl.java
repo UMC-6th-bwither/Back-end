@@ -54,7 +54,7 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     @Override
-    public List<BreederResponseDTO.BreederPreviewDTO> getBreedersByUserId(Long userId) {
+    public List<BreederResponseDTO.BreederInquiryDTO> getBreedersByUserId(Long userId) {
         List<Inquiry> inquiries = inquiryRepository.findByUserUserId(userId);
         log.info("요청:"+inquiries);
 
@@ -68,17 +68,18 @@ public class InquiryServiceImpl implements InquiryService {
         List<Breeder> breeders = breederRepository.findAllById(breederIds);
 
         // Breeder 엔티티를 BreederPreviewDTO로 변환
-        List<BreederResponseDTO.BreederPreviewDTO> breederPreviewDTOs = breeders.stream()
-                .map(breeder -> BreederResponseDTO.BreederPreviewDTO.builder()
+        List<BreederResponseDTO.BreederInquiryDTO> BreederInquiryDTO = breeders.stream()
+                .map(breeder -> BreederResponseDTO.BreederInquiryDTO.builder()
                         .breederId(breeder.getBreederId())
                         .profileUrl(breeder.getBreederFiles().isEmpty() ? null : breeder.getBreederFiles().get(0).getBreederFilePath()) // profileUrl 필드가 존재한다고 가정
-                        .address(breeder.getUser().getAddress())       // address 필드가 존재한다고 가정
-                        .breederName(breeder.getTradeName()) // breederName 필드가 존재한다고 가정
+                        .address(breeder.getUser().getAddress())
+                        .breederName(breeder.getTradeName())
+                        .tradePhone(breeder.getTradePhone())
                         .createdAt(breeder.getUser().getCreatedAt())
                         .updatedAt(breeder.getUser().getUpdatedAt())
                         .build())
                 .collect(Collectors.toList());
 
-        return breederPreviewDTOs;
+        return BreederInquiryDTO;
     }
 }
