@@ -187,4 +187,26 @@ public class BreederResponseDTO {
             this.isUploaded = isUploaded;
         }
     }
+
+    @Builder
+    @Getter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BreederInquiryDTO {
+        Long breederId;
+        String profileUrl;
+        String address;
+        String breederName;
+        String tradePhone;
+        AnimalType animalType;
+        List<String> species;
+        Integer careerYear;
+        Integer certificateCount;
+        Integer waitAnimal;
+        Integer waitList;
+        Double breederRating;
+        Integer reviewCount;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
 }

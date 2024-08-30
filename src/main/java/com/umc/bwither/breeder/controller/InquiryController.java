@@ -29,7 +29,7 @@ public class InquiryController {
     @GetMapping("/breeders")
     public ApiResponse<?> getBreedersByUserId() {
         Long userId = userAuthorizationUtil.getCurrentUserId();
-        List<BreederResponseDTO.BreederPreviewDTO> breeders = inquiryService.getBreedersByUserId(userId);
+        List<BreederResponseDTO.BreederInquiryDTO> breeders = inquiryService.getBreedersByUserId(userId);
         System.out.println("브리더:"+breeders);
         return ApiResponse.of(SuccessStatus.SUCCESS_GET_INQUIRYBREEDER, breeders);
     }

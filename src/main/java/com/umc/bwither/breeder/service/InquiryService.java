@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface InquiryService {
     void createInquiry(Long userId, Long breederUserId);
-    List<BreederResponseDTO.BreederPreviewDTO> getBreedersByUserId(Long userId);
+    List<BreederResponseDTO.BreederInquiryDTO> getBreedersByUserId(Long userId);
 }
