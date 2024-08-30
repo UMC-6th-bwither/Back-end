@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -47,6 +48,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void createTips(PostRequestDTO.GetTipDTO tipDTO) {
+        coverImageUrl = null;
 
         Long userId = userAuthorizationUtil.getCurrentUserId();
         // 사용자 조회
@@ -105,6 +107,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void createReviews(PostRequestDTO.GetReviewDTO reviewDTO) {
+        coverImageUrl = null;
 
         Long userId = userAuthorizationUtil.getCurrentUserId();
 
@@ -275,6 +278,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void updateTips(Long postId, PostRequestDTO.GetTipDTO requestDTO) {
+        coverImageUrl = null;
 
         Long userId = userAuthorizationUtil.getCurrentUserId();
 
@@ -329,6 +333,7 @@ public class PostServiceImpl implements PostService {
     @Override
     @Transactional
     public void updateReviews(Long postId, PostRequestDTO.GetReviewDTO requestDTO) {
+        coverImageUrl = null;
         Long userId = userAuthorizationUtil.getCurrentUserId();
 
         // 브리더 조회
