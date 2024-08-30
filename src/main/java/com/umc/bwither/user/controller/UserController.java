@@ -106,19 +106,10 @@ public class UserController {
             breederService.saveBreeder(breeder);
 
             for (BreedingJoinDTO breedingJoinDTO : breederJoinDTO.getBreedingCareers()) {
-                LocalDate joinDate = (breedingJoinDTO.getJoinDate() != null && !breedingJoinDTO.getJoinDate().isEmpty())
-                        ? LocalDate.parse(breedingJoinDTO.getJoinDate() + "-01")
-                        : null;
-
-                LocalDate leaveDate = (breedingJoinDTO.getLeaveDate() != null && !breedingJoinDTO.getLeaveDate().isEmpty())
-                        ? LocalDate.parse(breedingJoinDTO.getLeaveDate() + "-01")
-                        : null;
-
-
                 Breeding breeding = Breeding.builder()
                         .tradeName(breedingJoinDTO.getTradeName())
-                        .joinDate(joinDate)
-                        .leaveDate(leaveDate)
+                        .joinDate(breedingJoinDTO.getJoinDate())
+                        .leaveDate(breedingJoinDTO.getLeaveDate())
                         .currentlyEmployed(breedingJoinDTO.getCurrentlyEmployed())
                         .breeder(breeder)
                         .build();

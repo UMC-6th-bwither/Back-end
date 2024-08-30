@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Builder
 @Getter
 @NoArgsConstructor
@@ -13,9 +15,9 @@ public class BreedingJoinDTO {
 
     private String tradeName;      // 상호명
 
-    private String joinDate;       // 입사 연월 (예: YYYY-MM)
+    private LocalDate joinDate;       // 입사 연월 (예: YYYY-MM-DD)
 
-    private String leaveDate;     // 퇴사 연월 (예: YYYY-MM)
+    private LocalDate leaveDate;     // 퇴사 연월 (예: YYYY-MM-DD)
 
     private Boolean currentlyEmployed; // 재직 중 여부
 
