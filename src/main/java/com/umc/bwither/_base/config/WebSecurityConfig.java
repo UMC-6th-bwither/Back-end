@@ -51,7 +51,8 @@ public class WebSecurityConfig {
                             "http://localhost:5173",
                             "http://ec2-15-165-235-78.ap-northeast-2.compute.amazonaws.com",
                             "http://bwither.com",
-                            "https://s3-bwither.s3.ap-northeast-2.amazonaws.com/breeder-files"
+//                            "https://s3-bwither.s3.ap-northeast-2.amazonaws.com/breeder-files"
+                            "https://s3-bwither.s3.ap-northeast-2.amazonaws.com"
                     )
                     .allowCredentials(true);
             }
